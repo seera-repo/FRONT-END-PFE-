@@ -1,6 +1,6 @@
 import Header from '../components/Header';
 import thumbnail from '../assets/images/thumbnail.png';
-import { Search, Filter, Badge, Star, Users, BookOpen } from 'lucide-react';
+import { Search, Filter, Badge, Star, Users, BookOpen, Heart } from 'lucide-react';
 import Input from '../components/ui/Input';
 import { useState } from 'react';
 
@@ -8,55 +8,117 @@ const BrowseCourse = () => {
 
   const coursesarr = [
     {
-      id: 1,
-      title: 'Course Title 1',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
       image: thumbnail,
-      categorie: 'Development',
-      likes: 120,
-      student: 200,
-      lessons: 20,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
       teacher: {
-        name: 'John Doe',
+        name: 'Dr. Ahmed Khalil',
         avatar: 'https://via.placeholder.com/50'
       },
     },
     {
-      id: 1,
-      title: 'Course Title 1',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
       image: thumbnail,
-      categorie: 'Development',
-      likes: 120,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
       teacher: {
-        name: 'John Doe',
-        avatar: 'https://via.placeholder.com/50'
-      }
-    },
-    {
-      id: 1,
-      title: 'Course Title 1',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
-      image: thumbnail,
-      categorie: 'Development',
-      likes: 120,
-      teacher: {
-        name: 'John Doe',
+        name: 'Dr. Ahmed Khalil',
         avatar: 'https://via.placeholder.com/50'
       },
     },
+
     {
-      id: 1,
-      title: 'Course Title 1',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
       image: thumbnail,
-      categorie: 'Development',
-      likes: 120,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
       teacher: {
-        name: 'John Doe',
+        name: 'Dr. Ahmed Khalil',
         avatar: 'https://via.placeholder.com/50'
-      }
-    }
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+
   ]
 
   const categories = ["All", "Development", "Design", "front-end", "back-end", "full-stack", "data science", "machine learning"];
@@ -90,7 +152,7 @@ const BrowseCourse = () => {
         <div className="w-full h-px bg-[#d2d4f5] m-0"></div>
 
         {/* Filters + Grid */}
-        <section className='px-6 py-10 bg-violet-50/30'>
+        <section className='px-6 py-10 bg-violet-50/50'>
           {/* Filters */}
           <div className="mb- flex flex-wrap items-center justify-center gap-2 mx-auto max-w-7xl ">
             <Filter className="mr-1 h-4 w-4 text-muted-foreground" />
@@ -109,7 +171,7 @@ const BrowseCourse = () => {
           <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-15'>
             {
               coursesarr.map((course) => (
-                <div className=' duration-200 ease-in-out cursor-pointer justify-center border-[#DBDFD0]  bg-card text-card-foreground flex flex-col gap-6 border py-6 shadow-sm group h-full overflow-hidden rounded-2xl border-border bg-card transition-all hover:shadow-xl hover:-translate-y-1' key={course.id}>
+                <div className=' bg-white duration-200 ease-in-out cursor-pointer justify-center border-[#DBDFD0]  bg-card text-card-foreground flex flex-col gap-6 border py-6 shadow-sm group h-full overflow-hidden rounded-2xl border-border bg-card transition-all hover:shadow-xl hover:-translate-y-1' key={course.id}>
 
                   <img
                     src={course.image}
@@ -117,15 +179,15 @@ const BrowseCourse = () => {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
 
-                  <div className="flex flex-col gap-3 px-6 p-6">
+                  <div className="flex flex-col gap-3 px-6 p-4">
                     <div className="flex items-center justify-between">
 
-                      <Badge className="rounded-lg text-xs">
+                      <div className="px-3 py-1  active:opacity-80 text-[10px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer bg-[#d2d4f5] text-[#2F35C2]  ">
                         {course.categorie}
-                      </Badge>
+                      </div>
 
                       <span className="flex items-center gap-1 text-sm font-semibold text-foreground">
-                        <Star className="h-3.5 w-3.5 fill-warning text-warning" />
+                        <Heart className={`h-4 w-4 text-red-400 fill-current`} />
                         {course.likes}
                       </span>
 
@@ -135,18 +197,19 @@ const BrowseCourse = () => {
                       {course.title}
                     </h2>
 
-                    <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                    <p className="line-clamp-2 text-sm text-[#4d555e] leading-relaxed ">
                       {course.description}
                     </p>
 
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm  text-[#3f4246]">
                       By{" "}
-                      <span className="font-medium text-foreground">
+                      <span className="font-medium text-black">
                         {course.teacher.name}
                       </span>
                     </p>
 
-                    <div className="mt-auto flex items-center gap-4 border-t border-border pt-4 text-xs text-muted-foreground">
+                    <div className="mt-auto flex items-center gap-4 border-t border-border pt-4 text-xs text-muted-foreground  text-[#4d555e]">
+
                       <span className="flex items-center gap-1">
                         <Users className="h-3.5 w-3.5" /> {course.student}
                       </span>
@@ -156,23 +219,6 @@ const BrowseCourse = () => {
 
                     </div>
                   </div>
-                  {/* <div className='flex flex-col justify-center items-start gap-2 px-3 py-2'>
-                    <div>
-                      <p className='text-lg font-semibold text-[#2F327D]'>
-                        {course.title}
-                      </p>
-
-                      <p className='text-[#495460] text-[12px] font-semibold'>
-                        {course.description}
-                      </p>
-                    </div>
-
-                    <div className='flex flex-'>
-                      <img src={course.teacher.avatar} alt={course.teacher.name} className='w-10 h-10 rounded-full' />
-
-
-                    </div>
-                  </div> */}
                 </div>
               ))
             }
