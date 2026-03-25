@@ -33,9 +33,9 @@ function App() {
         <Route path="/ChooseComunity" element={<ChooseComunity />} />
 
         <Route path="/BrowseCourses" element={<BrowseCourse />} />
+
         <Route path="/Profile" element={<Profile />} />
 
-        
       </Routes>
     </BrowserRouter>
   );
