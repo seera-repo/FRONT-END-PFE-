@@ -5,10 +5,12 @@ import Signup from './pages/SignUp';
 import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 import Course from './pages/Course';
-import ComunityBlog from './pages/ComunityBlog';
+import CommunityBlog from './pages/ComunityBlog';
 import ChooseComunity from './pages/ChooseComunity';
 import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
+import Profile from './pages/Profile';
+
 
 
 function App() {
@@ -25,7 +27,7 @@ function App() {
 
         <Route path="/Course" element={<Course />} />
 
-        <Route path="/ComunityBlog" element={<ComunityBlog />} />
+        <Route path="/CommunityBlog" element={<CommunityBlog />} />
 
         <Route path="/ChooseRole" element={<ChooseRole />} />
 
@@ -33,6 +35,7 @@ function App() {
 
         <Route path="/BrowseCourse" element={<BrowseCourse />} />
 
+        <Route path="/Profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
