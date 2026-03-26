@@ -24,7 +24,7 @@ function App() {
 
         <Route path="/HomePage" element={<HomePage />} />
 
-        <Route path="/Course" element={<Course />} />
+        <Route path="/course/:id" element={<Course />} />
 
         <Route path="/CommunityBlog" element={<ComunityBlog />} />
 
