@@ -24,7 +24,7 @@ function App() {
 
         <Route path="/HomePage" element={<HomePage />} />
 
-        <Route path="/Course" element={<Course />} />
+        <Route path="/course/:id" element={<Course />} />
 
         <Route path="/CommunityBlog" element={<ComunityBlog />} />
 
@@ -33,9 +33,9 @@ function App() {
         <Route path="/ChooseComunity" element={<ChooseComunity />} />
 
         <Route path="/BrowseCourses" element={<BrowseCourse />} />
+
         <Route path="/Profile" element={<Profile />} />
 
-        
       </Routes>
     </BrowserRouter>
   );
