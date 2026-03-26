@@ -10,6 +10,7 @@ import ChooseComunity from './pages/ChooseComunity';
 import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import Profile from './pages/Profile';
+import CourseCard from './components/CourseCard';
 
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
         <Route path="/ChooseRole" element={<ChooseRole />} />
 
         <Route path="/ChooseComunity" element={<ChooseComunity />} />
-
+        <Route path="/CourseCard" element={<CourseCard/>} />
         <Route path="/BrowseCourses" element={<BrowseCourse />} />
         <Route path="/Profile" element={<Profile />} />
 

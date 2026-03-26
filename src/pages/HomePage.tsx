@@ -22,13 +22,25 @@ const HomePage = () => {
         {/* COURSES */}
         <h2 className="font-semibold mb-3">Your Courses</h2>
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <CourseCard />
+          <CourseCard
+         title="Introduction To Computer Science"
+         teacher="Mohand"
+         role="Software Developer"
+         category="CS BASICS"
+         image=""/>
           <CourseCard />
           <CourseCard />
         </div>
 
         {/* RECOMMENDED */}
         <h2 className="font-semibold mb-3">Recommended For You</h2>
+        <div className="grid grid-cols-3 gap-4">
+          <CourseCard />
+          <CourseCard />
+          <CourseCard />
+        </div>
+        {/* saved*/}
+        <h2 className="font-semibold ">Saved Couress</h2>
         <div className="grid grid-cols-3 gap-4">
           <CourseCard />
           <CourseCard />
