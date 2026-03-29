@@ -10,6 +10,7 @@ import ChooseComunity from './pages/ChooseComunity';
 import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import Profile from './pages/Profile';
+import LessonPage from './pages/LessonPage';
 
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
         <Route path="/HomePage" element={<HomePage />} />
 
         <Route path="/course/:id" element={<Course />} />
+
+        <Route path="/courses/:id/lessons/:lessonId" element={<LessonPage />} />
 
         <Route path="/CommunityBlog" element={<ComunityBlog />} />
 

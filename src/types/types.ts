@@ -18,3 +18,16 @@ export type Course = {
 export type CourseCardProps = {
   course: Course;
 };
+
+// types.ts
+export type Lesson = {
+  id: number;
+  title: string;
+  description: string;
+  order_index: number;
+};
+
+export type LessonCardProps = {
+  lesson: Lesson;
+  courseId?: string;
+};
