@@ -1,106 +1,108 @@
-import { useState, useEffect } from "react";
-import Header from '../components/Header'; 
-import Papa from "papaparse"; // ✅ ADDED: for CSV parsing
+////////////////////////// COMMUNITY PAGE ///////////////////////////////
+
+
+
+import { useState } from "react";
+import Header from "../components/Header";
 import CreatePost from "../components/CreatePost";
 import PostCard from "../components/PostCard";
 
-// Post type stays the same
+// Type for comments
+type Comment = {
+  id: string;
+  comment: string;
+  createdAt: string;
+  userName?: string;
+};
+
+// Type for posts
 type Post = {
   id: string;
-  title: string;
   content: string;
+  createdAt: string;
+  userName?: string;
   likes: number;
-  createdAt: string;
-  User?: { name: string };
+  comments: Comment[];
 };
 
-// ✅ ADDED: CSV row type for TypeScript
-type CsvRow = {
-  id: string;
-  title: string;
-  content: string;
-  likes: string; // CSV values are strings
-  createdAt: string;
-  userName: string;
-};
-
-function CommunityBlog() {
-  const [posts, setPosts] = useState<Post[]>([]);
-
-  // ✅ CHANGED: fetchPosts now uses CSV instead of backend
-  const fetchPosts = async () => {
-    try {
-      const res = await fetch("/posts.csv"); // ✅ CSV fetch
-      const csvText = await res.text();
-
-      const parsed = Papa.parse(csvText, { header: true }); // ✅ parse CSV
-
-      const formattedPosts: Post[] = (parsed.data as CsvRow[])
-        .filter((row) => row.id) // ✅ skip empty rows
-        .map((row) => ({
-          id: row.id,
-          title: row.title,
-          content: row.content,
-          likes: Number(row.likes),
-          createdAt: row.createdAt,
-          User: { name: row.userName },
-        }));
-
-      setPosts(formattedPosts);
-    } catch (err) {
-      console.log("Error reading CSV:", err);
-    }
-  };
-
-  // ✅ CHANGED: wrap fetchPosts in async function to avoid React warning
-  useEffect(() => {
-    const load = async () => {
-      await fetchPosts();
-    };
-    load();
-  }, []);
-
-  // Add new post locally (same as your original code)
-  const handleAddPost = (content: string) => {
-    if (!content.trim()) return;
-
-    const newPost: Post = {
-      id: (posts.length + 1).toString(),
-      title: "Untitled",
-      content,
-      likes: 0,
+export default function CommunityPage() {
+  ////////////////////////// INITIAL FAKE POSTS ///////////////////////////
+  const [posts, setPosts] = useState<Post[]>([
+    {
+      id: "1",
+      content: "Hello Community! Excited to share my first post here.",
       createdAt: new Date().toISOString(),
-      User: { name: "You" },
-    };
+      userName: "Sarah",
+      likes: 0,
+      comments: [
+        {
+          id: "c1",
+          comment: "Welcome, Sarah! Great to have you here.",
+          createdAt: new Date().toISOString(),
+          userName: "Liam",
+        },
+        {
+          id: "c2",
+          comment: "Good luck learning React!",
+          createdAt: new Date().toISOString(),
+          userName: "Maria",
+        },
+      ],
+    },
+    {
+      id: "2",
+      content: "Does anyone know good resources for learning React?",
+      createdAt: new Date().toISOString(),
+      userName: "Alex",
+      likes: 0,
+      comments: [],
+    },
+  ]);
 
+  ////////////////////////// FUNCTION TO ADD NEW POST ///////////////////////////
+  const addPost = (text: string) => {
+    const newPost: Post = {
+      id: Date.now().toString(),
+      content: text,
+      createdAt: new Date().toISOString(),
+      userName: "You",
+      likes: 0,
+      comments: [],
+    };
     setPosts([newPost, ...posts]);
   };
 
+  ////////////////////////// RENDER ///////////////////////////
   return (
     <>
-       <Header />
-    <div className="min-h-screen bg-[#f5f6fa] flex flex-col items-center py-10">
-      <h1 className="text-3xl font-semibold text-indigo-700">Community</h1>
-      <p className="text-gray-500 mt-2 mb-8 text-center">
-        Share Ideas, Ask Questions, And Support Fellow Learners
-      </p>
+      {/* HEADER */}
+      <Header />
 
-      <div className="w-full max-w-2xl space-y-6">
-        <CreatePost addPost={handleAddPost} />
+      {/* PAGE TITLE */}
+      <div className="mt-28 flex flex-col items-center gap-2 text-center px-4">
+        <h1 className="text-4xl font-bold text-purple-900">Community</h1>
+        <p className="text-gray-600 max-w-xl">
+          Share your thoughts, ask questions, and connect with other learners.
+        </p>
+      </div>
 
+      {/* MAIN CONTENT */}
+      <div className="flex flex-col items-center gap-6 p-6">
+        {/* CREATE POST INPUT */}
+        <CreatePost addPost={addPost} />
+
+        {/* LIST OF POSTS */}
         {posts.map((post) => (
           <PostCard
             key={post.id}
             content={post.content}
-            title={post.title}
             createdAt={post.createdAt}
-            userName={post.User?.name}
+            userName={post.userName}
+            likes={post.likes}
+            initialComments={post.comments}
           />
         ))}
       </div>
-    </div>
     </>
   );
 }
-
-export default CommunityBlog;

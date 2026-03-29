@@ -1,32 +1,71 @@
-import { useState } from "react";
-import type { KeyboardEvent } from "react";
+////////////////////////// CREATE POST COMPONENT ///////////////////////////////
+
+import { useState, useRef } from "react";
+import { Send } from "lucide-react";
 
 type CreatePostProps = {
   addPost: (text: string) => void;
+  userName?: string;
 };
 
-function CreatePost({ addPost }: CreatePostProps) {
+export default function CreatePost({ addPost, userName = "You" }: CreatePostProps) {
   const [text, setText] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && text.trim() !== "") {
-      addPost(text);
-      setText("");
-    }
+  // SEND POST FUNCTION
+  const handleSend = () => {
+    if (text.trim() === "") return;
+
+    addPost(text);
+    setText("");
+
+    // Reset textarea height
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4 border border-gray-200">
-      <input
-        type="text"
-        placeholder="Share Something With Community..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={handleKeyDown}
-        className="flex-1 bg-gray-100 rounded-lg px-4 py-2 outline-none text-sm text-gray-700 placeholder-gray-400"
-      />
+    <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col gap-4 border border-[#d2d4f5] w-full max-w-2xl">
+
+      {/* AVATAR + TEXTAREA */}
+      <div className="flex items-start gap-4">
+        {/* Avatar */}
+        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">
+          {userName.slice(0, 2).toUpperCase()}
+        </div>
+
+        {/* TEXTAREA */}
+        <textarea
+          ref={textareaRef}
+          placeholder="Share Something With Community..."
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+
+            // Auto-grow height
+            const el = e.target;
+            el.style.height = "auto";
+            el.style.height = el.scrollHeight + "px";
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+          className="flex-1 bg-white rounded-2xl px-5 py-4 text-sm outline-none border border-[#d2d4f5] focus:border-[#2F35C2] focus:ring-1 focus:ring-[#2F35C2] transition placeholder-gray-400 overflow-hidden"
+          rows={1}
+        />
+      </div>
+
+      {/* SEND BUTTON */}
+      <div className="flex justify-end">
+        <button
+          onClick={handleSend}
+          className="px-5 py-2 rounded-full bg-purple-900 flex items-center justify-center hover:bg-purple-800 transition text-white"
+        >
+          <Send size={18} />
+        </button>
+      </div>
     </div>
   );
 }
-
-export default CreatePost;
