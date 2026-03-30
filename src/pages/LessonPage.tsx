@@ -102,7 +102,7 @@ function LessonPage() {
                 {/* <Separator className="my-8" /> */}
 
                 {/* Prev / Next Navigation */}
-              <div className="flex items-center justify-between gap-4">
+              {/* <div className="flex items-center justify-between gap-4">
                 {prevLesson ? (
                   <button
                     className="rounded-xl"
@@ -140,7 +140,7 @@ function LessonPage() {
                     </Link>
                   </Button>
                 )}
-              </div>
+              </div> */}
               </div>
             </div>
           </div>
