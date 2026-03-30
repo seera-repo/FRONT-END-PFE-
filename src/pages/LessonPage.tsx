@@ -4,11 +4,11 @@ import Header from "../components/Header";
 //import ReactPlayer from "react-player";
 
 const lessons = [
-  { id: 1, title: "What is Computer Science?", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 1, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-123.mp4" },
-  { id: 2, title: "How Computers Think", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 2, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-456.mp4" },
-  { id: 3, title: "Introduction to Algorithms", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 3, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-789.mp4" },
-  { id: 4, title: "Your First Program", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 4, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-012.mp4" },
-  { id: 5, title: "Variables & Data Types", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 5, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-345.mp4" },
+  { id: 1111111, title: "What is Computer Science?", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 1, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-123.mp4" },
+  { id: 222222, title: "How Computers Think", description: "Time to write your first program! We will use a simple, beginner-friendly approach to create a program that greets the user. You will learn about code editors, running programs, and seeing your code come to life.", order_index: 2, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-456.mp4" },
+  { id: 3333333, title: "Introduction to Algorithms", description: "Variables are containers for storing data. Learn about different data types like numbers, text, and booleans, and understand how to use them effectively in your programs.", order_index: 3, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-789.mp4" },
+  { id: 4444444, title: "Your First Program", description: "Programs need to make decisions. Learn about conditional statements that let your code choose different paths based on conditions, making your programs smarter and more interactive.", order_index: 4, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-012.mp4" },
+  { id: 5555555, title: "Variables & Data Types", description: "Loops let you repeat actions without writing the same code over and over. Master for-loops and while-loops to handle repetitive tasks efficiently.", order_index: 5, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-345.mp4" },
 ]
 
 function LessonPage() {
@@ -24,11 +24,11 @@ function LessonPage() {
     return <div>Lesson not found</div>;
   }
   const prevLesson = lesson.order_index > 0
-    ? lessons[lesson.order_index - 1]
+    ? lessons[lesson.order_index - 2]
     : null;
 
   const nextLesson = lesson.order_index + 1 < lessons.length
-    ? lessons[lesson.order_index + 1]
+    ? lessons[lesson.order_index ]
     : null;
 
   return (
@@ -99,48 +99,50 @@ function LessonPage() {
                   </div>
                 </div>
 
-                {/* <Separator className="my-8" /> */}
+                <div className="w-full h-px bg-gray-300 my-6"></div>
 
                 {/* Prev / Next Navigation */}
-              {/* <div className="flex items-center justify-between gap-4">
-                {prevLesson ? (
-                  <button
-                    className="rounded-xl"
-                  >
-                    <Link
-                      to={`/courses/${id}/lessons/${leson}`}
+                <div className="flex items-center justify-between gap-4 py-2">
+                  {prevLesson ? (
+                    <button
+                      className="py-2 px-3 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors shadow-2xl hover:bg-[#585bc0]/80 disabled:cursor-not-allowed "
                     >
-                      <ArrowLeft className="mr-2 h-5 w-5" />
-                      <span className="hidden sm:inline">
-                        {prevLesson.title}
-                      </span>
-                      <span className="sm:hidden">Previous</span>
-                    </Link>
-                  </Button>
-                ) : (
-                  <div />
-                )}
-                {nextLesson ? (
-                  <Button size="lg" asChild className="rounded-xl">
-                    <Link
-                      href={`/courses/${id}/lessons/${lessonIndex + 2}`}
-                    >
-                      <span className="hidden sm:inline">
-                        {nextLesson.title}
-                      </span>
-                      <span className="sm:hidden">Next Lesson</span>
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
-                ) : (
-                  <Button size="lg" asChild className="rounded-xl">
-                    <Link href={`/courses/${id}`}>
-                      <CheckCircle2 className="mr-2 h-5 w-5" />
-                      Finish Course
-                    </Link>
-                  </Button>
-                )}
-              </div> */}
+                      <Link
+                        className="flex"
+                        to={`/courses/${id}/lessons/${prevLesson.id}`}
+                      >
+                        <ArrowLeft className="mr-2 h-5 w-5" />
+                        <span className="hidden sm:inline">
+                          {prevLesson.title}
+                        </span>
+                        <span className="sm:hidden">Previous</span>
+                      </Link>
+                    </button>
+                  ) : (
+                    <div />
+                  )}
+                  {nextLesson ? (
+                    <button className="py-2 px-6 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors hover:bg-[#585bc0]/80 disabled:cursor-not-allowed">
+                      <Link
+                        className="flex"
+                        to={`/courses/${id}/lessons/${nextLesson.id}`}
+                      >
+                        <span className="hidden sm:inline">
+                          {nextLesson.title}
+                        </span>
+                        <span className="sm:hidden">Next Lesson</span>
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </Link>
+                    </button>
+                  ) : (
+                    <button  className="p-2 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors hover:bg-[#585bc0]/80 disabled:cursor-not-allowed">
+                      <Link to={`/course/${id}`} className="flex">
+                        <CheckCircle2 className="mr-2 h-5 w-5" />
+                        Finish Course
+                      </Link>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
