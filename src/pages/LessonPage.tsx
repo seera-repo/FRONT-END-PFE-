@@ -27,8 +27,8 @@ function LessonPage() {
     ? lessons[lesson.order_index - 2]
     : null;
 
-  const nextLesson = lesson.order_index + 1 < lessons.length
-    ? lessons[lesson.order_index ]
+  const nextLesson = lesson.order_index  < lessons.length
+    ? lessons[lesson.order_index]
     : null;
 
   return (
@@ -36,6 +36,7 @@ function LessonPage() {
       <Header />
       <main className="flex-1 mt-20">
         <div className="mx-auto max-w-7xl px-6 py-8">
+          {/* Breadcrumb */}
           <nav
             className="mb-6 flex items-center gap-1 text-sm text-[#59656e] "
             aria-label="Breadcrumb"
@@ -60,91 +61,135 @@ function LessonPage() {
             </span>
           </nav>
 
-          <div>
-            <div>
-              <div className="flex-1">
-                <div className="mb-2 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d2d4f5] text-sm font-bold text-[#2F35C2] ">
-                    {lesson?.order_index}
-                  </div>
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Lesson {lesson.order_index} of {lessons.length}
-                  </span>
+          <div className="flex flex-col gap-8 lg:flex-row">
+            {/* Main Content */}
+            <div className="flex-1">
+              {/* Lesson badge + title */}
+              <div className="mb-2 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d2d4f5] text-sm font-bold text-[#2F35C2] ">
+                  {lesson?.order_index}
                 </div>
-                <h1 className="text-balance text-2xl font-extrabold text-foreground md:text-3xl">
-                  {lesson.title}
-                </h1>
+                <span className="text-sm font-medium text-muted-foreground">
+                  Lesson {lesson.order_index} of {lessons.length}
+                </span>
+              </div>
+              <h1 className="text-balance text-2xl font-extrabold text-foreground md:text-3xl">
+                {lesson.title}
+              </h1>
 
-                {/* Video Player */}
-                <div className="mt-6 overflow-hidden border-[#d4e5ea] rounded-2xl shadow-sm bg-white flex flex-col gap-6  border py-6 ">
-                  <div className="flex aspect-video items-center justify-center ">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="flex h-20 w-20 items-center justify-center rounded-full">
-                        <PlayCircle className="h-12 w-12 text-[#091b21]" />
-                      </div>
+              {/* Video Player */}
+              <div className="mt-6 overflow-hidden border-[#d4e5ea] rounded-2xl shadow-sm bg-white flex flex-col gap-6  border py-6 ">
+                <div className="flex aspect-video items-center justify-center ">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full">
+                      <PlayCircle className="h-12 w-12 text-[#091b21]" />
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Lesson Description */}
-                <div className="mt-6 rounded-2xl border-[#d4e5ea] bg-white text-card-foreground flex flex-col gap-6  py-6 shadow-sm">
-                  <div className="p-6">
-                    <h2 className="flex items-center gap-2 text-lg font-bold text-[#19232a]">
-                      <BookOpen className="h-5 w-5 text-[#2F35C2]" />
-                      Lesson Description
-                    </h2>
-                    <p className="mt-4 text-base leading-relaxed text-[#59656e]">
-                      {lesson.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="w-full h-px bg-gray-300 my-6"></div>
-
-                {/* Prev / Next Navigation */}
-                <div className="flex items-center justify-between gap-4 py-2">
-                  {prevLesson ? (
-                    <button
-                      className="py-2 px-3 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors shadow-2xl hover:bg-[#585bc0]/80 disabled:cursor-not-allowed "
-                    >
-                      <Link
-                        className="flex"
-                        to={`/courses/${id}/lessons/${prevLesson.id}`}
-                      >
-                        <ArrowLeft className="mr-2 h-5 w-5" />
-                        <span className="hidden sm:inline">
-                          {prevLesson.title}
-                        </span>
-                        <span className="sm:hidden">Previous</span>
-                      </Link>
-                    </button>
-                  ) : (
-                    <div />
-                  )}
-                  {nextLesson ? (
-                    <button className="py-2 px-6 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors hover:bg-[#585bc0]/80 disabled:cursor-not-allowed">
-                      <Link
-                        className="flex"
-                        to={`/courses/${id}/lessons/${nextLesson.id}`}
-                      >
-                        <span className="hidden sm:inline">
-                          {nextLesson.title}
-                        </span>
-                        <span className="sm:hidden">Next Lesson</span>
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </Link>
-                    </button>
-                  ) : (
-                    <button  className="p-2 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors hover:bg-[#585bc0]/80 disabled:cursor-not-allowed">
-                      <Link to={`/course/${id}`} className="flex">
-                        <CheckCircle2 className="mr-2 h-5 w-5" />
-                        Finish Course
-                      </Link>
-                    </button>
-                  )}
+              {/* Lesson Description */}
+              <div className="mt-6 rounded-2xl border-[#d4e5ea] bg-white text-card-foreground flex flex-col gap-6  py-6 shadow-sm">
+                <div className="p-6">
+                  <h2 className="flex items-center gap-2 text-lg font-bold text-[#19232a]">
+                    <BookOpen className="h-5 w-5 text-[#2F35C2]" />
+                    Lesson Description
+                  </h2>
+                  <p className="mt-4 text-base leading-relaxed text-[#59656e]">
+                    {lesson.description}
+                  </p>
                 </div>
               </div>
+
+              <div className="w-full h-px bg-gray-300 my-6"></div>
+
+              {/* Prev / Next Navigation */}
+              <div className="flex items-center justify-between gap-4 py-2">
+                {prevLesson ? (
+                  <button
+                    className="py-2 px-3 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors shadow-2xl hover:bg-[#585bc0]/80 disabled:cursor-not-allowed "
+                  >
+                    <Link
+                      className="flex"
+                      to={`/courses/${id}/lessons/${prevLesson.id}`}
+                    >
+                      <ArrowLeft className="mr-2 h-5 w-5" />
+                      <span className="hidden sm:inline">
+                        {prevLesson.title}
+                      </span>
+                      <span className="sm:hidden">Previous</span>
+                    </Link>
+                  </button>
+                ) : (
+                  <div />
+                )}
+                {nextLesson ? (
+                  <button className="py-2 px-6 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors hover:bg-[#585bc0]/80 disabled:cursor-not-allowed">
+                    <Link
+                      className="flex"
+                      to={`/courses/${id}/lessons/${nextLesson.id}`}
+                    >
+                      <span className="hidden sm:inline">
+                        {nextLesson.title}
+                      </span>
+                      <span className="sm:hidden">Next Lesson</span>
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </button>
+                ) : (
+                  <button className="p-2 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors hover:bg-[#585bc0]/80 disabled:cursor-not-allowed">
+                    <Link to={`/course/${id}`} className="flex">
+                      <CheckCircle2 className="mr-2 h-5 w-5" />
+                      Finish Course
+                    </Link>
+                  </button>
+                )}
+              </div>
             </div>
+
+            {/* Sidebar: Lesson List */}
+            <aside className="w-full shrink-0 lg:w-80">
+              <div className="sticky top-24 rounded-2xl border-[#d4e5ea] bg-white text-[#19232a] flex flex-col gap-6 border py-6 shadow-sm">
+                <div className="p-6">
+                  <h3 className="mb-1 text-base font-bold text-[#19232a]">
+                    All Lessons
+                  </h3>
+                  <p className="mb-4 text-xs text-[#59656e]">
+                    {lessons.length} lessons total
+                  </p>
+
+                  <div className="flex flex-col gap-1">
+                    {lessons.map((l, idx) => {
+                      const isCurrent = l.id === lesson.id;
+
+                      return (
+                        <Link
+                          key={l.id}
+                          to={`/courses/${id}/lessons/${l.id}`}
+                          className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all ${isCurrent
+                              ? "bg-[#4d51c8] font-semibold text-white shadow-sm"
+                              : "text-[#676876] hover:bg-[#f0f0f0] hover:text-[#19232a]"
+                            }`}
+                        >
+                          <span
+                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isCurrent
+                                ? "bg-white/20 text-white"
+                                : "bg-[#dbdbfe] text-[#59656e]"
+                              }`}
+                          >
+                            {idx + 1}
+                          </span>
+
+                          <span className="flex-1 truncate">
+                            {l.title}
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </aside>
           </div>
 
         </div>
