@@ -23,12 +23,11 @@ const Course = () => {
   }
 
   const lessons = [
-    { id: 1, title: "What is Computer Science?", description: "25 min", order_index: 1 },
-    { id: 2, title: "How Computers Think", description: "30 min", order_index: 2 },
-    { id: 3, title: "Introduction to Algorithms", description: "35 min", order_index: 3 },
-    { id: 4, title: "Your First Program", description: "40 min", order_index: 4 },
-    { id: 5, title: "Variables & Data Types", description: "30 min", order_index: 5 },
-
+    { id: 1111111, title: "What is Computer Science?", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 1, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-123.mp4" },
+    { id: 222222, title: "How Computers Think", description: "Time to write your first program! We will use a simple, beginner-friendly approach to create a program that greets the user. You will learn about code editors, running programs, and seeing your code come to life.", order_index: 2, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-456.mp4" },
+    { id: 3333333, title: "Introduction to Algorithms", description: "Variables are containers for storing data. Learn about different data types like numbers, text, and booleans, and understand how to use them effectively in your programs.", order_index: 3, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-789.mp4" },
+    { id: 4444444, title: "Your First Program", description: "Programs need to make decisions. Learn about conditional statements that let your code choose different paths based on conditions, making your programs smarter and more interactive.", order_index: 4, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-012.mp4" },
+    { id: 5555555, title: "Variables & Data Types", description: "Loops let you repeat actions without writing the same code over and over. Master for-loops and while-loops to handle repetitive tasks efficiently.", order_index: 5, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-345.mp4" },
   ]
 
   const initialComments = [
