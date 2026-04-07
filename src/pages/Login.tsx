@@ -1,7 +1,7 @@
 import {useState} from "react";
 import image from "../images/photo4.svg"
 import photos from"../images/photo2.svg"
-const login = () => {
+const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,15 +22,21 @@ const login = () => {
       setError(data.message); 
       return;
     }
+    if (data.token) {
     localStorage.setItem("token", data.token);
+    window.location.href = "/dashboard";
+    } else {
+      setError("No token received from server");
+      }
     console.log("success", data);
-  } catch (error) {
-    setError("Something went wrong. Please try again.");
-    console.error("Error:", error);
   }
+  catch (error) {
+  setError("Something went wrong. Please try again.");
+  console.error("Error:", error);
+}
 };
   return (
-    <div className="login">
+    <div className="Login">
     <div className="items-center justify-center flex flex-col min-h-screen bg-[#E3E2EB]">
         <div className="bg-white p-8 rounded-3xl shadow-lg w-[420px] flex flex-col items-center">
           <h1 className="flex items-center justify-center text-sm text-black-600 ">welcome to learn..!</h1>
@@ -62,7 +68,7 @@ const login = () => {
             )}
          <button 
          onClick={handleLogin}
-         className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[180px] block mt-10 flex items-center justify-center hover:opacity-80 transition">login</ button>
+         className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[180px] block mt-10 flex items-center justify-center hover:opacity-80 transition">Login</ button>
         
       </div>
     </div>
@@ -71,4 +77,4 @@ const login = () => {
   )
 }
 
-export default login
+export default Login
