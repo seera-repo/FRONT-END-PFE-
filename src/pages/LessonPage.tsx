@@ -15,30 +15,31 @@ import { useQuery } from "@tanstack/react-query";
 
 function LessonPage() {
 
-const { id, lessonId } = useParams();
+  const { id, lessonId } = useParams();
 
-const { data: lessonsData, isLoading: lessonsLoading } = useQuery({
-  queryKey: ['lessons', id],
-  queryFn: () => fetchLessons(id!),
-});
+  const { data: lessonsData, isLoading: lessonsLoading } = useQuery({
+    queryKey: ['lessons', id],
+    queryFn: () => fetchLessons(id!),
+  });
 
-if (lessonsLoading) return <p>Loading...</p>;
+  if (lessonsLoading) return <p>Loading...</p>;
 
-const lessons = lessonsData ?? [];
+  const lessons = lessonsData ?? [];
 
-// id is a string (UUID), not a number
-const lesson = lessons.find(l => l.id === lessonId);
+  // id is a string (UUID), not a number
+  const lesson = lessons.find(l => l.id === lessonId);
 
-if (!lesson) return <div>Lesson not found</div>;
 
-// order_index starts at 1, array starts at 0
-const prevLesson = lesson.order_index > 1
-  ? lessons[lesson.order_index - 2]
-  : null;
+  if (!lesson) return <div>Lesson not found</div>;
+  console.log('Video URL:', lesson.vedio_url);
+  // order_index starts at 1, array starts at 0
+  const prevLesson = lesson.order_index > 1
+    ? lessons[lesson.order_index - 2]
+    : null;
 
-const nextLesson = lesson.order_index < lessons.length
-  ? lessons[lesson.order_index]
-  : null;
+  const nextLesson = lesson.order_index < lessons.length
+    ? lessons[lesson.order_index]
+    : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f6f6fd]">
@@ -90,9 +91,11 @@ const nextLesson = lesson.order_index < lessons.length
               <div className="mt-6 overflow-hidden border-[#d4e5ea] rounded-2xl shadow-sm bg-white flex flex-col gap-6  border py-6 ">
                 <div className="flex aspect-video items-center justify-center ">
                   <div className="flex flex-col items-center gap-3">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full">
-                      <PlayCircle className="h-12 w-12 text-[#091b21]" />
-                    </div>
+                      <video
+                        src={lesson.vedio_url}
+                        controls
+                        className="w-full h-full rounded-lg"
+                      />
                   </div>
                 </div>
               </div>
@@ -176,14 +179,14 @@ const nextLesson = lesson.order_index < lessons.length
                           key={l.id}
                           to={`/courses/${id}/lessons/${l.id}`}
                           className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all ${isCurrent
-                              ? "bg-[#4d51c8] font-semibold text-white shadow-sm"
-                              : "text-[#676876] hover:bg-[#f0f0f0] hover:text-[#19232a]"
+                            ? "bg-[#4d51c8] font-semibold text-white shadow-sm"
+                            : "text-[#676876] hover:bg-[#f0f0f0] hover:text-[#19232a]"
                             }`}
                         >
                           <span
                             className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isCurrent
-                                ? "bg-white/20 text-white"
-                                : "bg-[#dbdbfe] text-[#59656e]"
+                              ? "bg-white/20 text-white"
+                              : "bg-[#dbdbfe] text-[#59656e]"
                               }`}
                           >
                             {idx + 1}
