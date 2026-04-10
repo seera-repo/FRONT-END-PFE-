@@ -11,7 +11,7 @@ function Header() {
   const navLinks = [
     { label: "Dashboard", href: "/dashboard", icon: DashboardIcon },
 
-    { label: "Courses", href: "/BrowseCourses", icon: CoursesIcon },
+    { label: "Courses", href: "/BrowseCourse", icon: CoursesIcon },
 
     { label: "Community", href: "/CommunityBlog", icon: CommunityIcon },
 

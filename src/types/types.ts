@@ -1,37 +1,65 @@
 
-export type Course = {
+// src/types/course.ts
+
+export interface Lesson {
   id: string;
   title: string;
-  categorie: string;
-  student: number;
-  lessons: number;
-  duration: string;
-  image: string;
-  likes: number;
-  description: string;
-  teacher: {
+  description: string | null;
+  vedio_url: string;
+  order_index: number;
+  course_id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Teacher {
+  id: string;
+  user_id: string;
+  isPsychologist: boolean;
+  cv_URL: string;
+  descreption: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  User: {
     name: string;
-    avatar: string;
   };
-};
+}
+
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  document: string | null;
+  image_url: string | null;
+  isSpecialized: boolean;
+  teacher_id: string;
+  categorie_id: string;
+  likes: number;
+  createdAt: string;
+  updatedAt: string;
+  Teacher: Teacher;
+  Categorie: { name: string };
+  Enrollments: any[];
+}
+
+export interface CourseByIdResponse {
+  success: boolean;
+  courses: Course;
+  enrollmentCount: number;
+  lessonCount: number;
+}
 
 export type CourseCardProps = {
   course: Course;
 };
 
-// types.ts
-export type Lesson = {
-  id: number;
-  title: string;
-  description: string;
-  order_index: number;
-};
+
 
 export type LessonCardProps = {
   lesson: Lesson;
   courseId?: string;
 };
-
 export interface User {
   name: string;
   isSick?: boolean;
