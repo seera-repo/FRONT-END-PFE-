@@ -1,84 +1,75 @@
-////////////////////////// COMMUNITY PAGE ///////////////////////////////
+////////////////////////// COMMUNITY PAGE //////////////////////////
 
-
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Header from "../components/Header";
 import CreatePost from "../components/CreatePost";
 import PostCard from "../components/PostCard";
 
-// Type for comments
+////////////////////////// TYPES //////////////////////////
+
+// Comment type
 type Comment = {
   id: string;
   comment: string;
   createdAt: string;
-  userName?: string;
 };
 
-// Type for posts
+// Post type (matching backend)
 type Post = {
   id: string;
   content: string;
   createdAt: string;
-  userName?: string;
   likes: number;
   comments: Comment[];
+  User?: {
+    name: string;
+  };
 };
 
-export default function CommunityPage() {
-  ////////////////////////// INITIAL FAKE POSTS ///////////////////////////
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: "1",
-      content: "Hello Community! Excited to share my first post here.",
-      createdAt: new Date().toISOString(),
-      userName: "Sarah",
-      likes: 0,
-      comments: [
-        {
-          id: "c1",
-          comment: "Welcome, Sarah! Great to have you here.",
-          createdAt: new Date().toISOString(),
-          userName: "Liam",
-        },
-        {
-          id: "c2",
-          comment: "Good luck learning React!",
-          createdAt: new Date().toISOString(),
-          userName: "Maria",
-        },
-      ],
-    },
-    {
-      id: "2",
-      content: "Does anyone know good resources for learning React?",
-      createdAt: new Date().toISOString(),
-      userName: "Alex",
-      likes: 0,
-      comments: [],
-    },
-  ]);
+////////////////////////// COMPONENT //////////////////////////
 
-  ////////////////////////// FUNCTION TO ADD NEW POST ///////////////////////////
-  const addPost = (text: string) => {
-    const newPost: Post = {
-      id: Date.now().toString(),
-      content: text,
-      createdAt: new Date().toISOString(),
-      userName: "You",
-      likes: 0,
-      comments: [],
+export default function CommunityPage() {
+
+  ////////////////////////// STATE //////////////////////////
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  ////////////////////////// FETCH POSTS //////////////////////////
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/posts/:post_id");
+        setPosts(res.data.data);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
     };
-    setPosts([newPost, ...posts]);
+
+    fetchPosts();
+  }, []);
+
+  ////////////////////////// ADD POST //////////////////////////
+  const addPost = async (text: string) => {
+    try {
+      const res = await axios.post("http://localhost:3000/posts/:post_id", {
+        title: "New Post",
+        content: text,
+      });
+
+      setPosts([res.data.data, ...posts]);
+
+    } catch (error) {
+      console.error("Error adding post:", error);
+    }
   };
 
-  ////////////////////////// RENDER ///////////////////////////
+  ////////////////////////// RETURN //////////////////////////
   return (
     <>
       {/* HEADER */}
       <Header />
 
-      {/* PAGE TITLE */}
+      {/* TITLE */}
       <div className="mt-28 flex flex-col items-center gap-2 text-center px-4">
         <h1 className="text-4xl font-bold text-purple-900">Community</h1>
         <p className="text-gray-600 max-w-xl">
@@ -88,20 +79,23 @@ export default function CommunityPage() {
 
       {/* MAIN CONTENT */}
       <div className="flex flex-col items-center gap-6 p-6">
-        {/* CREATE POST INPUT */}
+
+        {/* CREATE POST */}
         <CreatePost addPost={addPost} />
 
-        {/* LIST OF POSTS */}
+        {/* POSTS LIST */}
         {posts.map((post) => (
           <PostCard
             key={post.id}
+             postId={post.id}
             content={post.content}
             createdAt={post.createdAt}
-            userName={post.userName}
+            userName={post.User?.name}
             likes={post.likes}
-            initialComments={post.comments}
+            
           />
         ))}
+
       </div>
     </>
   );

@@ -1,64 +1,94 @@
-////////////////////////// POST CARD COMPONENT ///////////////////////////////
+////////////////////////// POST CARD COMPONENT //////////////////////////
 
 import { useState } from "react";
+import axios from "axios";
+import type { Comment } from "../types/types";
 import PostComment from "./PostComment";
 import { Heart, MessageCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
-type Comment = {
-  id: string;
-  comment: string;
-  createdAt: string;
-  userName?: string;
-};
+////////////////////////// TYPES //////////////////////////
 
 type PostCardProps = {
+  postId: string;
   content: string;
   createdAt: string;
   userName?: string;
   likes?: number;
-  initialComments?: Comment[];
 };
 
+////////////////////////// COMPONENT //////////////////////////
+
 export default function PostCard({
+  postId,
   content,
   createdAt,
   userName,
   likes = 0,
-  initialComments = [],
 }: PostCardProps) {
-  const [liked, setLiked] = useState(false);
+
+  ////////////////////////// STATE //////////////////////////
   const [likesCount, setLikesCount] = useState(likes);
   const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState<Comment[]>(initialComments);
 
-  // LIKE BUTTON
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikesCount(liked ? likesCount - 1 : likesCount + 1);
+  ////////////////////////// LIKE POST //////////////////////////
+  const handleLike = async () => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:3000/posts/${postId}/like`
+      );
+
+      setLikesCount(res.data.data.likes);
+
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
   };
 
-  // TOGGLE COMMENT SECTION
-  const toggleComments = () => setShowComments(!showComments);
+  ////////////////////////// FETCH COMMENTS //////////////////////////
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/posts/${postId}/comments`
+      );
 
-  // ADD NEW COMMENT
-  const handleAddComment = () => {
+      setComments(res.data.data);
+
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  ////////////////////////// TOGGLE COMMENTS //////////////////////////
+  const toggleComments = () => {
+    setShowComments(!showComments);
+
+    if (!showComments) {
+      fetchComments(); // load when opening
+    }
+  };
+
+  ////////////////////////// ADD COMMENT //////////////////////////
+  const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
-    setComments([
-      ...comments,
-      {
-        id: Date.now().toString(),
-        comment: newComment,
-        createdAt: new Date().toISOString(),
-        userName: userName || "You",
-      },
-    ]);
+    try {
+      const res = await axios.post(
+        `http://localhost:3000/posts/${postId}/comments`,
+        { comment: newComment }
+      );
 
-    setNewComment("");
+      setComments([res.data.data, ...comments]);
+      setNewComment("");
+
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
   };
 
+  ////////////////////////// RENDER //////////////////////////
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 w-full max-w-2xl">
 
@@ -68,7 +98,9 @@ export default function PostCard({
           {userName?.slice(0, 2).toUpperCase()}
         </div>
         <div>
-          <p className="font-semibold text-gray-800">{userName}</p>
+          <p className="font-semibold text-gray-800">
+            {userName || "Unknown"}
+          </p>
           <p className="text-sm text-gray-400">
             {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
           </p>
@@ -76,22 +108,23 @@ export default function PostCard({
       </div>
 
       {/* POST CONTENT */}
-      <p className="text-gray-800 leading-relaxed mb-4 wrap-break-word whitespace-pre-wrap">{content}</p>
+      <p className="text-gray-800 leading-relaxed mb-4 whitespace-pre-wrap">
+        {content}
+      </p>
 
       {/* ACTION BUTTONS */}
       <div className="flex items-center gap-6 mb-4">
+
         {/* LIKE */}
         <button
           onClick={handleLike}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full transition ${
-            liked ? "bg-red-100 text-red-500" : "bg-transparent text-gray-600 hover:bg-gray-100"
-          }`}
+          className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-600 hover:bg-gray-100 transition"
         >
-          <Heart size={20} className={liked ? "fill-red-500 text-red-500" : ""} />
+          <Heart size={20} />
           <span className="text-sm">{likesCount}</span>
         </button>
 
-        {/* COMMENT TOGGLE */}
+        {/* COMMENT */}
         <button
           onClick={toggleComments}
           className="flex items-center gap-1 px-3 py-1.5 rounded-full text-gray-600 hover:bg-gray-100 transition"
@@ -99,39 +132,44 @@ export default function PostCard({
           <MessageCircle size={20} />
           <span className="text-sm">{comments.length}</span>
         </button>
+
       </div>
 
-      {/* COMMENTS SECTION */}
+      {/* COMMENTS */}
       {showComments && (
         <>
           <div className="border-t border-gray-200 my-4"></div>
+
           <div className="space-y-4">
+
             {comments.map((c) => (
-              <PostComment
-                key={c.id}
-                commentText={c.comment}
-                userName={c.userName}
-                createdAt={c.createdAt}
-              />
+            <PostComment
+              key={c.id}
+              comment={c}   // ✅ pass full object
+/>
             ))}
 
-            {/* COMMENT INPUT */}
+            {/* INPUT */}
             <div className="flex items-center gap-3 mt-2">
               <input
                 type="text"
                 placeholder="Write a reply..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") handleAddComment(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddComment();
+                }}
                 className="flex-1 bg-white rounded-full px-5 py-3 text-sm outline-none border border-[#d2d4f5] focus:border-[#2F35C2] focus:ring-1 focus:ring-[#2F35C2] transition"
               />
+
               <button
                 onClick={handleAddComment}
-                className="w-10 h-10 rounded-full bg-purple-900 flex items-center justify-center text-white text-lg hover:bg-purple-800 transition"
+                className="w-10 h-10 rounded-full bg-purple-900 flex items-center justify-center text-white hover:bg-purple-800 transition"
               >
                 ➤
               </button>
             </div>
+
           </div>
         </>
       )}
