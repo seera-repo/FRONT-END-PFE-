@@ -8,6 +8,7 @@ import Course from './pages/Course';
 import ComunityBlog from './pages/ComunityBlog';
 import ChooseComunity from './pages/ChooseComunity';
 import ChooseRole from './pages/ChooseRole';
+import NormalOrTrisomyStudent from './pages/NormalORTrisomyStudent';
 import BrowseCourse from './pages/BrowseCourse';
 import Profile from './pages/Profile';
 
@@ -29,13 +30,13 @@ function App() {
         <Route path="/CommunityBlog" element={<ComunityBlog />} />
 
         <Route path="/ChooseRole" element={<ChooseRole />} />
-
         <Route path="/ChooseComunity" element={<ChooseComunity />} />
+        <Route path="/NormalOrTrisomyStudent" element={<NormalOrTrisomyStudent />} />
 
         <Route path="/BrowseCourses" element={<BrowseCourse />} />
         <Route path="/Profile" element={<Profile />} />
 
-        
+
       </Routes>
     </BrowserRouter>
   );
