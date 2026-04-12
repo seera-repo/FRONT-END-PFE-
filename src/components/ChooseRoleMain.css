@@ -1,0 +1,177 @@
+#chooseRole {
+    height: 1030px;
+    background-color: rgb(247, 236, 250);
+    margin-top: -72px;
+    padding-top: 100px;
+}
+
+#chooseTitleRole {
+    font-family: 'Geist', sans-serif;
+    font-size: 60px;
+    font-weight: 550;
+    margin-top: 140px;
+    margin-left: 320px;
+    color: rgb(95, 29, 153);
+}
+
+#chooseTextRole {
+    font-family: 'Geist', sans-serif;
+    font-size: 23px;
+    font-weight: 400;
+    margin-top: 0px;
+    margin-left: 300px;
+    color: rgb(95, 29, 153);
+}
+
+.chooseFlex {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    margin-top: 60PX;
+    margin-left: 240px;
+}
+
+.settingsChooseText {
+    font-family: 'Geist', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: rgb(139, 51, 215);
+    margin-top: 40px;
+    margin-left: 430px;
+}
+
+#skipRole {
+    font-family: 'Geist', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    margin-top: 100px;
+    margin-left: 600px;
+    margin-bottom: 50px;
+    color: rgb(134, 41, 215);
+    position: relative;
+    top: 20px;
+    cursor: pointer;
+}
+
+#skipRole:hover {
+    color: rgb(149, 80, 209);
+}
+
+.choosePart {
+    width: 400px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    padding-left: 35px;
+    border: 3px solid rgb(200, 152, 219);
+    background-color: rgb(246, 227, 254);
+    transition: opacity 3s ease, filter 3s ease;
+}
+
+.choosePart:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+}
+
+.choosePart.clicked {
+    opacity: 0.1;
+    filter: blur(2px);
+    overflow: hidden;
+    border: 3px solid rgb(179, 15, 244);
+    transform: translateY(-3px) scale(1.05);
+}
+
+.choosePartImage {
+    width: 150px;
+    height: 150px;
+    margin-top: 50PX;
+    margin-left: 90PX;
+    border-radius: 20px;
+    background-size: contain;
+}
+
+#choosePartTitleRole1 {
+    font-family: 'Geist', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-left: 70PX;
+    color: rgb(95, 29, 153);
+}
+
+#choosePartTextRole1 {
+    color: rgb(90, 90, 90);
+    font-family: 'Geist', sans-serif;
+    font-size: 19px;
+    font-weight: 400;
+    width: 350px;
+    margin-left: -5px;
+    margin-top: 10PX;
+    text-align: center;
+    color: rgb(95, 29, 153);
+}
+
+#choosePartTitleRole2 {
+    font-family: 'Geist', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: rgb(26, 26, 26);
+    margin-top: 15px;
+    margin-left: 70PX;
+    color: rgb(95, 29, 153);
+}
+
+#choosePartTextRole2 {
+    color: rgb(90, 90, 90);
+    font-family: 'Geist', sans-serif;
+    font-size: 19px;
+    font-weight: 400;
+    width: 350px;
+    margin-left: -10px;
+    margin-top: 10PX;
+    text-align: center;
+    color: rgb(95, 29, 153);
+}
+
+
+.choosePartLinkRole {
+    font-family: 'Geist', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin-left: 110px;
+    margin-top: 40px;
+    color: rgb(139, 59, 210);
+}
+
+/* Simple spinner in the middle of element on click */
+
+.choosePart {
+    position: relative;
+}
+
+.choosePart:active::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgb(139, 59, 210);
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}

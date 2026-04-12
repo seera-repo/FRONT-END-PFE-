@@ -4,14 +4,14 @@ import CoursesIcon from '../assets/icons/folder.svg';
 import DashboardIcon from '../assets/icons/home.svg';
 import LogoutIcon from '../assets/icons/logout.svg';
 
-import { useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 
 
 function Header() {
   const navLinks = [
     { label: "Dashboard", href: "/dashboard", icon: DashboardIcon },
 
-    { label: "Courses", href: "/BrowseCourses", icon: CoursesIcon },
+    { label: "Courses", href: "/BrowseCourse", icon: CoursesIcon },
 
     { label: "Community", href: "/CommunityBlog", icon: CommunityIcon },
 
