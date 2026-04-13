@@ -36,11 +36,14 @@ function App() {
 
         <Route path="/ChooseComunity" element={<ChooseComunity />} />
 
+<<<<<<< HEAD
         <Route path="/NormalORTrisomyStudent" element={<NormalORTrisomyStudent />} />
 
         <Route path="/BrowseCourse" element={<BrowseCourse />} />
 
         <Route path="/Profile" element={<Profile />} />
+=======
+>>>>>>> 867c39ff02e0147c71de8f9a967257db1d9e1e1e
       </Routes>
     </BrowserRouter>
   );
