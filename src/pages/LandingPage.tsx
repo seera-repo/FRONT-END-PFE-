@@ -6,7 +6,7 @@ import FreeAccount from '../components/FreeAccount';
 import Footer from '../components/Footer';
 function LandingPage() {
   return (
-    <div>
+    <div className="flex flex-col justify-center items-center m-4">
       <LandingHeader />
       <GetStarted />
       <FeatureSection />
