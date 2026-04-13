@@ -1,8 +1,9 @@
 import {useState} from "react";
-import image from "../images/photo4.svg"
+import {useNavigate} from "react-router-dom"
 import photos from"../images/photo2.svg"
-const Login = () => {
 
+const Login = () => {
+const navigate = useNavigate()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -66,9 +67,12 @@ const Login = () => {
           {error && (
            <p className="text-red-500 text-sm mt-3 text-center">{error}</p>
             )}
+            <p onClick={() => navigate('/Signup')}
+             className="text-[14px] hover:underline mt-3 text-right w-full cursor-pointer pr-3 text-[#7268C7]">Creat account
+            </p>
          <button 
          onClick={handleLogin}
-         className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[180px] block mt-10 flex items-center justify-center hover:opacity-80 transition">Login</ button>
+         className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[180px] block mt-5 flex items-center justify-center hover:opacity-80 transition">Login</ button>
         
       </div>
     </div>

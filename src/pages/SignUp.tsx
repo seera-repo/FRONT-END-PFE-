@@ -1,10 +1,12 @@
 import {useState} from "react";
 import photos from"../images/photo2.svg"
+import { useNavigate } from "react-router-dom";
 const signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState(""); 
+  const navigate = useNavigate()
 
   const handleLogin = async () => {
     setError("");
@@ -39,7 +41,7 @@ const signup = () => {
           
          <p className="text-[#5B5B5B] mt-2 mb-5  text-[15px] flex items-center justify-center"> Join our inclusive learning community today </p>
          
-         <h1 className="mr-70 mb-2">user name</h1>
+         <h1 className="mr-66 mb-2">user name</h1>
          <input 
          type="text"
          placeholder="Enter your user name"
@@ -66,12 +68,14 @@ const signup = () => {
             </span>
           </div>
           {error && (
-  <p className="text-red-500 text-sm mt-3 text-center">{error}</p>
-)}
-
+         <p className="text-red-500 text-sm mt-3 text-center">{error}</p>
+         )}
+          <h1 
+          onClick={() => navigate('/Login')} className="text-[13px] text-[#7268C7] hover:underline mt-3 text-right w-full cursor-pointer pr-3">
+            i already have an account</h1>
          <button 
          onClick={handleLogin}
-         className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[150px] block mt-7  hover:opacity-80 transition items-center justify-center flex ">signUp</ button>
+         className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[150px] block mt-5  hover:opacity-80 transition items-center justify-center flex ">signUp</ button>
         </div>
       </div>
      </div>
