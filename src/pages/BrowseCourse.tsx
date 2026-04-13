@@ -1,25 +1,133 @@
 import Header from '../components/Header';
+import thumbnail from '../assets/images/thumbnail.png';
 import { Search, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Input from '../components/ui/Input';
 import { useState } from 'react';
 import CourseCard from '../components/CourseCard';
-import { useQuery } from '@tanstack/react-query';
-import { fetchCourses } from '../api/courses';
 
 
 const BrowseCourse = () => {
+
+  const coursesarr = [
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+    {
+      id: "1",
+      title: "Introduction to Computer Science",
+      categorie: "CS Basics",
+      student: 85,
+      lessons: 12,
+      duration: "6 hours",
+      image: thumbnail,
+      likes: 150,
+      description: "Master the foundations of computer science with clear, visual explanations.",
+      teacher: {
+        name: 'Dr. Ahmed Khalil',
+        avatar: 'https://via.placeholder.com/50'
+      },
+    },
+
+
+  ]
+
   const categories = ["All", "Development", "Design", "front-end", "back-end", "full-stack", "data science", "machine learning"];
 
   const [activeCategory, setActiveCategory] = useState("All");
-  
-  const { data: courses = [], isLoading, error } = useQuery({
-    queryKey: ['courses'],
-    queryFn: fetchCourses
-  });
-  console.log("Fetched courses:", courses);
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading courses</p>;
+
   return (
     <>
       <Header />
@@ -63,10 +171,10 @@ const BrowseCourse = () => {
           </div>
 
           {/* Grid */}
-          {courses.length > 0 ? (
-            <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-15'>
+          {coursesarr.length > 0 ? (
+            <div className='grid gap-6  sm:grid-cols-2 lg:grid-cols-3 mt-15 '>
               {
-                courses.map((course) => (
+                coursesarr.map((course) => (
                   <Link key={course.id} to={`/course/${course.id}`}>
                     <CourseCard course={course} />
                   </Link>

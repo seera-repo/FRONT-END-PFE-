@@ -1,85 +1,20 @@
 
-// src/types/course.ts
-
-export interface Lesson {
+export type Course = {
   id: string;
   title: string;
-  description: string | null;
-  vedio_url: string;
-  order_index: number;
-  course_id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Teacher {
-  id: string;
-  user_id: string;
-  isPsychologist: boolean;
-  cv_URL: string;
-  descreption: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  User: {
-    name: string;
-  };
-}
-
-export interface Course {
-  id: string;
-  title: string;
-  description: string;
-  document: string | null;
-  image_url: string | null;
-  isSpecialized: boolean;
-  teacher_id: string;
-  categorie_id: string;
+  categorie: string;
+  student: number;
+  lessons: number;
+  duration: string;
+  image: string;
   likes: number;
-  createdAt: string;
-  updatedAt: string;
-  Teacher: Teacher;
-  Categorie: { name: string };
-  Enrollments: any[];
-}
-
-export interface CourseByIdResponse {
-  success: boolean;
-  courses: Course;
-  enrollmentCount: number;
-  lessonCount: number;
-}
+  description: string;
+  teacher: {
+    name: string;
+    avatar: string;
+  };
+};
 
 export type CourseCardProps = {
   course: Course;
 };
-
-
-
-export type LessonCardProps = {
-  lesson: Lesson;
-  courseId?: string;
-};
-
-// src/types/course.ts
-
-export interface CourseComment {
-  id: string;
-  comment: string;
-  user_id: string;
-  course_id: string;
-  createdAt: string;
-  updatedAt: string;
-  User: {
-    name: string;
-  };
-  Course: {
-    title: string;
-  };
-}
-
-export interface CommentsResponse {
-  success: boolean;
-  count: number;
-  data: CourseComment[];
-}
