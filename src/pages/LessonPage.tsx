@@ -1,33 +1,35 @@
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronRight, PlayCircle } from "lucide-react";
+ import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronRight, PlayCircle } from "lucide-react";
 import { Link, useParams } from 'react-router-dom';
 import Header from "../components/Header";
+import { fetchLessons } from "../api/lessons";
+import { useQuery } from "@tanstack/react-query";
 //import ReactPlayer from "react-player";
 
-const lessons = [
-  { id: 1111111, title: "What is Computer Science?", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 1, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-123.mp4" },
-  { id: 222222, title: "How Computers Think", description: "Time to write your first program! We will use a simple, beginner-friendly approach to create a program that greets the user. You will learn about code editors, running programs, and seeing your code come to life.", order_index: 2, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-456.mp4" },
-  { id: 3333333, title: "Introduction to Algorithms", description: "Variables are containers for storing data. Learn about different data types like numbers, text, and booleans, and understand how to use them effectively in your programs.", order_index: 3, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-789.mp4" },
-  { id: 4444444, title: "Your First Program", description: "Programs need to make decisions. Learn about conditional statements that let your code choose different paths based on conditions, making your programs smarter and more interactive.", order_index: 4, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-012.mp4" },
-  { id: 5555555, title: "Variables & Data Types", description: "Loops let you repeat actions without writing the same code over and over. Master for-loops and while-loops to handle repetitive tasks efficiently.", order_index: 5, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-345.mp4" },
-]
-
 function LessonPage() {
-  const { id, lessonId } = useParams<{
-    id: string;
-    lessonId: string;
-  }>();
-  // get lesson by id from parrams
-  const lessonIdNumber = Number(lessonId);
-  const lesson = lessons.find(l => l.id === lessonIdNumber);
 
-  if (!lesson) {
-    return <div>Lesson not found</div>;
-  }
-  const prevLesson = lesson.order_index > 0
+  const { id, lessonId } = useParams();
+
+  const { data: lessonsData, isLoading: lessonsLoading } = useQuery({
+    queryKey: ['lessons', id],
+    queryFn: () => fetchLessons(id!),
+  });
+
+  if (lessonsLoading) return <p>Loading...</p>;
+
+  const lessons = lessonsData ?? [];
+
+  // id is a string (UUID), not a number
+  const lesson = lessons.find(l => l.id === lessonId);
+
+
+  if (!lesson) return <div>Lesson not found</div>;
+  console.log('Video URL:', lesson.vedio_url);
+  // order_index starts at 1, array starts at 0
+  const prevLesson = lesson.order_index > 1
     ? lessons[lesson.order_index - 2]
     : null;
 
-  const nextLesson = lesson.order_index  < lessons.length
+  const nextLesson = lesson.order_index < lessons.length
     ? lessons[lesson.order_index]
     : null;
 
@@ -81,9 +83,11 @@ function LessonPage() {
               <div className="mt-6 overflow-hidden border-[#d4e5ea] rounded-2xl shadow-sm bg-white flex flex-col gap-6  border py-6 ">
                 <div className="flex aspect-video items-center justify-center ">
                   <div className="flex flex-col items-center gap-3">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full">
-                      <PlayCircle className="h-12 w-12 text-[#091b21]" />
-                    </div>
+                      <video
+                        src={lesson.vedio_url}
+                        controls
+                        className="w-full h-full rounded-lg"
+                      />
                   </div>
                 </div>
               </div>
@@ -167,14 +171,14 @@ function LessonPage() {
                           key={l.id}
                           to={`/courses/${id}/lessons/${l.id}`}
                           className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all ${isCurrent
-                              ? "bg-[#4d51c8] font-semibold text-white shadow-sm"
-                              : "text-[#676876] hover:bg-[#f0f0f0] hover:text-[#19232a]"
+                            ? "bg-[#4d51c8] font-semibold text-white shadow-sm"
+                            : "text-[#676876] hover:bg-[#f0f0f0] hover:text-[#19232a]"
                             }`}
                         >
                           <span
                             className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isCurrent
-                                ? "bg-white/20 text-white"
-                                : "bg-[#dbdbfe] text-[#59656e]"
+                              ? "bg-white/20 text-white"
+                              : "bg-[#dbdbfe] text-[#59656e]"
                               }`}
                           >
                             {idx + 1}
