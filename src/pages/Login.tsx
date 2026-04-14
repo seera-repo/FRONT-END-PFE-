@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import photos from "../images/photo2.svg";
 
 interface TokenPayload {
   id: string;
@@ -59,7 +58,7 @@ const Login = () => {
       setError("Something went wrong. Please try again.");
       console.error("Error:", error);
     }
-  };
+  }
   return (
     <div className="Login">
       <div className="items-center justify-center flex flex-col min-h-screen bg-[#E3E2EB]">
@@ -84,9 +83,6 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="rounded-full border px-4 p-2 outline-none border w-[350px] border-[#4957BD] flex items-center justify-center placeholder:text-[14px] text-[#989797]">
             </ input>
-            <span className="absolute left-88 top-1/2 -translate-y-1/2 text-gray-500">
-              <img src={photos} alt="photo2" className="w-5.5 h-3.5" />
-            </span>
           </div>
 
           {error && (
