@@ -6,7 +6,6 @@ type Props = {
 }
 
 import { useNavigate } from "react-router-dom";
-import "./communitygetstartedpart.css";
 
 function CommunityGetStartedPart({ color, title, text, onClick }: Props) {
     const navigate = useNavigate();
@@ -19,10 +18,10 @@ function CommunityGetStartedPart({ color, title, text, onClick }: Props) {
     };
 
     return (
-        <div id="communityGetStartedPart" onClick={handleClick}>
-            <div id="forCommunity" style={{ backgroundColor: color }}>{title}</div>
-            <p id="communityTextGetStarted">{text}</p>
-            <a id="communitylinkGetStarted">Get started</a>
+        <div id="communityGetStartedPart" className="w-[500px] h-[250px] text-[rgb(155,155,155)] rounded-[20px] bg-[rgba(239,241,255,0.8)] border border-[rgb(189,189,189)] hover:shadow-[3px_3px_6px_rgba(0,0,0,0.3)] hover:cursor-pointer" onClick={handleClick}>
+            <div id="forCommunity" className="w-[120px] h-[35px] rounded-[40px] text-[#202020] text-[15px] font-[500] text-center whitespace-nowrap pt-[5px] mt-[40px] ml-[30px]" style={{ backgroundColor: color }}>{title}</div>
+            <p id="communityTextGetStarted" className="text-[rgb(90,90,90)] font-[350] text-[17px] mt-[15px] ml-[30px] text-left w-[450px] h-[70px] mb-[35px]">{text}</p>
+            <a id="communitylinkGetStarted" className="text-[#702DFF] text-[15px] font-[450] ml-[30px] mt-[100px]">Get started  -&gt;</a>
         </div>
     );
 }

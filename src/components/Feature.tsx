@@ -1,4 +1,3 @@
-import './feature.css';
 type Props = {
     image: string;
     title: string;
@@ -6,10 +5,9 @@ type Props = {
 }
 function Feature({ image, title, text }: Props) {
     return (
-        <div id='feature'>
-            <img id="feautreImage" src={image}></img>
-            <h2 id="featureTitle" >{title}</h2>
-            <p id="featureText">{text}</p>
+        <div className="items-center justify-center w-[390px] h-[290px] bg-[rgba(167,170,233,0.39)] flex flex-col rounded-[20px] border border-[rgb(181,180,180)] hover:shadow-[0px_4px_16px_rgba(0,0,0,0.2)] hover:cursor-pointer">            <img id="feautreImage" className="rounded-[20px] w-[70px] h-[70px] mt-[20px] " src={image}></img>
+            <h2 id="featureTitle" className="text-[rgb(44,44,44)] w-[220px] h-[30px] text-[22px] font-[550] whitespace-nowrap mt-[10px]">{title}</h2>
+            <p id="featureText" className="text-[rgb(90,90,90)] w-[360px] h-[120px] text-[18px] font-[300] text-center mt-[10px]">{text}</p>
         </div>
     );
 }

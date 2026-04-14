@@ -11,7 +11,7 @@ import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
-
+import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
 
 
 function App() {
@@ -38,6 +38,11 @@ function App() {
 
         <Route path="/ChooseComunity" element={<ChooseComunity />} />
 
+        <Route path="/NormalORTrisomyStudent" element={<NormalORTrisomyStudent />} />
+
+        <Route path="/BrowseCourse" element={<BrowseCourse />} />
+
+        <Route path="/Profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
