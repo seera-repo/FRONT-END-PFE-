@@ -5,64 +5,69 @@ import { Link, useParams } from 'react-router-dom';
 import { useState, type FormEvent, } from "react";
 import LessonCase from "../components/LessonCase";
 import Comment from '../components/Comment';
+import { useQuery } from '@tanstack/react-query'
+import { fetchCourseById } from "../api/courses";
+import {fetchLessons} from "../api/lessons";
+import { fetchCommentsByCourse } from "../api/course_commnts";
+import type { CourseComment } from "../types/types"
+
 
 const Course = () => {
-  const course = {
-    id: "1",
-    title: "Introduction to Computer Science",
-    categorie: "CS Basics",
-    student: 85,
-    lessons: 12,
-    image: thumbnail,
-    likes: 150,
-    description: "Master the foundations of computer science with clear, visual explanations.",
-    teacher: {
-      name: 'Dr. Ahmed Khalil',
-      avatar: 'https://via.placeholder.com/50'
-    },
-  }
-
-  const lessons = [
-    { id: 1111111, title: "What is Computer Science?", description: "An algorithm is a step-by-step set of instructions to solve a problem. In this lesson, you will learn to think algorithmically using everyday examples like recipes and directions before applying these ideas to computer programs.", order_index: 1, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-123.mp4" },
-    { id: 222222, title: "How Computers Think", description: "Time to write your first program! We will use a simple, beginner-friendly approach to create a program that greets the user. You will learn about code editors, running programs, and seeing your code come to life.", order_index: 2, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-456.mp4" },
-    { id: 3333333, title: "Introduction to Algorithms", description: "Variables are containers for storing data. Learn about different data types like numbers, text, and booleans, and understand how to use them effectively in your programs.", order_index: 3, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-789.mp4" },
-    { id: 4444444, title: "Your First Program", description: "Programs need to make decisions. Learn about conditional statements that let your code choose different paths based on conditions, making your programs smarter and more interactive.", order_index: 4, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-012.mp4" },
-    { id: 5555555, title: "Variables & Data Types", description: "Loops let you repeat actions without writing the same code over and over. Master for-loops and while-loops to handle repetitive tasks efficiently.", order_index: 5, vedio_url: "http://localhost:3000/uploads/videos/vedio_url-345.mp4" },
-  ]
-
-  const initialComments = [
-    {
-      id: 1,
-      user: "Maria Garcia",
-      comment: "This course is amazing! The explanations are so clear and easy to follow.",
-    },
-    {
-      id: 2,
-      user: "Liam Chen",
-      comment: "I love the visual aids. They really help me understand abstract concepts.",
-    },
-  ]
 
 
   const { id } = useParams();
   const [saved, setSaved] = useState(false);
   const [enrolled, setEnrolled] = useState(false);
-  const [comments, setComments] = useState(initialComments)
   const [newComment, setNewComment] = useState("")
 
-  function handleComment(e: FormEvent) {
-    e.preventDefault()
-    if (!newComment.trim()) return
-    setComments((prev) => [
-      {
-        id: Date.now(),
-        user: "You",
-        comment: newComment,
-      },
-      ...prev,
-    ])
-    setNewComment("")
-  }
+  //FECH LESONS
+  const { data: lessons, isLoading: lessonsLoading } = useQuery({
+    queryKey: ['lessons', id],
+    queryFn: () => fetchLessons(id!),
+  });
+
+  //FECH COURSE
+  const { data, isLoading: courseLoading, error } = useQuery({
+    queryKey: ['Course', id],
+    queryFn: () => fetchCourseById(id!),
+  });
+
+  //FECH COMMENTS
+  const { data: commentsData, isLoading: commentsLoading } = useQuery({
+    queryKey: ['comments', id],
+    queryFn: () => fetchCommentsByCourse(id!),
+  });
+  const [comments, setComments] = useState(commentsData?.data || []);
+
+
+  if (!data || !lessons) return <p>not found</p>
+  const course = data.courses;
+
+
+  const enrollmentCount = data.enrollmentCount;
+  if (courseLoading || lessonsLoading || commentsLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading courses</p>;
+
+
+  // Handle new comment submission
+function handleComment(e: FormEvent) {
+  e.preventDefault();
+  if (!newComment.trim()) return;
+
+  const fakeComment: CourseComment = {
+    id: Date.now().toString(),
+    comment: newComment,
+    user_id: 'me',
+    course_id: id!,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    User: { name: 'You' },
+    Course: { title: '' },
+  };
+
+  setComments((prev) => [fakeComment, ...prev]);
+  setNewComment('');
+}
 
 
   return (
@@ -71,7 +76,7 @@ const Course = () => {
       <div className="relative mt-17 h-50 md:h-60 overflow-hidden ">
         {/* image */}
         <img
-          src={course.image}
+          src={course.image_url || thumbnail}
           alt={course.title}
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -107,7 +112,7 @@ const Course = () => {
                 <div className="flex flex-wrap items-center gap-3">
 
                   <div className="px-4 py-2  active:opacity-80 text-[12px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer bg-[#d2d4f5] text-[#2F35C2]  ">
-                    {course.categorie}
+                    {course.Categorie.name}
                   </div>
 
                   <span className="flex items-center gap-1 text-sm font-semibold text-foreground">
@@ -124,17 +129,17 @@ const Course = () => {
                 <p className="mt-2 text-base ">
                   By{" "}
                   <span className="font-semibold text-[#2F35C2] cursor-pointer hover:text-[#2F35C2]/80 transition-colors">
-                    {course.teacher.name}
+                    {course.Teacher.User.name}
                   </span>
                 </p>
 
                 <div className="mt-5 flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1.5">
-                    <Users className="h-4 w-4" /> {course.student} students
+                    <Users className="h-4 w-4" /> {enrollmentCount} students
                   </span>
 
                   <span className="flex items-center gap-1.5">
-                    <BookOpen className="h-4 w-4" /> {course.lessons} lessons
+                    <BookOpen className="h-4 w-4" /> {lessons.length} lessons
                   </span>
                 </div>
 
@@ -227,7 +232,7 @@ const Course = () => {
               {/* comments array */}
               <div className="mt-6 flex flex-col gap-4">
                 {comments.map((comment) => (
-                  <Comment key={comment.id} comment={comment} />
+                  <Comment key={comment.id} {...comment} />
                 ))}
               </div>
             </div>
