@@ -25,8 +25,7 @@ export interface Teacher {
     name: string;
   };
 }
-
-export interface Course {
+interface Course {
   id: string;
   title: string;
   description: string;
@@ -36,12 +35,45 @@ export interface Course {
   teacher_id: string;
   categorie_id: string;
   likes: number;
-  createdAt: string;
-  updatedAt: string;
-  Teacher: Teacher;
-  Categorie: { name: string };
-  //Enrollments: any[];
+  createdAt : Date;
+  updatedAt: Date;
+
+  // counts
+  lessonsCount: number;
+  enrollmentsCount: number;
+
+  // associations
+  Teacher: {
+    id: string;
+    user_id: string;
+    status: string;
+    cvUrl?: string | null;
+    User: {
+      name: string;
+    };
+  };
+
+  Categorie: {
+    name: string;
+  };
 }
+
+// export interface Course {
+//   id: string;
+//   title: string;
+//   description: string;
+//   document: string | null;
+//   image_url: string | null;
+//   isSpecialized: boolean;
+//   teacher_id: string;
+//   categorie_id: string;
+//   likes: number;
+//   createdAt: string;
+//   updatedAt: string;
+//   Teacher: Teacher;
+//   Categorie: { name: string };
+//   Enrollments: any[];
+// }
 
 export interface CourseByIdResponse {
   success: boolean;
@@ -51,9 +83,8 @@ export interface CourseByIdResponse {
 }
 
 export type CourseCardProps = {
-  course: Course;
+  course:  Course; 
 };
-
 
 
 export type LessonCardProps = {
@@ -82,8 +113,7 @@ export interface CommentsResponse {
   success: boolean;
   count: number;
   data: CourseComment[];
-}
-
+} 
 
 export interface User {
   id: string;

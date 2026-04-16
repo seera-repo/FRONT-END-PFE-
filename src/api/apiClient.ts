@@ -1,18 +1,10 @@
-// apiClient.ts
-// This file contains a generic API client function that can be used to make requests to the backend API.
+import { getToken } from "./auth";
+const BASE_URL = 'http://localhost:3000';
 
 
-const BASE_URL = "http://localhost:3000";
-
-export async function apiFetch<T>(
-  endPoint: string,
-  options?: RequestInit
-): Promise<T> {
-
-  // ✅ ALWAYS GET FRESH TOKEN
-  const token = localStorage.getItem("token");
-
-  const res = await fetch(`${BASE_URL}/${endPoint}`, {
+export async function apiFetch<T>(endPoint: string, options?: RequestInit): Promise<T> {
+  const token = getToken(); 
+  const res = await fetch(`${BASE_URL}/${endPoint}`,{
     ...options,
     headers: {
       "Content-Type": "application/json",
