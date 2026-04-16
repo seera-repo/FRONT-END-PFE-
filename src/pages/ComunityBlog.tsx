@@ -1,69 +1,36 @@
-////////////////////////// COMMUNITY PAGE //////////////////////////
+////////////////////////// COMMUNITY PAGE ///////////////////////////////
 
-import { useState, useEffect } from "react";
-import axios from "axios";
 import Header from "../components/Header";
 import CreatePost from "../components/CreatePost";
 import PostCard from "../components/PostCard";
 
-////////////////////////// TYPES //////////////////////////
-
-// Comment type
-type Comment = {
-  id: string;
-  comment: string;
-  createdAt: string;
-};
-
-// Post type (matching backend)
-type Post = {
-  id: string;
-  content: string;
-  createdAt: string;
-  likes: number;
-  comments: Comment[];
-  User?: {
-    name: string;
-  };
-};
-
-////////////////////////// COMPONENT //////////////////////////
+import { useQuery } from "@tanstack/react-query";
+import { fetchPosts } from "../api/postsApi";
 
 export default function CommunityPage() {
 
-  ////////////////////////// STATE //////////////////////////
-  const [posts, setPosts] = useState<Post[]>([]);
+  // ================= FETCH POSTS =================
+  const {
+    data: posts = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["posts"],
+    queryFn: fetchPosts,
+  });
 
-  ////////////////////////// FETCH POSTS //////////////////////////
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/posts/:post_id");
-        setPosts(res.data.data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
+  // ================= LOADING =================
+  if (isLoading) {
+    return <p className="text-center mt-20">Loading...</p>;
+  }
 
-    fetchPosts();
-  }, []);
+  // ================= ERROR =================
+  if (error) {
+    return <p className="text-center mt-20">Error loading posts</p>;
+  }
 
-  ////////////////////////// ADD POST //////////////////////////
-  const addPost = async (text: string) => {
-    try {
-      const res = await axios.post("http://localhost:3000/posts/:post_id", {
-        title: "New Post",
-        content: text,
-      });
 
-      setPosts([res.data.data, ...posts]);
-
-    } catch (error) {
-      console.error("Error adding post:", error);
-    }
-  };
-
-  ////////////////////////// RETURN //////////////////////////
+  //================== MAIN RENDER =================
   return (
     <>
       {/* HEADER */}
@@ -71,31 +38,24 @@ export default function CommunityPage() {
 
       {/* TITLE */}
       <div className="mt-28 flex flex-col items-center gap-2 text-center px-4">
-        <h1 className="text-4xl font-bold text-purple-900">Community</h1>
+        <h1 className="text-4xl font-bold" style={{ color: "#2F327D" }}>
+          Community
+        </h1>
         <p className="text-gray-600 max-w-xl">
           Share your thoughts, ask questions, and connect with other learners.
         </p>
       </div>
 
-      {/* MAIN CONTENT */}
+      {/* CREATE POST */}
       <div className="flex flex-col items-center gap-6 p-6">
+        <CreatePost />
+      </div>
 
-        {/* CREATE POST */}
-        <CreatePost addPost={addPost} />
-
-        {/* POSTS LIST */}
+      {/* POSTS LIST */}
+      <div className="flex flex-col items-center gap-6 p-6">
         {posts.map((post) => (
-          <PostCard
-            key={post.id}
-             postId={post.id}
-            content={post.content}
-            createdAt={post.createdAt}
-            userName={post.User?.name}
-            likes={post.likes}
-            
-          />
+          <PostCard key={post.id} post={post} />
         ))}
-
       </div>
     </>
   );

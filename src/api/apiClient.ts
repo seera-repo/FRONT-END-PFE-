@@ -1,17 +1,29 @@
-const BASE_URL = 'http://localhost:3000';
-const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU3ZWU5MGNhLTcxZGMtNGMyNy1hMjViLWYwMGNhYzNlODJkNyIsInJvbGUiOiJUZWFjaGVyIiwiaWF0IjoxNzc1NTY0MTQ0LCJleHAiOjE3NzYxNjg5NDR9.9NjdksjsyjyUznWbJHSiLodtq57h0dy4Q0lzymoT55g';
+// apiClient.ts
+// This file contains a generic API client function that can be used to make requests to the backend API.
 
-export async function apiFetch<T>(endPoint: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE_URL}/${endPoint}`,{
+
+const BASE_URL = "http://localhost:3000";
+
+export async function apiFetch<T>(
+  endPoint: string,
+  options?: RequestInit
+): Promise<T> {
+
+  // ✅ ALWAYS GET FRESH TOKEN
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/${endPoint}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${TOKEN}`,
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }), // ✅ safe
       ...options?.headers,
-    }
-  })
-  if(!res.ok){
+    },
+  });
+
+  if (!res.ok) {
     throw new Error(`API request failed with status ${res.status}`);
   }
+
   return res.json() as Promise<T>;
 }

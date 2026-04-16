@@ -1,177 +1,192 @@
-////////////////////////// POST CARD COMPONENT //////////////////////////
+////////////////////////// POST CARD COMPONENT ///////////////////////////////
 
 import { useState } from "react";
-import axios from "axios";
-import type { Comment } from "../types/types";
 import PostComment from "./PostComment";
 import { Heart, MessageCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-////////////////////////// TYPES //////////////////////////
+import type { Post, PostComment as PostCommentType } from "../types/types";
+import { fetchComments, addComment, likePost, deleteComment ,updateComment} from "../api/postsApi";
 
 type PostCardProps = {
-  postId: string;
-  content: string;
-  createdAt: string;
-  userName?: string;
-  likes?: number;
+  post: Post;
 };
 
-////////////////////////// COMPONENT //////////////////////////
+export default function PostCard({ post }: PostCardProps) {
+  const queryClient = useQueryClient();
+  const isLiked = post.isLikedByCurrentUser;
 
-export default function PostCard({
-  postId,
-  content,
-  createdAt,
-  userName,
-  likes = 0,
-}: PostCardProps) {
-
-  ////////////////////////// STATE //////////////////////////
-  const [likesCount, setLikesCount] = useState(likes);
+  
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
 
-  ////////////////////////// LIKE POST //////////////////////////
-  const handleLike = async () => {
-    try {
-      const res = await axios.patch(
-        `http://localhost:3000/posts/${postId}/like`
-      );
+  // ================= FETCH COMMENTS =================
+  const {
+    data: comments = [],
+    isLoading: commentsLoading,
+  } = useQuery({
+    queryKey: ["comments", post.id],
+    queryFn: () => fetchComments(post.id),
+    enabled: showComments && !!post.id,
+  });
 
-      setLikesCount(res.data.data.likes);
+  // ================= LIKE MUTATION =================
+  const likeMutation = useMutation({
+    mutationFn: () => likePost(post.id),
 
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
-  };
+    onSuccess: () => {
+  queryClient.invalidateQueries({ queryKey: ["posts"] });
+       },
+  });
 
-  ////////////////////////// FETCH COMMENTS //////////////////////////
-  const fetchComments = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/posts/${postId}/comments`
-      );
+  // ================= ADD COMMENT MUTATION =================
+  const commentMutation = useMutation({
+    mutationFn: (comment: string) => addComment(post.id, comment),
 
-      setComments(res.data.data);
+    onSuccess: (newComment) => {
+  queryClient.setQueryData(
+    ["comments", post.id],
+    (oldComments: PostCommentType[] | undefined) => [newComment, ...(oldComments || [])]
+  );
 
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    }
-  };
+  queryClient.invalidateQueries({ queryKey: ["posts"] });
 
-  ////////////////////////// TOGGLE COMMENTS //////////////////////////
-  const toggleComments = () => {
-    setShowComments(!showComments);
+  setNewComment("");
+},
+  });
 
-    if (!showComments) {
-      fetchComments(); // load when opening
-    }
-  };
+  //========================DELETE COMMENT MUTATION =================
+  
+const deleteCommentMutation = useMutation({
+  mutationFn: (commentId: string) => deleteComment(commentId),
 
-  ////////////////////////// ADD COMMENT //////////////////////////
-  const handleAddComment = async () => {
+  onSuccess: (_, commentId) => {
+    queryClient.setQueryData(
+      ["comments", post.id],
+      (oldComments: PostCommentType[] | undefined) =>
+        oldComments
+          ? oldComments.filter((c) => c.id !== commentId)
+          : []
+    );
+  },
+});//======================== UPDATE COMMENT MUTATION =================
+const updateCommentMutation = useMutation({
+  mutationFn: ({ id, comment }: { id: string; comment: string }) =>
+    updateComment(id, comment),
+
+  onSuccess: (updatedComment) => {
+    queryClient.setQueryData(
+      ["comments", post.id],
+      (old: PostCommentType[] | undefined) =>
+        old?.map((c) =>
+          c.id === updatedComment.id ? updatedComment : c
+        )
+    );
+  },
+});
+
+  // ================= TOGGLE COMMENTS =================
+  const toggleComments = () => setShowComments((prev) => !prev);
+
+  // ================= SEND COMMENT =================
+  const handleAddComment = () => {
     if (!newComment.trim()) return;
-
-    try {
-      const res = await axios.post(
-        `http://localhost:3000/posts/${postId}/comments`,
-        { comment: newComment }
-      );
-
-      setComments([res.data.data, ...comments]);
-      setNewComment("");
-
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    }
+    commentMutation.mutate(newComment);
   };
-
-  ////////////////////////// RENDER //////////////////////////
+//========================================= RENDER ==================================//
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 w-full max-w-2xl">
 
-      {/* POST HEADER */}
+      {/* HEADER */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">
-          {userName?.slice(0, 2).toUpperCase()}
+          {post.user?.name?.slice(0, 2).toUpperCase() || "UN"}
         </div>
+
         <div>
           <p className="font-semibold text-gray-800">
-            {userName || "Unknown"}
+            {post.user?.name || "Unknown"}
           </p>
+
           <p className="text-sm text-gray-400">
-            {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
+            {formatDistanceToNow(new Date(post.createdAt), {
+              addSuffix: true,
+            })}
           </p>
         </div>
       </div>
 
-      {/* POST CONTENT */}
+      {/* CONTENT */}
       <p className="text-gray-800 leading-relaxed mb-4 whitespace-pre-wrap">
-        {content}
+        {post.content}
       </p>
 
-      {/* ACTION BUTTONS */}
+      {/* ACTIONS */}
       <div className="flex items-center gap-6 mb-4">
 
         {/* LIKE */}
         <button
-          onClick={handleLike}
-          className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-600 hover:bg-gray-100 transition"
+          onClick={() => likeMutation.mutate()}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full transition cursor-pointer
+            ${isLiked 
+              ? "bg-red-100 text-red-500" 
+              : "text-gray-600 hover:bg-gray-100"}
+          `}
         >
-          <Heart size={20} />
-          <span className="text-sm">{likesCount}</span>
-        </button>
+          <Heart
+            size={20}
+            fill={isLiked ? "#ef4444" : "none"}
+            stroke={isLiked ? "#ef4444" : "currentColor"}
+          />
+          <span className="text-sm">{post.likes}</span>
+          </button>
 
-        {/* COMMENT */}
+        {/* COMMENTS */}
         <button
           onClick={toggleComments}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-full text-gray-600 hover:bg-gray-100 transition"
+          className="flex items-center gap-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-full cursor-pointer"
         >
           <MessageCircle size={20} />
-          <span className="text-sm">{comments.length}</span>
+        <span className="text-sm">
+        {showComments ? comments.length : post.commentsCount || 0}
+         </span>
         </button>
-
       </div>
 
-      {/* COMMENTS */}
+      {/* COMMENTS SECTION */}
       {showComments && (
-        <>
-          <div className="border-t border-gray-200 my-4"></div>
+        <div className="border-t border-gray-200 pt-4 space-y-4">
 
-          <div className="space-y-4">
+          {/* COMMENTS LIST */}
+          {commentsLoading ? (
+            <p className="text-sm text-gray-400">Loading comments...</p>
+          ) : (
+            comments.map((c: PostCommentType) => (
+              <PostComment key={c.id} comment={c}  onDelete={() => deleteCommentMutation.mutate(c.id)}  onUpdate={(id, text) =>updateCommentMutation.mutate({ id, comment: text }) } />
 
-            {comments.map((c) => (
-            <PostComment
-              key={c.id}
-              comment={c}   // ✅ pass full object
-/>
-            ))}
+            ))
+          )}
 
-            {/* INPUT */}
-            <div className="flex items-center gap-3 mt-2">
-              <input
-                type="text"
-                placeholder="Write a reply..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleAddComment();
-                }}
-                className="flex-1 bg-white rounded-full px-5 py-3 text-sm outline-none border border-[#d2d4f5] focus:border-[#2F35C2] focus:ring-1 focus:ring-[#2F35C2] transition"
-              />
+          {/* INPUT */}
+          <div className="flex gap-2">
+            <input
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write a comment..."
+              className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm 
+              focus:outline-none focus:ring-1 focus:ring-[#4C4FC1] focus:border-[#4C4FC1] transition "
+            />
 
-              <button
-                onClick={handleAddComment}
-                className="w-10 h-10 rounded-full bg-purple-900 flex items-center justify-center text-white hover:bg-purple-800 transition"
-              >
-                ➤
-              </button>
-            </div>
-
+            <button
+              onClick={handleAddComment}
+              disabled={commentMutation.isPending}
+              className="px-4 py-2 rounded-full disabled:opacity-50 cursor-pointer transition"style={{ backgroundColor: "rgba(112, 45, 255, 0.2)", color: "#2F327D" }}  
+            >
+              ➤
+            </button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

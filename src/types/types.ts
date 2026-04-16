@@ -40,7 +40,7 @@ export interface Course {
   updatedAt: string;
   Teacher: Teacher;
   Categorie: { name: string };
-  Enrollments: any[];
+  //Enrollments: any[];
 }
 
 export interface CourseByIdResponse {
@@ -60,30 +60,77 @@ export type LessonCardProps = {
   lesson: Lesson;
   courseId?: string;
 };
+
+// src/types/course.ts
+
+export interface CourseComment {
+  id: string;
+  comment: string;
+  user_id: string;
+  course_id: string;
+  createdAt: string;
+  updatedAt: string;
+  User: {
+    name: string;
+  };
+  Course: {
+    title: string;
+  };
+}
+
+export interface CommentsResponse {
+  success: boolean;
+  count: number;
+  data: CourseComment[];
+}
+
+
 export interface User {
+  id: string;
   name: string;
+  email: string;
+  role_id?: string;
   isSick?: boolean;
+  emailVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+
+export interface PublicUser {
+  id: string;
+  name: string;
 }
 
 export interface Post {
   id: string;
   title: string;
   content: string;
+
   user_id: string;
+  user?: PublicUser;
+
   likes: number;
   isSpecialized: boolean;
+   
+
   createdAt: string;
   updatedAt: string;
-  User?: User;
+  isLikedByCurrentUser?: boolean;
+  comments?: PostComment[];
+    commentsCount?: number;
 }
 
-export interface Comment {
+
+export interface PostComment {
   id: string;
   comment: string;
+
   user_id: string;
+  user?: PublicUser;
+
   post_id: string;
+
   createdAt: string;
   updatedAt: string;
-  Post?: Pick<Post, "title">;
-  User?: User;
 }

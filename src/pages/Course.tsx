@@ -8,7 +8,7 @@ import Comment from '../components/Comment';
 import { useQuery } from '@tanstack/react-query'
 import { fetchCourseById } from "../api/courses";
 import {fetchLessons} from "../api/lessons";
-import { fetchCommentsByCourse } from "../api/course_commnts";
+import { fetchCommentsByCourse } from "../api/course_comments";
 import type { CourseComment } from "../types/types"
 
 
