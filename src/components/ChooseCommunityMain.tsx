@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 const myPic3 = new URL("../community-general.jpg", import.meta.url).href;
 const myPic6 = new URL("../community-special.jpg", import.meta.url).href;
-import "./chooseComunityMain.css";
-function ChooseComunityMain() {
+//import "./chooseCommunityMain.css";
+function ChooseCommunityMain() {
     const navigate = useNavigate();
     const sendData3 = () => {
         fetch("http://localhost:3000/api/your-route", {
@@ -69,4 +69,4 @@ function ChooseComunityMain() {
         </div>
     )
 }
-export default ChooseComunityMain;
+export default ChooseCommunityMain;

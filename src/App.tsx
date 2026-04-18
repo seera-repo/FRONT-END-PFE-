@@ -6,11 +6,14 @@ import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 import Course from './pages/Course';
 import CommunityBlog from './pages/ComunityBlog';
-import ChooseComunity from './pages/ChooseComunity';
+import ChooseComunity from './pages/ChooseCommunity';
 import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
+import Sidebateacher from './components/Sidebarteacher';
+import HomePageTeacher from './pages/HomePageTeacher';
+import FormTeacher from './pages/FormTeacher';
 
 
 
@@ -34,8 +37,11 @@ function App() {
 
         <Route path="/ChooseRole" element={<ChooseRole />} />
 
-        <Route path="/ChooseComunity" element={<ChooseComunity />} />
-
+        <Route path="/ChooseCommunity" element={<ChooseComunity />} />
+        
+       <Route path="/Sidebateacher" element={<Sidebateacher />} />
+        <Route path="/FormTeacher" element={<FormTeacher />} /> 
+         <Route path="/HomePageTeacher" element={<HomePageTeacher />} />  
       </Routes>
     </BrowserRouter>
   );
