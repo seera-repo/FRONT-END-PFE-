@@ -24,7 +24,9 @@ const navigate = useNavigate()
       return;
     }
     if (data.token) {
+    console.log("data:", data)
     localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data));
     window.location.href = "/dashboard";
     } else {
       setError("No token received from server");

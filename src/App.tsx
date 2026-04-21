@@ -11,6 +11,7 @@ import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
+import ProfileStudent from './pages/ProfileStudent';
 
 
 
@@ -39,6 +40,8 @@ function App() {
         <Route path="/BrowseCourse" element={<BrowseCourse />} />
 
         <Route path="/Profile" element={<Profile />} />
+
+        <Route path="/ProfileStudent" element={<ProfileStudent />} />
       </Routes>
     </BrowserRouter>
   );
