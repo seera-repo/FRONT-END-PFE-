@@ -25,7 +25,7 @@ export interface Teacher {
     name: string;
   };
 }
-interface Course {
+export interface Course {
   id: string;
   title: string;
   description: string;
@@ -114,3 +114,15 @@ export interface CommentsResponse {
   count: number;
   data: CourseComment[];
 }
+
+export type Category = {
+  id: string;
+  name: string;
+  createdAt: string; // or Date if you parse it
+  updatedAt: string; // or Date if you parse it
+};
+
+export type categoryResponse = {
+  success: boolean;
+  data: Category[];
+};
