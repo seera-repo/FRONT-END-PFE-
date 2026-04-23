@@ -11,11 +11,9 @@ import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
-import Sidebateacher from './components/Sidebarteacher';
-import HomePageTeacher from './pages/HomePageTeacher';
-import FormTeacher from './pages/FormTeacher';
-
-
+import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent'
+import  HomePageTeacher from './pages/HomePageTeacher'
+import AddCourse from './pages/AddCourse';
 
 function App() {
   return (
@@ -29,6 +27,8 @@ function App() {
 
         <Route path="/HomePage" element={<HomePage />} />
 
+        <Route path="/BrowseCourse" element={<BrowseCourse />} />
+
         <Route path="/course/:id" element={<Course />} />
 
         <Route path="/courses/:id/lessons/:lessonId" element={<LessonPage />} />
@@ -37,11 +37,15 @@ function App() {
 
         <Route path="/ChooseRole" element={<ChooseRole />} />
 
-        <Route path="/ChooseCommunity" element={<ChooseComunity />} />
-        
-       <Route path="/Sidebateacher" element={<Sidebateacher />} />
-        <Route path="/FormTeacher" element={<FormTeacher />} /> 
-         <Route path="/HomePageTeacher" element={<HomePageTeacher />} />  
+        <Route path="/ChooseComunity" element={<ChooseComunity />} />
+
+        <Route path="/NormalORTrisomyStudent" element={<NormalORTrisomyStudent />} />
+       <Route path="/HomePageTeacher" element={<HomePageTeacher />} />
+        <Route path="/BrowseCourse" element={<BrowseCourse />} />
+         
+
+        <Route path="/Profile" element={<Profile />} />
+          <Route path="/AddCoures" element={<AddCourse />} />
       </Routes>
     </BrowserRouter>
   );

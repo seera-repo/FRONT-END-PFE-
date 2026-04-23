@@ -75,14 +75,15 @@ const Sidebar = () => {
     <div className="w-56 h-screen bg-[#A7AAE9]/30 p-5 flex flex-col shrink-0 rounded-3xl overflow-hidden">
 
       {/* Logo */}
-      <div className="flex flex-col items-start mb-8">
-        <h1 className="text-purple-700 font-bold text-sm leading-tight">
-          NAME OF THE<br />PLATFORM AND LOGO
-        </h1>
-      </div>
+      <a href="/HomePage" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
+              <span className="text-white font-bold text-sm">D</span>
+            </div>
+            <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">diversity</span>
+          </a>
 
       {/* Overview */}
-      <div className="mb-6">
+      <div className="mb-10">
         <p className="text-gray-400 text-[11px] font-bold tracking-widest mb-2 px-1">
           OVERVIEW
         </p>
