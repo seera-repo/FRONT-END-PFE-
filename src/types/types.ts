@@ -81,6 +81,7 @@ export interface CourseByIdResponse {
   enrollmentCount: number;
   lessonCount: number;
   isEnrolled: boolean;
+  isSaved: boolean;
 }
 
 export type CourseCardProps = {

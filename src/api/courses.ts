@@ -17,7 +17,6 @@ interface CourseFilters {
 
 export async function fetchCourses(filters?: CourseFilters): Promise<Course[]> {
   // Build query string only from filters that were actually passed
-  console.log("Fetching courses with filters:", filters);
   const params = new URLSearchParams();
 
   //check filters 

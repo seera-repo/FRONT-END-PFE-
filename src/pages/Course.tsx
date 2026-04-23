@@ -11,6 +11,7 @@ import { fetchCourseById } from "../api/courses";
 import { fetchLessons } from "../api/lessons";
 import { fetchCommentsByCourse } from "../api/course_commnts";
 import { enrole, removeEnrollment } from "../api/enrollment";
+import { removeSavedCourse, saveCourse } from "../api/savedCourses";
 import type { CourseComment } from "../types/types"
 
 
@@ -22,6 +23,7 @@ const Course = () => {
   const [enrolled, setEnrolled] = useState(false);
   const [newComment, setNewComment] = useState("")
   const [Error, setError] = useState("");
+
   //FECH LESONS
   const { data: lessons, isLoading: lessonsLoading } = useQuery({
     queryKey: ['lessons', id],
@@ -48,7 +50,13 @@ const Course = () => {
     }
   }, [data?.isEnrolled]);
 
-    
+// Set initial saved status based on fetched course data
+  useEffect(() => {
+    if (data?.isSaved !== undefined) {
+      setSaved(data.isSaved);
+    }
+  }, [data?.isSaved]);
+
   //add enrollment and unenrollment mutations
   const enrollMutation = useMutation({
     mutationFn: () => enrole(id!),
@@ -61,6 +69,7 @@ const Course = () => {
     }
   });
 
+//REMOVE ENROLLMENT
   const unenrollMutation = useMutation({
     mutationFn: () => removeEnrollment(id!),
     onSuccess: () => {
@@ -72,12 +81,35 @@ const Course = () => {
     }
   });
 
+  //save to a course
+  const saveMutation = useMutation({
+    mutationFn: () => saveCourse(id!),
+    onSuccess: () => {
+      setSaved(true);
+    },
+    onError: () => {
+      setError("Failed to save course, please try again.");
+    }
+  });
 
-  if (!data || !lessons) return <p>not found</p>
+  //remove from saved courses
+    const removeSavedMutation = useMutation({
+    mutationFn: () => removeSavedCourse(id!),
+    onSuccess: () => {
+      setSaved(false);
+      queryClient.invalidateQueries({ queryKey: ["Course", id] });
+    },
+    onError: () => {
+      setError("Failed to remove saved course, please try again.");
+    }
+  });
+
+
+  if (!data || !lessons) return <p>Loading...</p>;
   const course = data.courses;
 
   const enrollmentCount = data.enrollmentCount;
-  console.log("enrollment count:", data);
+
   if (courseLoading || lessonsLoading || commentsLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading courses</p>;
 
@@ -206,7 +238,7 @@ const Course = () => {
 
                   <button
                     className="border-2 text-base px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex bg-[#259cca]/30 border-[#d4e5ea]"
-                    onClick={() => setSaved(!saved)}
+                    onClick={() => saved ? removeSavedMutation.mutate() : saveMutation.mutate()}
                   >
                     <Heart
                       className={`mr-2 h-5 w-5 ${saved

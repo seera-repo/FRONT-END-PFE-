@@ -14,7 +14,6 @@ export async function updateUser(userData: any): Promise<void> {
       isSick: userData.isSick,
     })
   });
-  console.log(res);
   if (!res.success) {
     throw new Error('Failed to update user');
   }
