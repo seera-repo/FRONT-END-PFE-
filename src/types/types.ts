@@ -80,6 +80,7 @@ export interface CourseByIdResponse {
   courses: Course;
   enrollmentCount: number;
   lessonCount: number;
+  isEnrolled: boolean;
 }
 
 export type CourseCardProps = {
@@ -125,4 +126,18 @@ export type Category = {
 export type categoryResponse = {
   success: boolean;
   data: Category[];
+};
+
+export type enrollment = {
+    id: string;
+    user_id: string;
+    course_id: string;
+    updatedAt: string;
+    createdAt: string;
+}
+
+export type enrollmentResponse = {
+  message: string;
+  success: boolean;
+  data: enrollment
 };

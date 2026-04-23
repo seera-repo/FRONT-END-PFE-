@@ -37,7 +37,7 @@ const styles = `
 function NormalOrTrisomyMain() {
     const queryClient = useQueryClient();
 
-    const { mutate, isPending } = useMutation({
+    const { mutate } = useMutation({
         mutationFn: updateUser,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] }); // refetch user data

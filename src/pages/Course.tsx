@@ -2,24 +2,26 @@ import Header from "../components/Header"
 import thumbnail from '../assets/images/thumbnail.png';
 import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send } from "lucide-react";
 import { Link, useParams } from 'react-router-dom';
-import { useState, type FormEvent, } from "react";
+import { useEffect, useState, type FormEvent, } from "react";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import LessonCase from "../components/LessonCase";
 import Comment from '../components/Comment';
 import { useQuery } from '@tanstack/react-query'
 import { fetchCourseById } from "../api/courses";
-import {fetchLessons} from "../api/lessons";
+import { fetchLessons } from "../api/lessons";
 import { fetchCommentsByCourse } from "../api/course_commnts";
+import { enrole, removeEnrollment } from "../api/enrollment";
 import type { CourseComment } from "../types/types"
 
 
 const Course = () => {
-
+  const queryClient = useQueryClient();
 
   const { id } = useParams();
   const [saved, setSaved] = useState(false);
   const [enrolled, setEnrolled] = useState(false);
   const [newComment, setNewComment] = useState("")
-
+  const [Error, setError] = useState("");
   //FECH LESONS
   const { data: lessons, isLoading: lessonsLoading } = useQuery({
     queryKey: ['lessons', id],
@@ -39,35 +41,66 @@ const Course = () => {
   });
   const [comments, setComments] = useState(commentsData?.data || []);
 
+// Set initial enrollment status based on fetched course data
+  useEffect(() => {
+    if (data?.isEnrolled !== undefined) {
+      setEnrolled(data.isEnrolled);
+    }
+  }, [data?.isEnrolled]);
+
+    
+  //add enrollment and unenrollment mutations
+  const enrollMutation = useMutation({
+    mutationFn: () => enrole(id!),
+    onSuccess: () => {
+      setEnrolled(true);
+      queryClient.invalidateQueries({ queryKey: ["Course", id] }); // refetch course data
+    },
+    onError: () => {
+      setError("Failed to enroll, please try again.");
+    }
+  });
+
+  const unenrollMutation = useMutation({
+    mutationFn: () => removeEnrollment(id!),
+    onSuccess: () => {
+      setEnrolled(false);
+      queryClient.invalidateQueries({ queryKey: ["Course", id] });
+    },
+    onError: () => {
+      setError("Failed to unenroll, please try again.");
+    }
+  });
+
 
   if (!data || !lessons) return <p>not found</p>
   const course = data.courses;
 
-
   const enrollmentCount = data.enrollmentCount;
+  console.log("enrollment count:", data);
   if (courseLoading || lessonsLoading || commentsLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading courses</p>;
 
 
   // Handle new comment submission
-function handleComment(e: FormEvent) {
-  e.preventDefault();
-  if (!newComment.trim()) return;
+  function handleComment(e: FormEvent) {
+    e.preventDefault();
+    if (!newComment.trim()) return;
 
-  const fakeComment: CourseComment = {
-    id: Date.now().toString(),
-    comment: newComment,
-    user_id: 'me',
-    course_id: id!,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    User: { name: 'You' },
-    Course: { title: '' },
-  };
+    const fakeComment: CourseComment = {
+      id: Date.now().toString(),
+      comment: newComment,
+      user_id: 'me',
+      course_id: id!,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      User: { name: 'You' },
+      Course: { title: '' },
+    };
 
-  setComments((prev) => [fakeComment, ...prev]);
-  setNewComment('');
-}
+    setComments((prev) => [fakeComment, ...prev]);
+    setNewComment('');
+  }
 
 
   return (
@@ -97,7 +130,7 @@ function handleComment(e: FormEvent) {
           </div>
         </div>
       </div>
-      <main className="flex-1 flex justify-center items-center min-h-screen bg-[#f2f2f5]">
+      <main className="flex-1 flex justify-center items-start min-h-screen bg-[#f2f2f5] pt-8">
         {/* Hero Banner */}
 
 
@@ -150,20 +183,27 @@ function handleComment(e: FormEvent) {
                 {/* Action Buttons */}
                 <div className="mt-8 flex flex-wrap gap-3">
                   <button
-                    className={`px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex justify-center items-center  ${enrolled ? "bg-[#b6d6c1] text-black" : " bg-[#d2d4f5] text-[#2F35C2] "
-                      } `}
-                    onClick={() => setEnrolled(!enrolled)}
+                    className={`px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex justify-center items-center ${enrolled ? "bg-[#b6d6c1] text-black" : "bg-[#d2d4f5] text-[#2F35C2]"
+                      }`}
+                    disabled={enrollMutation.isPending || unenrollMutation.isPending}
+                    onClick={() => enrolled ? unenrollMutation.mutate() : enrollMutation.mutate()}
                   >
+                    {/* {enrollMutation.isPending || unenrollMutation.isPending ? (
+                      <span className="animate-spin mr-2">⏳</span>
+                    ) :  */}
                     {enrolled ? (
-                      <>
-                        <CheckCircle2 className="mr-2 h-5 w-5" /> Enrolled
-                      </>
+                      <><CheckCircle2 className="mr-2 h-5 w-5" /> Enrolled</>
                     ) : (
-                      <>
-                        <Play className="mr-2 h-5 w-5 " /> Enroll Now
-                      </>
+                      <><Play className="mr-2 h-5 w-5" /> Enroll Now</>
                     )}
                   </button>
+
+                  {(enrollMutation.isError || unenrollMutation.isError) && (
+                    <p className="text-red-500 text-sm mt-2">Something went wrong, please try again.</p>
+                  )}
+                  {/* The disabled during isPending prevents double clicks, and invalidateQueries makes sure the course data (enrollment count etc.) refetches automatically after the action. */}
+
+
                   <button
                     className="border-2 text-base px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex bg-[#259cca]/30 border-[#d4e5ea]"
                     onClick={() => setSaved(!saved)}
