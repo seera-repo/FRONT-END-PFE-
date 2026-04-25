@@ -28,7 +28,7 @@ function Header() {
             className='flex flex-row justify-center items-center'
             href='/'>
 
-            <h3 className='ml-6 text-3xl font-bold text-[#2F35C2]'>WebName</h3>
+            <h3 className='ml-6 text-3xl font-bold'>diversity</h3>
           </a>
 
           <ul className='flex felx-row flex-1 justify-center items-center gap-x-2 text-[#202020] font-semibold max-md:hidden'>
@@ -40,7 +40,9 @@ function Header() {
                   className="group flex items-center gap-x-2 text-[14px] py-1 px-4 rounded-4xl cursor-pointer"
                 >
                   {
-                    link.icon && <img src={link.icon} alt={link.label} />
+                    link.icon && <img src={link.icon} alt={link.label} 
+                     className="transition-all group-hover:opacity-50"
+                    />
                   }
 
                   <a

@@ -1,14 +1,24 @@
 import Header from "../components/Header"
 import {ChevronRight} from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { fetchProfileStudent } from '../api/user'
+
 const ProfileStudent = () => {
+  const { data: user, isLoading, isError } = useQuery({
+  queryKey: ['profile'],
+  queryFn: fetchProfileStudent
+ })
+ if (isLoading) return <p>Loading...</p>
+if (isError) return <p>Something went wrong</p>
+
   const getInitial= (firstName:string,lastName:string) =>{
    return `${firstName[0]}${lastName[0]}`.toUpperCase()
   }
-  const user = JSON.parse(localStorage.getItem("user") || "{}")
-  const getCategoryLabel = (category:string) =>{
-  if (category === "normal") return "Regular Student"
-  if (category ==="trisomy21") return "Special Needs Student"
-  }
+
+  const getCategoryLabel = () => {
+  if (user?.isSick) return "Special Needs Student"
+  return "Regular Student"
+}
   return (
    <div className="ProfileStudent bg-green-600">
      <div className="flex min-h-screen flex-col bg-[#f6f6fd] pb-20">
@@ -22,7 +32,7 @@ const ProfileStudent = () => {
           </span>
           <div className="mx-auto max-w-3xl bg-white mt-10 rounded-3xl">
             <div className="flex justify-center items-center pt-5">
-             <div className="h-28 w-28 rounded-full flex justify-center items-center bg-[#A7AAE9]">
+             <div className="h-28 w-28 rounded-full flex justify-center items-center bg-[#3548A7]">
                 <span className="text-white font-bold text-3xl">
                   {getInitial("wissal" , "mekhaldi")}
                 </span>
@@ -37,13 +47,13 @@ const ProfileStudent = () => {
               <div className="w-1/2">
                <p className="pl-8 mt-5 text-[16px]">Full Name *</p>
                 <input
-                  value={user.name || ""}
+                  value={user?.name || ""}
                   placeholder="Student's full name"
                   className="rounded-2xl border p-2 ml-8 mt-2 w-[340px] border-gray-300">
                 </input>
                <p className="pl-8 mt-5 text-[16px]">Email *</p>
                 <input
-                value={user.email || ""}
+                value={user?.email || ""}
                   placeholder="Email address"
                   className="rounded-2xl border p-2 ml-8 mt-2 w-[340px] border-gray-300">
                 </input>
@@ -51,19 +61,20 @@ const ProfileStudent = () => {
               <div className="w-1/2">
                <p className="pl-8 text-[16px] pt-5">Category *</p>
                   <input
-                  value = {getCategoryLabel(user.category) || ""}
+                   value={getCategoryLabel() || ""}
                     placeholder="select your caterogy"
                     className="rounded-2xl border p-2 ml-8 mt-2 w-[340px] border-gray-300">
                   </input>
                 <p className="pl-8 text-[16px] pt-5">Created at *</p>
                   <input
                     placeholder="select your caterogy"
+                    value={user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : ""}
                     className="rounded-2xl border p-2 ml-8 mt-2 w-[340px] border-gray-300">
                   </input>
               </div>
             </div>
             <div className="flex justify-center items-center pt-10 items-center gap-2 pb-8">
-                  <button className="p-1 py-5 rounded-3xl bg-[#702DFF] w-[600px] text-white font-semibold text-[20px] flex items-center justify-center">Complete setup 
+                  <button className="p-1 py-5 rounded-3xl bg-[#2D0680] hover:bg-[#702DFF] w-[600px] text-white font-semibold text-[20px] flex items-center justify-center">Complete setup 
                     < ChevronRight className="w-5 h-5 text-white"/>
                   </button>
                 </div>

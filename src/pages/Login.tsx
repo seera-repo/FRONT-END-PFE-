@@ -15,6 +15,7 @@ const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  
   const handleLogin = async () => {
     setError("");
 
@@ -62,7 +63,7 @@ const navigate = useNavigate();
           <p className=" items-center justify-center text-[#7268C7] text-[27px]">Welcome back</p>
 
           <p className="text-[#5B5B5B] mt-2 mb-5 flex items-center justify-center text-sm "> Sign in to continue your learning journey</p>
-          <p className="mb-2">Email</p>
+          <p className="mr-76 mb-2">Email</p>
           <input
             type="text"
             placeholder="Enter your email"
@@ -70,7 +71,7 @@ const navigate = useNavigate();
             className="rounded-full border px-4 p-2 outline-none border-[#4957BD] w-[350px] flex items-center justify-center mb-3 placeholder:text-[14px] text-[#989797]">
           </ input>
 
-          <p className="mb-2">password</p>
+          <p className="mr-68 mb-2">password</p>
           <div className="relative">
             <input
               type="password"
