@@ -22,7 +22,7 @@ type Course = {
   students: number;
   rating: number;
   status: "published" | "draft";
-  progress: number;
+ 
 };
 
 type Activity = {
@@ -43,7 +43,7 @@ type Activity = {
 
 const MOCK_PROFILE: TeacherProfile = {
   id: "uuid-123", isPsychologist: false, cv_URL: null,
-  descreption: "My bio", status: "rejected",
+  descreption: "My bio", status: "approved",
   user_id: "user-1", createdAt: "2024-01-15T10:00:00Z", updatedAt: "2024-01-20T14:30:00Z"
 };
 
@@ -54,18 +54,11 @@ const MOCK_PROFILE: TeacherProfile = {
 // const MOCK_PROFILE: TeacherProfile = { status: "rejected", ... };
 
 const COURSES: Course[] = [
-  { id: 1, title: "Introduction To Computer Science", category: "CS BASICS", students: 142, rating: 4.9, status: "published", progress: 78 },
-  { id: 2, title: "Data Structures & Algorithms",     category: "CS CORE",   students: 89,  rating: 4.7, status: "published", progress: 55 },
-  { id: 3, title: "Web Development Fundamentals",     category: "WEB DEV",   students: 0,   rating: 0,   status: "draft",     progress: 20 },
+  { id: 1, title: "Introduction To Computer Science", category: "CS BASICS", students: 142, rating: 4.9, status: "published",  },
+  { id: 2, title: "Data Structures & Algorithms",     category: "CS CORE",   students: 89,  rating: 4.7, status: "published",  },
+  { id: 3, title: "Web Development Fundamentals",     category: "WEB DEV",   students: 0,   rating: 0,   status: "draft",      },
 ];
 
-const ACTIVITY: Activity[] = [
-  { id: 1, type: "enrollment", student: "Sara M.",   course: "Intro to CS",     time: "2 min ago"   },
-  { id: 2, type: "review",     student: "Karim B.",  course: "Data Structures", time: "14 min ago", message: "Amazing course, very clear!"        },
-  { id: 3, type: "question",   student: "Lina H.",   course: "Intro to CS",     time: "1 hr ago",   message: "Can you explain recursion again?" },
-  { id: 4, type: "enrollment", student: "Youcef A.", course: "Data Structures", time: "3 hr ago"    },
-  { id: 5, type: "submission", student: "Nour T.",   course: "Web Dev",         time: "Yesterday"   },
-];
 
 // ─── 1. FORM SCREEN — shown when profile is null (first signup) ──────────────
 const FormScreen = ({ onSubmit }: { onSubmit: () => void }) => {
@@ -318,11 +311,11 @@ const ApprovedDashboard = () => (
           <span className="inline-flex items-center gap-1.5 bg-white/15 text-white/90 text-[11px] font-semibold px-3 py-1 rounded-full mb-3 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             Teacher Dashboard
-          </span>
+          </span> 
           <h1 className="text-white text-2xl font-extrabold leading-snug mb-1">
             Welcome back,<br /><span className="text-purple-300">Dr. Ahmed Khalil</span>
           </h1>
-          <p className="text-white/60 text-sm">You have <span className="text-white font-semibold">5 new</span> student activities today.</p>
+          
         </div>
         <div className="hidden lg:flex flex-col gap-2 mr-2">
           <button className="bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
@@ -337,36 +330,19 @@ const ApprovedDashboard = () => (
       </div>
     </div>
 
-    {/* Stats */}
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      {[
-        { label: "Total Students",  value: "231", sub: "↑ 12 this week", color: "bg-purple-100", icon: <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg> },
-        { label: "Active Courses",  value: "2",   sub: "1 draft",        color: "bg-indigo-100", icon: <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
-        { label: "Avg. Rating",     value: "4.8", sub: "★ out of 5",     color: "bg-amber-100",  icon: <svg className="w-5 h-5 text-amber-500"  fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg> },
-        { label: "Open Questions",  value: "5",   sub: undefined,        color: "bg-rose-100",   icon: <svg className="w-5 h-5 text-rose-500"   fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> },
-      ].map(({ label, value, sub, color, icon }) => (
-        <div key={label} className="bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-shadow duration-300 flex items-center gap-4">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${color}`}>{icon}</div>
-          <div>
-            <p className="text-2xl font-extrabold text-gray-800 leading-none">{value}</p>
-            {sub && <p className="text-[10px] text-green-500 font-semibold mt-0.5">{sub}</p>}
-            <p className="text-xs text-gray-400 font-medium mt-0.5">{label}</p>
-          </div>
-        </div>
-      ))}
-    </div>
+   
 
-    {/* Courses + Activity */}
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+    {/* Courses  */} 
+    <div className="grid grid-cols-1 justify-center">
       <section className="lg:col-span-2">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 ">
           <h2 className="text-sm font-bold tracking-widest uppercase text-gray-600">My Courses</h2>
           <button className="text-xs font-semibold text-purple-600 hover:text-purple-800 transition-colors flex items-center gap-1">
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
             New Course
           </button>
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 justify-center">
           {COURSES.map((c) => (
             <div key={c.id} className="bg-white rounded-2xl px-5 py-4 shadow-md hover:shadow-lg transition-shadow duration-200">
               <div className="flex items-start justify-between gap-3 mb-3">
@@ -380,59 +356,22 @@ const ApprovedDashboard = () => (
                 <button className="text-xs text-purple-600 hover:text-purple-800 font-semibold shrink-0">Edit</button>
               </div>
               <div className="flex items-center gap-5 text-xs text-gray-400 mb-3">
-                <span className="flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                  {c.students} students
-                </span>
-                {c.rating > 0 && (
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                    {c.rating}
-                  </span>
-                )}
+                
+                
               </div>
               <div>
                 <div className="flex justify-between text-[10px] text-gray-400 mb-1">
                   <span>Course completion</span>
-                  <span className="font-semibold text-gray-600">{c.progress}%</span>
+                  
                 </div>
-                <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full bg-gradient-to-r from-purple-400 to-indigo-500 transition-all duration-500" style={{ width: `${c.progress}%` }} />
-                </div>
+               
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-bold tracking-widest uppercase text-gray-600">Recent Activity</h2>
-          <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">{ACTIVITY.length} new</span>
-        </div>
-        <div className="bg-white rounded-2xl shadow-md p-4 flex flex-col">
-          {ACTIVITY.map((a, i) => (
-            <div key={a.id}>
-              <div className="flex items-start gap-3 py-3">
-                {activityIcon(a.type)}
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-gray-800 leading-snug">
-                    <span className="text-purple-700">{a.student}</span>
-                    {a.type === "enrollment" && " enrolled in "}
-                    {a.type === "review"     && " left a review on "}
-                    {a.type === "question"   && " asked a question in "}
-                    {a.type === "submission" && " submitted work in "}
-                    <span className="text-gray-600">{a.course}</span>
-                  </p>
-                  {a.message && <p className="text-[11px] text-gray-400 mt-0.5 italic truncate">"{a.message}"</p>}
-                  <p className="text-[10px] text-gray-300 mt-1">{a.time}</p>
-                </div>
-              </div>
-              {i < ACTIVITY.length - 1 && <div className="border-t border-gray-50" />}
-            </div>
-          ))}
-        </div>
-      </section>
+      
     </div>
   </main>
 );
