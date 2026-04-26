@@ -90,7 +90,26 @@ export async function deletePost(postId: string) {
   return res;
 }
 
+//////////////////////////////////////UPDATE POST ///////////////////////////////////
 
+type UpdatePostResponse = {
+  success: boolean;
+  data: Post;
+};
+
+export async function updatePost(postId: string, content: string) {
+  const res = await apiFetch<UpdatePostResponse>(
+    `api/posts/${postId}`,
+    {
+      method: "PUT",
+      body: JSON.stringify({ content }),
+    }
+  );
+
+  if (!res.success) throw new Error("Failed to update post");
+
+  return res.data;
+}
 //========================= COMMENTS API =========================
 
 

@@ -1,26 +1,61 @@
 ////////////////////////// POST CARD COMPONENT ///////////////////////////////
 
-import { useState } from "react";
+import { useState,useRef,useEffect, useLayoutEffect } from "react";
 import PostComment from "./PostComment";
-import { Heart, MessageCircle } from "lucide-react";
+import { getUser } from "../api/auth";
+import { Check, Heart, MessageCircle,MoreHorizontal,Pencil, Trash2,X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
 import type { Post, PostComment as PostCommentType } from "../types/types";
-import { fetchComments, addComment, likePost, deleteComment ,updateComment} from "../api/postsApi";
+import { fetchComments, addComment, likePost, deleteComment ,updateComment, deletePost,updatePost} from "../api/postsApi";
 
+
+//========================================= TYPES ==================================//
 type PostCardProps = {
   post: Post;
 };
 
+
+
+
+//========================================= API CALLS ==================================//
 export default function PostCard({ post }: PostCardProps) {
   const queryClient = useQueryClient();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isLiked = post.isLikedByCurrentUser;
-
-  
+  const currentUser = getUser();
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
+  const [showMenu, setShowMenu] = useState(false);
+  const [isEditingPost, setIsEditingPost] = useState(false);
+  const [editedPostText, setEditedPostText] = useState(post.content);
+  const menuRef = useRef<HTMLDivElement>(null);
 
+
+  //======================== AUTO-RESIZE TEXTAREA FOR EDITING POST =================
+   useLayoutEffect(() => {
+  if (isEditingPost && textareaRef.current) {
+    textareaRef.current.style.height = "auto";
+    textareaRef.current.style.height =
+      textareaRef.current.scrollHeight + "px";
+  }
+}, [isEditingPost, editedPostText]);
+  
+
+//==================================FERME LE MENU QUAND ON CLIQUE AILLEURS=============================
+useEffect(() => {
+  const handleClickOutside = (e: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      setShowMenu(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
   // ================= FETCH COMMENTS =================
   const {
     data: comments = [],
@@ -85,7 +120,31 @@ const updateCommentMutation = useMutation({
     );
   },
 });
+//========================DELETE POST MUTATION =================
+const deletePostMutation = useMutation({
+  mutationFn: (postId: string) => deletePost(postId),
 
+  onSuccess: (_, postId) => {
+    queryClient.setQueryData(
+      ["posts"],
+      (oldPosts: Post[] | undefined) =>
+        oldPosts ? oldPosts.filter((p) => p.id !== postId) : []
+    );
+  },
+});
+//============================== EDIT POST MUTATION =================
+const updatePostMutation = useMutation({
+  mutationFn: (content: string) => updatePost(post.id, content),
+  onSuccess: (updatedPost) => {
+    queryClient.setQueryData(
+      ["posts"],
+      (oldPosts: Post[] | undefined) =>
+        oldPosts?.map((p) => p.id === updatedPost.id ? { ...p, content: updatedPost.content } : p)
+    );
+    setIsEditingPost(false);
+    setShowMenu(false);
+  },
+});
   // ================= TOGGLE COMMENTS =================
   const toggleComments = () => setShowComments((prev) => !prev);
 
@@ -98,29 +157,110 @@ const updateCommentMutation = useMutation({
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 w-full max-w-2xl">
 
-      {/* HEADER */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">
-          {post.user?.name?.slice(0, 2).toUpperCase() || "UN"}
+          {/* HEADER */}
+      <div className="flex justify-between items-start mb-4">
+
+        {/* LEFT SIDE (avatar + name + time) */}
+        <div className="flex items-center gap-3">
+
+          {/* AVATAR */}
+          <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">
+            {post.user?.name?.slice(0, 2).toUpperCase() || "UN"}
+          </div>
+
+          {/* NAME + TIME */}
+          <div>
+            <p className="font-semibold text-gray-800">
+              {post.user?.name || "Unknown"}
+            </p>
+
+            <p className="text-sm text-gray-400">
+              {formatDistanceToNow(new Date(post.createdAt), {
+                addSuffix: true,
+              })}
+            </p>
+          </div>
+
         </div>
 
-        <div>
-          <p className="font-semibold text-gray-800">
-            {post.user?.name || "Unknown"}
-          </p>
+        
 
-          <p className="text-sm text-gray-400">
-            {formatDistanceToNow(new Date(post.createdAt), {
-              addSuffix: true,
-            })}
-          </p>
+        {/* RIGHT SIDE (MENU BUTTON) */}
+        {currentUser?.id === post.user_id && (
+         <div className="relative " ref={menuRef}>
+
+          <button
+            onClick={() => setShowMenu((prev) => !prev)}
+            className="p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition cursor-pointer">
+          
+           <MoreHorizontal size={16} />
+          </button>
+
+          {/* MENU */}
+          {showMenu && (
+            <div className="absolute right-0 top-5 bg-white border border-gray-100 rounded-xl shadow-lg w-36 z-10">
+              <button onClick={() => { setIsEditingPost(true); setShowMenu(false); }}
+                  
+                className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-[#2F327D] hover:bg-[#702DFF]/20 transition cursor-pointer">
+              <Pencil size={14}  className="text-[#2F327D]"/>
+                Edit
+              </button>
+           <button
+            onClick={() => deletePostMutation.mutate(post.id)}
+                className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition cursor-pointer">
+                  <Trash2 size={14} />
+            Delete
+          </button>
+            </div>
+          )}
         </div>
-      </div>
+        )}
+      </div> 
+
+       
+
+      {/* POST TITLE */}
+        {post.title && (
+  <h2 className="text-[17px] font-semibold text-gray-800 tracking-tight leading-snug mb-3 wrap-break-word">
+    {post.title}
+  </h2>
+)}
+
 
       {/* CONTENT */}
-      <p className="text-gray-800 leading-relaxed mb-4 whitespace-pre-wrap">
-        {post.content}
-      </p>
+
+     {isEditingPost ? (
+    <div className="mb-4 flex flex-col gap-2">
+    <textarea
+       ref={textareaRef}
+      value={editedPostText}
+      onChange={(e) => setEditedPostText(e.target.value)}
+      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm transition resize-none overflow-hidden outline-none"/>
+        
+      
+      
+    
+     <div className="flex justify-end gap-2">
+      <button
+        onClick={() => { setIsEditingPost(false); setEditedPostText(post.content); }}
+        className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition cursor-pointer"
+      >
+        <X size={16} />
+      </button>
+      <button
+        onClick={() => updatePostMutation.mutate(editedPostText)}
+        disabled={updatePostMutation.isPending}
+       className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700 transition cursor-pointer"
+      >
+        <Check size={16} />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-gray-800 leading-relaxed mb-4 whitespace-pre-line wrap-break-word overflow-wrap-anywhere">
+          {post.content}
+        </p>
+      )}
 
       {/* ACTIONS */}
       <div className="flex items-center gap-6 mb-4">
@@ -173,6 +313,12 @@ const updateCommentMutation = useMutation({
             <input
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
+              onKeyDown={(e) => {
+             if (e.key === "Enter") {
+             e.preventDefault();
+             handleAddComment();
+             }
+            }}
               placeholder="Write a comment..."
               className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm 
               focus:outline-none focus:ring-1 focus:ring-[#4C4FC1] focus:border-[#4C4FC1] transition "

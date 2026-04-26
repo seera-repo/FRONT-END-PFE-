@@ -4,10 +4,14 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { createPost, type CreatePostInput } from "../api/postsApi";
 import { fetchMe } from "../api/userAPI";
 
+
+
+//=============================== CREATE POST COMPONENT =================================
 export default function CreatePost() {
+
+  const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   const queryClient = useQueryClient();
 
   //  GET CURRENT USER
@@ -28,11 +32,12 @@ export default function CreatePost() {
     if (!text.trim()) return;
 
     mutation.mutate({
-      title: "Post",
+       title: title.trim() || "Post",
       content: text,
     });
 
     setText("");
+    setTitle("");
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -51,6 +56,19 @@ export default function CreatePost() {
             : user?.name?.slice(0, 2).toUpperCase() || "??"}
         </div>
 
+
+       {/* TEXTAREA COLUMN */}
+     <div className="flex flex-col gap-2 flex-1">
+
+        {/* TITLE INPUT */}
+        <input
+          type="text"
+          placeholder="Title (optional)"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full bg-white rounded-2xl px-5 py-3 text-sm font-semibold outline-none border border-gray-200 focus:border-[#4C4FC1] focus:ring-1 focus:ring-[#4C4FC1]/20 transition placeholder-gray-400"
+        />
+
         {/* TEXTAREA */}
         <textarea
           ref={textareaRef}
@@ -68,9 +86,10 @@ export default function CreatePost() {
               handleSend();
             }
           }}
-        className="flex-1 bg-white rounded-2xl px-5 py-4 text-sm outline-none border  border-gray-200 focus:border-[#4C4FC1] focus:ring-1 focus:ring-[#4C4FC1]/20 transition placeholder-gray-400 overflow-hidden"
+        className=" bg-white rounded-2xl px-5 py-4 text-sm outline-none border  border-gray-200 focus:border-[#4C4FC1] focus:ring-1 focus:ring-[#4C4FC1]/20 transition placeholder-gray-400 overflow-hidden"
           rows={1}
         />
+      </div>
       </div>
 
       <div className="flex justify-end">
