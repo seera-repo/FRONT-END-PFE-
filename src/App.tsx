@@ -6,13 +6,14 @@ import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 import Course from './pages/Course';
 import CommunityBlog from './pages/ComunityBlog';
-import ChooseComunity from './pages/ChooseComunity';
+import ChooseComunity from './pages/ChooseCommunity';
 import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
-import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
-
+import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent'
+import  HomePageTeacher from './pages/HomePageTeacher'
+import AddCourse from './pages/AddCourse';
 
 function App() {
   return (
@@ -39,10 +40,12 @@ function App() {
         <Route path="/ChooseComunity" element={<ChooseComunity />} />
 
         <Route path="/NormalORTrisomyStudent" element={<NormalORTrisomyStudent />} />
-
+       <Route path="/HomePageTeacher" element={<HomePageTeacher />} />
         <Route path="/BrowseCourse" element={<BrowseCourse />} />
+         
 
         <Route path="/Profile" element={<Profile />} />
+          <Route path="/AddCoures" element={<AddCourse />} />
       </Routes>
     </BrowserRouter>
   );

@@ -14,8 +14,8 @@ type NavItem = {
 };
 
 const OVERVIEW_ITEMS: NavItem[] = [
-  { label: "Dashboard", icon: home,   path: "/HomePage"              },
-  { label: "Courses",   icon: folder, path: "/BrowseCourses" },
+  { label: "Dashboard", icon: home,   path: "/HomePageTeacher"              },
+  
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
@@ -23,8 +23,8 @@ const COMMUNITY_ITEMS: NavItem[] = [
 ];
 
 const USER = {
-  name: "Ahmed Khalil",
-  role: "Student",
+  name: "Dr.Khalil",
+  role: "Teacher",
 };
 
 function getInitials(name: string): string {
@@ -36,7 +36,7 @@ function getInitials(name: string): string {
     .join("");
 }
 
-const Sidebar = () => {
+const Sidebateacher = () => {
   const navigate  = useNavigate();
   const location  = useLocation();
   const [hovered, setHovered] = useState<string | null>(null);
@@ -83,7 +83,7 @@ const Sidebar = () => {
           </a>
 
       {/* Overview */}
-      <div className="mb-10">
+      <div className="mb-6">
         <p className="text-gray-400 text-[11px] font-bold tracking-widest mb-2 px-1">
           OVERVIEW
         </p>
@@ -107,7 +107,7 @@ const Sidebar = () => {
 
           {/* Avatar → profile page */}
           <button
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/FormTeacher")}
             title="Go to profile"
             className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center shrink-0 hover:bg-purple-200 transition-colors duration-150"
           >
@@ -142,4 +142,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebateacher;

@@ -9,7 +9,7 @@ import { useNavigate, Outlet} from 'react-router-dom';
 
 function Header() {
   const navLinks = [
-    { label: "Dashboard", href: "/dashboard", icon: DashboardIcon },
+    { label: "Dashboard", href: "/HomePage", icon: DashboardIcon },
 
     { label: "Courses", href: "/BrowseCourse", icon: CoursesIcon },
 
