@@ -28,24 +28,23 @@ function App() {
 
         <Route path="/Login" element={<Login />} />
 
-        <Route path="/HomePage" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/HomePage" element={<HomePage />} />
 
-        <Route path="/BrowseCourse" element={<ProtectedRoute><BrowseCourse /></ProtectedRoute>} />
+        <Route path="/BrowseCourse" element={<BrowseCourse />} />
 
-        <Route path="/course/:id" element={<ProtectedRoute><Course /></ProtectedRoute>} />
+        <Route path="/course/:id" element={<Course />} />
 
-        <Route path="/courses/:id/lessons/:lessonId" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
+        <Route path="/courses/:id/lessons/:lessonId" element={<LessonPage />} />
 
-        <Route path="/CommunityBlog" element={<ProtectedRoute><CommunityBlog /></ProtectedRoute>} />
+        <Route path="/CommunityBlog" element={<CommunityBlog />} />
 
-        <Route path="/ChooseRole" element={<ProtectedRoute><ChooseRole /></ProtectedRoute>} />
+        <Route path="/ChooseRole" element={<ChooseRole />} />
 
-        <Route path="/ChooseComunity" element={<ProtectedRoute><ChooseComunity /></ProtectedRoute>} />
+        <Route path="/ChooseComunity" element={<ChooseComunity />} />
 
         <Route path="/NormalORTrisomyStudent" element={<NormalORTrisomyStudent />} />
        <Route path="/HomePageTeacher" element={<HomePageTeacher />} />
         <Route path="/BrowseCourse" element={<BrowseCourse />} />
-         
 
         <Route path="/Profile" element={<Profile />} />
 
