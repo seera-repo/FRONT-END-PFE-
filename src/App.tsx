@@ -15,6 +15,7 @@ import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent'
 import  HomePageTeacher from './pages/HomePageTeacher'
 import AddCourse from './pages/AddCourse';
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -45,7 +46,8 @@ function App() {
          
 
         <Route path="/Profile" element={<Profile />} />
-          <Route path="/AddCoures" element={<AddCourse />} />
+          <Route path="/AddCourse" element={<AddCourse />} />
+          
       </Routes>
     </BrowserRouter>
   );
