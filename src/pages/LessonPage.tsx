@@ -23,7 +23,6 @@ function LessonPage() {
 
 
   if (!lesson) return <div>Lesson not found</div>;
-  console.log('Video URL:', lesson.vedio_url);
   // order_index starts at 1, array starts at 0
   const prevLesson = lesson.order_index > 1
     ? lessons[lesson.order_index - 2]

@@ -1,5 +1,6 @@
-import { apiFetch } from './apiClient';
-interface User {
+import { apiFetch } from './apiClient'
+
+export type User = {
   id: string
   name: string
   email: string
@@ -9,14 +10,17 @@ interface User {
   updatedAt: string
 }
 
-interface UserResponse {
+type UserResponse = {
   user: User
   success: boolean
 }
+
 export async function fetchProfileStudent(): Promise<User> {
-  const res = await apiFetch<UserResponse>("api/users/me");
+  const res = await apiFetch<UserResponse>('api/users/me')
+  
   if (!res.success) {
-    throw new Error("Failed to fetch user");
+    throw new Error("Failed to fetch user")
   }
-  return res.user;
+
+  return res.user
 }

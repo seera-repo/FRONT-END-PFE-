@@ -12,6 +12,7 @@ const signup = () => {
   const handleLogin = async () => {
     setError("");
     try {
+      
       const res = await fetch("http://localhost:3000/api/users/register", {
         method: "POST",
         headers: {

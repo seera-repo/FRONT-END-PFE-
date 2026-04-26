@@ -1,32 +1,8 @@
 import { useNavigate } from "react-router-dom";
 const myPic3 = new URL("../assets/images/community-general.jpg", import.meta.url).href;
 const myPic6 = new URL("../assets/images/community-special.jpg", import.meta.url).href;
+function ChooseCommunityMain() {
 
-const styles = `
-  .choosePartCommunity.clicked {
-    filter: blur(2px);
-    opacity: 0.1;
-    border: 4px solid rgba(167, 170, 233, 0.39);
-    transform: translateY(-3px) scale(1.05);
-  }
-  .choosePartCommunity:active::before {
-    content: "";
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px; height: 40px;
-    border: 4px solid #702DFF;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    z-index: 10;
-  }
-  @keyframes spin {
-    to { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-`;
-
-function ChooseComunityMain() {
     const navigate = useNavigate();
     const sendData3 = () => {
         fetch("http://localhost:3000/api/your-route", {
@@ -56,7 +32,7 @@ function ChooseComunityMain() {
     };
     return (
         <>
-            <style>{styles}</style>
+            
             <div id="chooseCommunity" className="h-[1000px] bg-white pt-[150px] w-full flex flex-col items-center">
                 <h1 id="chooseTitleCommunity" className="cursor-default font-['Geist',sans-serif] text-[60px] font-[550] mt-0 ml-[10px] text-[#202020]">Choose Your Community </h1>
                 <p id="chooseTextCommunity" className="cursor-default font-['Geist',sans-serif] text-[23px] font-normal mt-0 ml-0 text-[#202020]">
@@ -96,4 +72,4 @@ function ChooseComunityMain() {
         </>
     )
 }
-export default ChooseComunityMain;
+export default ChooseCommunityMain;
