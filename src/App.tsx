@@ -13,7 +13,6 @@ import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
 import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
 import ProtectedRoute from './components/ProtectedRoute';
-import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent'
 import  HomePageTeacher from './pages/HomePageTeacher'
 import AddCourse from './pages/AddCourse';
 
