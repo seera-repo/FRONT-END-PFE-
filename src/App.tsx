@@ -6,13 +6,16 @@ import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 import Course from './pages/Course';
 import CommunityBlog from './pages/ComunityBlog';
-import ChooseComunity from './pages/ChooseComunity';
+import ChooseComunity from './pages/ChooseCommunity';
 import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
 import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
 import ProtectedRoute from './components/ProtectedRoute';
+import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent'
+import  HomePageTeacher from './pages/HomePageTeacher'
+import AddCourse from './pages/AddCourse';
 
 
 function App() {
@@ -39,11 +42,14 @@ function App() {
 
         <Route path="/ChooseComunity" element={<ProtectedRoute><ChooseComunity /></ProtectedRoute>} />
 
-        <Route path="/NormalORTrisomyStudent" element={<ProtectedRoute><NormalORTrisomyStudent /></ProtectedRoute>} />
+        <Route path="/NormalORTrisomyStudent" element={<NormalORTrisomyStudent />} />
+       <Route path="/HomePageTeacher" element={<HomePageTeacher />} />
+        <Route path="/BrowseCourse" element={<BrowseCourse />} />
+         
 
-        <Route path="/BrowseCourse" element={<ProtectedRoute><BrowseCourse /></ProtectedRoute>} />
-
-        <Route path="/Profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/Profile" element={<Profile />} />
+          <Route path="/AddCourse" element={<AddCourse />} />
+          
       </Routes>
     </BrowserRouter>
   );

@@ -1,28 +1,54 @@
 type Props = {
-    color: string,
-    title: string,
-    text: string,
-    onClick?: () => void
-}
+  color: string;
+  title: string;
+  text: string;
+  onClick?: () => void;
+  icon?: string;
+};
 
 import { useNavigate } from "react-router-dom";
 
-function CommunityGetStartedPart({ color, title, text, onClick }: Props) {
-    const navigate = useNavigate();
+function CommunityGetStartedPart({ color, title, text, onClick, icon }: Props) {
+  const navigate = useNavigate();
 
-    const handleClick = () => {
-        if (onClick) {
-            onClick();
-        }
-        navigate('/Signup');
-    };
+  const handleClick = () => {
+    if (onClick) onClick();
+    navigate('/Signup');
+  };
 
-    return (
-        <div id="communityGetStartedPart" className="w-[500px] h-[250px] text-[rgb(155,155,155)] rounded-[20px] bg-[rgba(239,241,255,0.8)] border border-[rgb(189,189,189)] hover:shadow-[3px_3px_6px_rgba(0,0,0,0.3)] hover:cursor-pointer" onClick={handleClick}>
-            <div id="forCommunity" className="w-[120px] h-[35px] rounded-[40px] text-[#202020] text-[15px] font-[500] text-center whitespace-nowrap pt-[5px] mt-[40px] ml-[30px]" style={{ backgroundColor: color }}>{title}</div>
-            <p id="communityTextGetStarted" className="text-[rgb(90,90,90)] font-[350] text-[17px] mt-[15px] ml-[30px] text-left w-[450px] h-[70px] mb-[35px]">{text}</p>
-            <a id="communitylinkGetStarted" className="text-[#702DFF] text-[15px] font-[450] ml-[30px] mt-[100px]">Get started  -&gt;</a>
-        </div>
-    );
+  return (
+    <div
+      onClick={handleClick}
+      className="group relative flex flex-col justify-between w-full max-w-[480px] min-h-[220px] p-8 rounded-2xl bg-white border border-gray-200 hover:border-[#3548A7]/40 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
+    >
+      {/* Subtle background accent */}
+      <div
+        className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 -translate-y-1/2 translate-x-1/2"
+        style={{ backgroundColor: color }}
+      />
+
+      <div>
+        {/* Badge */}
+        <span
+          className="inline-block px-3 py-1 rounded-full text-sm font-semibold mb-4"
+          style={{ backgroundColor: '#EEEDFE', color: '#534AB7' }}
+        >
+          {title}
+        </span>
+
+        {/* Text */}
+        <p className="text-gray-600 text-[15px] leading-relaxed font-normal">
+          {text}
+        </p>
+      </div>
+
+      {/* Footer link */}
+      <div className="flex items-center gap-1 mt-6 text-[#534AB7] text-sm font-semibold group-hover:gap-2 transition-all duration-200">
+        Get started
+        <span className="text-base">→</span>
+      </div>
+    </div>
+  );
 }
+
 export default CommunityGetStartedPart;
