@@ -142,3 +142,14 @@ export type enrollmentResponse = {
   success: boolean;
   data: enrollment
 };
+
+export interface Quize {
+  id: string;
+  question: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  correct_answer: "a" | "b" | "c" | "d";
+  course_id: string;
+}

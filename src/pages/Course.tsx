@@ -1,6 +1,6 @@
 import Header from "../components/Header"
 import thumbnail from '../assets/images/thumbnail.png';
-import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send } from "lucide-react";
+import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send, Sparkles } from "lucide-react";
 import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState, type FormEvent, } from "react";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import Comment from '../components/Comment';
 import { useQuery } from '@tanstack/react-query'
 import { fetchCourseById } from "../api/courses";
 import { fetchLessons } from "../api/lessons";
+import { fetchQuizByCourse } from "../api/quize";
 import { fetchCommentsByCourse } from "../api/course_commnts";
 import { enrole, removeEnrollment } from "../api/enrollment";
 import { removeSavedCourse, saveCourse } from "../api/savedCourses";
@@ -23,7 +24,22 @@ const Course = () => {
   const [enrolled, setEnrolled] = useState(false);
   const [newComment, setNewComment] = useState("")
   const [Error, setError] = useState("");
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>(
+    {}
+  )
 
+  const { data: quizData, isLoading: quizLoading } = useQuery({
+    queryKey: ['quiz', id],
+    queryFn: () => fetchQuizByCourse(id!),
+    enabled: enrolled, // only fetch if enrolled
+  });
+
+
+  const quizQuestions = (quizData ?? []).map((q) => ({
+    question: q.question,
+    options: [q.option_a, q.option_b, q.option_c, q.option_d],
+    answer: ["a", "b", "c", "d"].indexOf(q.correct_answer), // converts "a" → 0, "b" → 1 etc
+  }));
   //FECH LESONS
   const { data: lessons, isLoading: lessonsLoading } = useQuery({
     queryKey: ['lessons', id],
@@ -43,14 +59,14 @@ const Course = () => {
   });
   const [comments, setComments] = useState(commentsData?.data || []);
 
-// Set initial enrollment status based on fetched course data
+  // Set initial enrollment status based on fetched course data
   useEffect(() => {
     if (data?.isEnrolled !== undefined) {
       setEnrolled(data.isEnrolled);
     }
   }, [data?.isEnrolled]);
 
-// Set initial saved status based on fetched course data
+  // Set initial saved status based on fetched course data
   useEffect(() => {
     if (data?.isSaved !== undefined) {
       setSaved(data.isSaved);
@@ -69,7 +85,7 @@ const Course = () => {
     }
   });
 
-//REMOVE ENROLLMENT
+  //REMOVE ENROLLMENT
   const unenrollMutation = useMutation({
     mutationFn: () => removeEnrollment(id!),
     onSuccess: () => {
@@ -93,7 +109,7 @@ const Course = () => {
   });
 
   //remove from saved courses
-    const removeSavedMutation = useMutation({
+  const removeSavedMutation = useMutation({
     mutationFn: () => removeSavedCourse(id!),
     onSuccess: () => {
       setSaved(false);
@@ -180,14 +196,14 @@ const Course = () => {
                     {course.Categorie.name}
                   </div>
 
-                  <span className="flex items-center gap-1 text-sm font-semibold text-foreground">
+                  <span className="flex items-center gap-1 text-sm font-semibold text-[#19232a]">
                     <Heart className={`h-4 w-4 text-red-400 fill-current`} />
                     {course.likes}
                   </span>
 
                 </div>
 
-                <h1 className="mt-4 text-balance text-3xl font-extrabold text-foreground md:text-4xl">
+                <h1 className="mt-4 text-balance text-3xl font-extrabold text-[#19232a] md:text-4xl">
                   {course.title}
                 </h1>
 
@@ -198,7 +214,7 @@ const Course = () => {
                   </span>
                 </p>
 
-                <div className="mt-5 flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
+                <div className="mt-5 flex flex-wrap items-center gap-5 text-sm text-[#59656e]">
                   <span className="flex items-center gap-1.5">
                     <Users className="h-4 w-4" /> {enrollmentCount} students
                   </span>
@@ -270,6 +286,113 @@ const Course = () => {
                     </div>
                   </div>
 
+                  <div className="w-full h-px bg-gray-300 my-6"></div>
+
+                  {/* AI Quiz */}
+                  {
+                    <div>
+                      <h2 className="flex items-center gap-2 text-xl font-bold text-[#19232a]">
+                        <Sparkles className="h-5 w-5 text-[#008cba]" />
+                        AI-Generated Quiz
+                      </h2>
+                      <p className="mt-1 text-sm text-[#59656e]">
+                        Test your understanding with these auto-generated questions.
+                      </p>
+                      <div className="mt-6 flex flex-col gap-5">
+                        {quizQuestions.map((q, qIdx) => (
+                          <div
+                            key={qIdx}
+                            className="rounded-2xl border-[#d4e5ea] bg-white text-[#19232a] flex flex-col gap-6 border shadow-sm"
+                          >
+                            <div className="p-6">
+                              <p className="text-base font-semibold text-[#19232a]">
+                                {qIdx + 1}. {q.question}
+                              </p>
+                              <div className="mt-4 flex flex-col gap-2">
+                                {q.options.map((opt, oIdx) => {
+                                  const isSelected =
+                                    selectedAnswers[qIdx] === oIdx
+                                  const isCorrect = oIdx === q.answer
+                                  let style =
+                                    "border-[#d4e5ea] text-[#59656e] hover:bg-[#e8f0f3]"
+                                  if (isSelected) {
+                                    style = isCorrect
+                                      ? "border-[#78c192] bg-[#78c192]/15 text-[#19232a] font-medium"
+                                      : "border-[#e7000b] bg-[#e7000b]/10 text-[#e7000b] font-medium"
+                                  }
+                                  return (
+                                    <button
+                                      key={oIdx}
+                                      onClick={() => {
+                                        if (selectedAnswers[qIdx] !== undefined) return; // already answered, do nothing
+                                        setSelectedAnswers((prev) => ({
+                                          ...prev,
+                                          [qIdx]: oIdx,
+                                        }))
+                                      }}
+                                      disabled={selectedAnswers[qIdx] !== undefined} // disable all options after selection
+                                      className={`rounded-xl border px-4 py-3 text-left text-sm transition-colors ${style} disabled:cursor-not-allowed`}
+                                    >
+                                      {opt}
+                                      {isSelected && isCorrect && (
+                                        <CheckCircle2 className="ml-2 inline h-4 w-4 text-[#78c192]" />
+                                      )}
+                                    </button>
+
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {/* show only when all questions answered */}
+                      {Object.keys(selectedAnswers).length === quizQuestions.length && (
+                        <div className="mt-6 rounded-2xl border border-[#d4e5ea] bg-white p-6 shadow-sm">
+                          {(() => {
+                            const correct = quizQuestions.filter((q, i) => selectedAnswers[i] === q.answer).length;
+                            const total = quizQuestions.length;
+                            const percentage = Math.round((correct / total) * 100);
+
+                            return (
+                              <>
+                                <div className="flex items-center justify-between mb-2">
+                                  <p className="text-base font-bold text-[#19232a]">Your Score</p>
+                                  <p className="text-base font-bold text-[#2F35C2]">{correct}/{total} — {percentage}%</p>
+                                </div>
+
+                                {/* bar */}
+                                <div className="w-full h-3 rounded-full bg-[#e8f0f3]">
+                                  <div
+                                    className={`h-3 rounded-full transition-all duration-500 ${percentage >= 50 ? "bg-[#78c192]" : "bg-[#e7000b]"
+                                      }`}
+                                    style={{ width: `${percentage}%` }}
+                                  />
+                                </div>
+
+                                {/* recommendation */}
+                                <p className={`mt-4 text-sm font-medium ${percentage >= 50 ? "text-[#78c192]" : "text-[#e7000b]"}`}>
+                                  <p className={`mt-4 text-sm font-medium ${percentage >= 50 ? "text-[#78c192]" : "text-[#e7000b]"}`}>
+                                    {percentage >= 50
+                                      ? "🎉 Great job! You passed the quiz."
+                                      : <p className="mt-4 text-sm font-medium text-[#e7000b]">
+                                        📚 You should repeat the course.{" "}
+                                        <Link
+                                          to={`/courses/${id}/lessons/${lessons[0].id}`}
+                                          className="underline text-[#2F35C2] hover:opacity-80"
+                                        >
+                                          Start from the beginning
+                                        </Link>
+                                      </p>}
+                                  </p>
+                                </p>
+                              </>
+                            );
+                          })()}
+                        </div>
+                      )}
+                    </div>
+                  }
                   <div className="w-full h-px bg-gray-300 my-6"></div>
                 </>
 
