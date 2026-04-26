@@ -20,6 +20,7 @@ const signup = () => {
   const handleLogin = async () => {
     setError("");
     try {
+      
       const res = await fetch("http://localhost:3000/api/users/register", {
         method: "POST",
         headers: {
@@ -44,13 +45,8 @@ const signup = () => {
           role: payload.role
         }));
         navigate("/HomePage");
-        const token = localStorage.getItem("token");
-        console.log("Stored token:", token); // ✅ should log the token 
-        const user = JSON.parse(localStorage.getItem("user")!);
 
-        console.log(user.id);   // ✅ works
-        console.log(user.role); // ✅ works
-
+        navigate('/NormalOrTrisomyStudent')
         
       } else {
         setError("No token received from server");

@@ -43,12 +43,6 @@ const Login = () => {
           role: payload.role
         }));
 
-        // const token = localStorage.getItem("token");
-        // console.log("Stored token:", token); // ✅ should log the token 
-        // const user = JSON.parse(localStorage.getItem("user")!);
-
-        // console.log(user.id);   // ✅ works
-        // console.log(user.role); // ✅ works
 
         navigate("/HomePage");
       } else {

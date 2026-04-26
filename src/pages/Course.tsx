@@ -1,25 +1,45 @@
 import Header from "../components/Header"
 import thumbnail from '../assets/images/thumbnail.png';
-import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send } from "lucide-react";
+import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send, Sparkles } from "lucide-react";
 import { Link, useParams } from 'react-router-dom';
-import { useState, type FormEvent, } from "react";
+import { useEffect, useState, type FormEvent, } from "react";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import LessonCase from "../components/LessonCase";
 import Comment from '../components/Comment';
 import { useQuery } from '@tanstack/react-query'
 import { fetchCourseById } from "../api/courses";
-import {fetchLessons} from "../api/lessons";
+import { fetchLessons } from "../api/lessons";
+import { fetchQuizByCourse } from "../api/quize";
 import { fetchCommentsByCourse } from "../api/course_commnts";
+import { enrole, removeEnrollment } from "../api/enrollment";
+import { removeSavedCourse, saveCourse } from "../api/savedCourses";
 import type { CourseComment } from "../types/types"
 
 
 const Course = () => {
-
+  const queryClient = useQueryClient();
 
   const { id } = useParams();
   const [saved, setSaved] = useState(false);
   const [enrolled, setEnrolled] = useState(false);
   const [newComment, setNewComment] = useState("")
+  const [Error, setError] = useState("");
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>(
+    {}
+  )
 
+  const { data: quizData, isLoading: quizLoading } = useQuery({
+    queryKey: ['quiz', id],
+    queryFn: () => fetchQuizByCourse(id!),
+    enabled: enrolled, // only fetch if enrolled
+  });
+
+
+  const quizQuestions = (quizData ?? []).map((q) => ({
+    question: q.question,
+    options: [q.option_a, q.option_b, q.option_c, q.option_d],
+    answer: ["a", "b", "c", "d"].indexOf(q.correct_answer), // converts "a" → 0, "b" → 1 etc
+  }));
   //FECH LESONS
   const { data: lessons, isLoading: lessonsLoading } = useQuery({
     queryKey: ['lessons', id],
@@ -39,35 +59,96 @@ const Course = () => {
   });
   const [comments, setComments] = useState(commentsData?.data || []);
 
+  // Set initial enrollment status based on fetched course data
+  useEffect(() => {
+    if (data?.isEnrolled !== undefined) {
+      setEnrolled(data.isEnrolled);
+    }
+  }, [data?.isEnrolled]);
 
-  if (!data || !lessons) return <p>not found</p>
+  // Set initial saved status based on fetched course data
+  useEffect(() => {
+    if (data?.isSaved !== undefined) {
+      setSaved(data.isSaved);
+    }
+  }, [data?.isSaved]);
+
+  //add enrollment and unenrollment mutations
+  const enrollMutation = useMutation({
+    mutationFn: () => enrole(id!),
+    onSuccess: () => {
+      setEnrolled(true);
+      queryClient.invalidateQueries({ queryKey: ["Course", id] }); // refetch course data
+    },
+    onError: () => {
+      setError("Failed to enroll, please try again.");
+    }
+  });
+
+  //REMOVE ENROLLMENT
+  const unenrollMutation = useMutation({
+    mutationFn: () => removeEnrollment(id!),
+    onSuccess: () => {
+      setEnrolled(false);
+      queryClient.invalidateQueries({ queryKey: ["Course", id] });
+    },
+    onError: () => {
+      setError("Failed to unenroll, please try again.");
+    }
+  });
+
+  //save to a course
+  const saveMutation = useMutation({
+    mutationFn: () => saveCourse(id!),
+    onSuccess: () => {
+      setSaved(true);
+    },
+    onError: () => {
+      setError("Failed to save course, please try again.");
+    }
+  });
+
+  //remove from saved courses
+  const removeSavedMutation = useMutation({
+    mutationFn: () => removeSavedCourse(id!),
+    onSuccess: () => {
+      setSaved(false);
+      queryClient.invalidateQueries({ queryKey: ["Course", id] });
+    },
+    onError: () => {
+      setError("Failed to remove saved course, please try again.");
+    }
+  });
+
+
+  if (!data || !lessons) return <p>Loading...</p>;
   const course = data.courses;
 
-
   const enrollmentCount = data.enrollmentCount;
+
   if (courseLoading || lessonsLoading || commentsLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading courses</p>;
 
 
   // Handle new comment submission
-function handleComment(e: FormEvent) {
-  e.preventDefault();
-  if (!newComment.trim()) return;
+  function handleComment(e: FormEvent) {
+    e.preventDefault();
+    if (!newComment.trim()) return;
 
-  const fakeComment: CourseComment = {
-    id: Date.now().toString(),
-    comment: newComment,
-    user_id: 'me',
-    course_id: id!,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    User: { name: 'You' },
-    Course: { title: '' },
-  };
+    const fakeComment: CourseComment = {
+      id: Date.now().toString(),
+      comment: newComment,
+      user_id: 'me',
+      course_id: id!,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      User: { name: 'You' },
+      Course: { title: '' },
+    };
 
-  setComments((prev) => [fakeComment, ...prev]);
-  setNewComment('');
-}
+    setComments((prev) => [fakeComment, ...prev]);
+    setNewComment('');
+  }
 
 
   return (
@@ -97,7 +178,7 @@ function handleComment(e: FormEvent) {
           </div>
         </div>
       </div>
-      <main className="flex-1 flex justify-center items-center min-h-screen bg-[#f2f2f5]">
+      <main className="flex-1 flex justify-center items-start min-h-screen bg-[#f2f2f5] pt-8">
         {/* Hero Banner */}
 
 
@@ -115,14 +196,14 @@ function handleComment(e: FormEvent) {
                     {course.Categorie.name}
                   </div>
 
-                  <span className="flex items-center gap-1 text-sm font-semibold text-foreground">
+                  <span className="flex items-center gap-1 text-sm font-semibold text-[#19232a]">
                     <Heart className={`h-4 w-4 text-red-400 fill-current`} />
                     {course.likes}
                   </span>
 
                 </div>
 
-                <h1 className="mt-4 text-balance text-3xl font-extrabold text-foreground md:text-4xl">
+                <h1 className="mt-4 text-balance text-3xl font-extrabold text-[#19232a] md:text-4xl">
                   {course.title}
                 </h1>
 
@@ -133,7 +214,7 @@ function handleComment(e: FormEvent) {
                   </span>
                 </p>
 
-                <div className="mt-5 flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
+                <div className="mt-5 flex flex-wrap items-center gap-5 text-sm text-[#59656e]">
                   <span className="flex items-center gap-1.5">
                     <Users className="h-4 w-4" /> {enrollmentCount} students
                   </span>
@@ -150,23 +231,30 @@ function handleComment(e: FormEvent) {
                 {/* Action Buttons */}
                 <div className="mt-8 flex flex-wrap gap-3">
                   <button
-                    className={`px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex justify-center items-center  ${enrolled ? "bg-[#b6d6c1] text-black" : " bg-[#d2d4f5] text-[#2F35C2] "
-                      } `}
-                    onClick={() => setEnrolled(!enrolled)}
+                    className={`px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex justify-center items-center ${enrolled ? "bg-[#b6d6c1] text-black" : "bg-[#d2d4f5] text-[#2F35C2]"
+                      }`}
+                    disabled={enrollMutation.isPending || unenrollMutation.isPending}
+                    onClick={() => enrolled ? unenrollMutation.mutate() : enrollMutation.mutate()}
                   >
+                    {/* {enrollMutation.isPending || unenrollMutation.isPending ? (
+                      <span className="animate-spin mr-2">⏳</span>
+                    ) :  */}
                     {enrolled ? (
-                      <>
-                        <CheckCircle2 className="mr-2 h-5 w-5" /> Enrolled
-                      </>
+                      <><CheckCircle2 className="mr-2 h-5 w-5" /> Enrolled</>
                     ) : (
-                      <>
-                        <Play className="mr-2 h-5 w-5 " /> Enroll Now
-                      </>
+                      <><Play className="mr-2 h-5 w-5" /> Enroll Now</>
                     )}
                   </button>
+
+                  {(enrollMutation.isError || unenrollMutation.isError) && (
+                    <p className="text-red-500 text-sm mt-2">Something went wrong, please try again.</p>
+                  )}
+                  {/* The disabled during isPending prevents double clicks, and invalidateQueries makes sure the course data (enrollment count etc.) refetches automatically after the action. */}
+
+
                   <button
                     className="border-2 text-base px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex bg-[#259cca]/30 border-[#d4e5ea]"
-                    onClick={() => setSaved(!saved)}
+                    onClick={() => saved ? removeSavedMutation.mutate() : saveMutation.mutate()}
                   >
                     <Heart
                       className={`mr-2 h-5 w-5 ${saved
@@ -198,6 +286,113 @@ function handleComment(e: FormEvent) {
                     </div>
                   </div>
 
+                  <div className="w-full h-px bg-gray-300 my-6"></div>
+
+                  {/* AI Quiz */}
+                  {
+                    <div>
+                      <h2 className="flex items-center gap-2 text-xl font-bold text-[#19232a]">
+                        <Sparkles className="h-5 w-5 text-[#008cba]" />
+                        AI-Generated Quiz
+                      </h2>
+                      <p className="mt-1 text-sm text-[#59656e]">
+                        Test your understanding with these auto-generated questions.
+                      </p>
+                      <div className="mt-6 flex flex-col gap-5">
+                        {quizQuestions.map((q, qIdx) => (
+                          <div
+                            key={qIdx}
+                            className="rounded-2xl border-[#d4e5ea] bg-white text-[#19232a] flex flex-col gap-6 border shadow-sm"
+                          >
+                            <div className="p-6">
+                              <p className="text-base font-semibold text-[#19232a]">
+                                {qIdx + 1}. {q.question}
+                              </p>
+                              <div className="mt-4 flex flex-col gap-2">
+                                {q.options.map((opt, oIdx) => {
+                                  const isSelected =
+                                    selectedAnswers[qIdx] === oIdx
+                                  const isCorrect = oIdx === q.answer
+                                  let style =
+                                    "border-[#d4e5ea] text-[#59656e] hover:bg-[#e8f0f3]"
+                                  if (isSelected) {
+                                    style = isCorrect
+                                      ? "border-[#78c192] bg-[#78c192]/15 text-[#19232a] font-medium"
+                                      : "border-[#e7000b] bg-[#e7000b]/10 text-[#e7000b] font-medium"
+                                  }
+                                  return (
+                                    <button
+                                      key={oIdx}
+                                      onClick={() => {
+                                        if (selectedAnswers[qIdx] !== undefined) return; // already answered, do nothing
+                                        setSelectedAnswers((prev) => ({
+                                          ...prev,
+                                          [qIdx]: oIdx,
+                                        }))
+                                      }}
+                                      disabled={selectedAnswers[qIdx] !== undefined} // disable all options after selection
+                                      className={`rounded-xl border px-4 py-3 text-left text-sm transition-colors ${style} disabled:cursor-not-allowed`}
+                                    >
+                                      {opt}
+                                      {isSelected && isCorrect && (
+                                        <CheckCircle2 className="ml-2 inline h-4 w-4 text-[#78c192]" />
+                                      )}
+                                    </button>
+
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {/* show only when all questions answered */}
+                      {Object.keys(selectedAnswers).length === quizQuestions.length && (
+                        <div className="mt-6 rounded-2xl border border-[#d4e5ea] bg-white p-6 shadow-sm">
+                          {(() => {
+                            const correct = quizQuestions.filter((q, i) => selectedAnswers[i] === q.answer).length;
+                            const total = quizQuestions.length;
+                            const percentage = Math.round((correct / total) * 100);
+
+                            return (
+                              <>
+                                <div className="flex items-center justify-between mb-2">
+                                  <p className="text-base font-bold text-[#19232a]">Your Score</p>
+                                  <p className="text-base font-bold text-[#2F35C2]">{correct}/{total} — {percentage}%</p>
+                                </div>
+
+                                {/* bar */}
+                                <div className="w-full h-3 rounded-full bg-[#e8f0f3]">
+                                  <div
+                                    className={`h-3 rounded-full transition-all duration-500 ${percentage >= 50 ? "bg-[#78c192]" : "bg-[#e7000b]"
+                                      }`}
+                                    style={{ width: `${percentage}%` }}
+                                  />
+                                </div>
+
+                                {/* recommendation */}
+                                <p className={`mt-4 text-sm font-medium ${percentage >= 50 ? "text-[#78c192]" : "text-[#e7000b]"}`}>
+                                  <p className={`mt-4 text-sm font-medium ${percentage >= 50 ? "text-[#78c192]" : "text-[#e7000b]"}`}>
+                                    {percentage >= 50
+                                      ? "🎉 Great job! You passed the quiz."
+                                      : <p className="mt-4 text-sm font-medium text-[#e7000b]">
+                                        📚 You should repeat the course.{" "}
+                                        <Link
+                                          to={`/courses/${id}/lessons/${lessons[0].id}`}
+                                          className="underline text-[#2F35C2] hover:opacity-80"
+                                        >
+                                          Start from the beginning
+                                        </Link>
+                                      </p>}
+                                  </p>
+                                </p>
+                              </>
+                            );
+                          })()}
+                        </div>
+                      )}
+                    </div>
+                  }
                   <div className="w-full h-px bg-gray-300 my-6"></div>
                 </>
 
