@@ -6,6 +6,8 @@ import leftIcon  from "../assets/icons/leftswip.svg";
 import rightIcon from "../assets/icons/rightswip.svg";
 import starIcon  from "../assets/icons/star.svg";
 
+
+
 type Course = {
   id: number;
   title: string;
@@ -15,6 +17,8 @@ type Course = {
   image: string;
 };
 
+
+
 const YOUR_COURSES: Course[] = [
   { id: 1, title: "Introduction To Computer Science", teacher: "Mohand", role: "Software Developer", category: "CS BASICS",  image: "" },
   { id: 2, title: "Web Development Fundamentals",     teacher: "Manel",  role: "Software Developer", category: "WEB DEV",    image: "" },
@@ -23,15 +27,9 @@ const YOUR_COURSES: Course[] = [
   { id: 5, title: "Computer Networks 101",            teacher: "Manel",  role: "Software Developer", category: "NETWORKING", image: "" },
 ];
 
-const RECOMMENDED: Course[] = [
-  { id: 6,  title: "Python For Beginners",      teacher: "Mohand", role: "Software Developer", category: "PROGRAMMING", image: "" },
-  { id: 7,  title: "Database Design",           teacher: "Manel",  role: "Software Developer", category: "CS CORE",     image: "" },
-  { id: 8,  title: "UI/UX Design Basics",       teacher: "Manel",  role: "Software Developer", category: "DESIGN",      image: "" },
-  { id: 9,  title: "React Native Basics",       teacher: "Mohand", role: "Software Developer", category: "MOBILE",      image: "" },
-  { id: 10, title: "Intro to Machine Learning", teacher: "Manel",  role: "Software Developer", category: "AI",          image: "" },
-];
 
-const ALL_COURSES = [...YOUR_COURSES, ...RECOMMENDED];
+
+
 const GAP = 16;
 
 type CourseRowProps = {
@@ -91,6 +89,9 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
     if (delta < -40) goLeft();
   };
 
+
+
+  
   return (
     <section className="mb-7">
       <div className="flex items-center justify-between mb-3">

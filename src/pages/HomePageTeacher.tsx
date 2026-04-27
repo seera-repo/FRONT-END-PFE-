@@ -297,7 +297,7 @@ const activityIcon = (type: Activity["type"]) => {
   };
   const { bg, icon } = map[type];
   return <div className={`w-8 h-8 rounded-full ${bg} flex items-center justify-center shrink-0`}>{icon}</div>;
-};
+}; 
 
 const ApprovedDashboard = () => (
   <main className="flex-1 overflow-y-auto p-6" style={{ scrollbarWidth: "none" }}>
