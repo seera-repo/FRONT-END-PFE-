@@ -32,34 +32,6 @@ const styles = `
 `;
 
 function NormalOrTrisomyMain() {
-    const sendData5 = () => {
-        fetch("http://localhost:3000/api/your-route", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                studentType: "a normal student"
-            }),
-        })
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.error(err));
-    };
-    const sendData6 = () => {
-        fetch("http://localhost:3000/api/your-route", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                studentType: "student with trisomy 21"
-            }),
-        })
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.error(err));
-    };
     const navigate = useNavigate();
     return (
         <>
@@ -70,13 +42,13 @@ function NormalOrTrisomyMain() {
                     Choose the learning experience that works best for you
                 </p>
                 <div className="chooseFlex flex flex-row gap-[30px] mt-[40px]">
-                    <div className="choosePartNormalOrTrisomy relative w-[350px] h-[460px] flex flex-col items-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]" onClick={(e) => { const btn = e.currentTarget; btn.classList.add("clicked"); sendData5(); setTimeout(() => { navigate('/HomePage') }, 1000) }} >
+                    <div className="choosePartNormalOrTrisomy relative w-[350px] h-[460px] flex flex-col items-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]" >
                         <img className="cursor-pointer w-[150px] h-[150px] mt-[50px] rounded-[20px] object-contain" src={myPic7}></img>
                         <h2 id="choosePartTitleNormalOrTrisomy1" className="cursor-pointer font-['Geist',sans-serif] text-[25px] font-semibold text-[#202020] mt-[15px] whitespace-nowrap">Trisomy 21 Student</h2>
                         <p id="choosePartTextNormalOrTrisomy1" className="cursor-pointer text-[#202020] font-['Geist',sans-serif] text-[17px] font-normal w-[300px] mt-[10px] text-center">I want larger text, simplified navigation, and extra learning support</p>
                         <a className="choosePartLinkNormalOrTrisomy cursor-pointer font-['Geist',sans-serif] text-[17px] font-medium mt-[50px] text-[#702DFF]">Select This</a>
                     </div>
-                    <div className="choosePartNormalOrTrisomy relative w-[350px] h-[460px] flex flex-col items-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]" onClick={(e) => { const btn = e.currentTarget; btn.classList.add("clicked"); sendData6(); setTimeout(() => { navigate('/HomePage') }, 1000) }}>
+                    <div className="choosePartNormalOrTrisomy relative w-[350px] h-[460px] flex flex-col items-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]" >
                         <img className="cursor-pointer w-[150px] h-[150px] mt-[50px] rounded-[20px] object-contain" src={myPic4}></img>
                         <h2 id="choosePartTitleNormalOrTrisomy2" className="cursor-pointer font-['Geist',sans-serif] text-[25px] font-semibold text-[#202020] mt-[15px] whitespace-nowrap">I am a Normal Student</h2>
                         <p id="hoosePartTextNormalOrTrisomy2" className="cursor-pointer text-[#202020] font-['Geist',sans-serif] text-[17px] font-normal w-[300px] mt-[10px] text-center">I prefer the standard learning experience with regular content</p>

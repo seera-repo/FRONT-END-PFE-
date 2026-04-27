@@ -12,13 +12,15 @@ import BrowseCourse from './pages/BrowseCourse';
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
 import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
-
+import Page from './pages/page';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route index element={<LandingPage />} />
+
+        <Route path="/adminDashBoard" element={<Page />} />
 
         <Route path="/Signup" element={<Signup />} />
 
