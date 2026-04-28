@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import home      from "../assets/icons/home.svg";
-import folder    from "../assets/icons/folder.svg";
+import logo       from "../assets/icons/logo.png";
+import home       from "../assets/icons/home.svg";
+import folder     from "../assets/icons/folder.svg";
 import logoutIcon from "../assets/icons/logout.svg";
-import people    from "../assets/icons/people.svg";
+import people     from "../assets/icons/people.svg";
 
-const PURPLE_FILTER = "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
+const PURPLE_FILTER =
+  "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
 
 type NavItem = {
   label: string;
@@ -13,35 +15,36 @@ type NavItem = {
   path: string;
 };
 
+// Inline data-URI for an "add" icon since there's no add.svg in the project
+const addIconSrc =
+  "data:image/svg+xml,%3Csvg width='17' height='17' viewBox='0 0 17 17' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.5 3.5V13.5M3.5 8.5H13.5' stroke='%23202020' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E";
+
 const OVERVIEW_ITEMS: NavItem[] = [
-  { label: "Dashboard", icon: home,   path: "/HomePageTeacher"              },
-  
+  { label: "Dashboard",  icon: home,       path: "/HomePageTeacher" },
+  { label: "Add Course", icon: addIconSrc, path: "/AddCourse"       },
+  { label: "Browse Courses", icon: folder,     path: "/BrowseCourse" },
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
-  { label: "community", icon: people, path: "/communityBlog" },
+  { label: "Community", icon: people, path: "/CommunityBlog" },
 ];
-
-const USER = {
-  name: "Dr.Khalil",
-  role: "Teacher",
-};
 
 function getInitials(name: string): string {
   return name
     .split(" ")
     .filter(Boolean)
-    .slice(0, 3)
+    .slice(0, 2)
     .map((w) => w[0].toUpperCase())
     .join("");
 }
 
-const Sidebateacher = () => {
-  const navigate  = useNavigate();
-  const location  = useLocation();
+const USER = { name: "Dr. Khalil", role: "Teacher" };
+
+const SidebarTeacher = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [hovered, setHovered] = useState<string | null>(null);
 
-  // Active is driven by the current URL path, not local state
   const isActive = (path: string) => location.pathname === path;
 
   const NavButton = ({ label, icon, path }: NavItem) => {
@@ -54,10 +57,10 @@ const Sidebateacher = () => {
         onClick={() => navigate(path)}
         onMouseEnter={() => setHovered(label)}
         onMouseLeave={() => setHovered(null)}
-        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 w-full text-left
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 w-full text-left
           ${active
-            ? "bg-white text-purple-700 shadow-sm"
-            : "text-gray-600 hover:bg-white/60 hover:text-purple-700"
+            ? "bg-white text-[#2e2c74] shadow-sm"
+            : "text-[#4a4d6e] hover:bg-white/60 hover:text-[#2e2c74]"
           }`}
       >
         <img
@@ -71,75 +74,83 @@ const Sidebateacher = () => {
     );
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
   return (
-    <div className="w-56 h-screen bg-[#A7AAE9]/30 p-5 flex flex-col shrink-0 rounded-3xl overflow-hidden">
+    <div className="w-56 h-screen bg-[#A7AAE9]/30 p-4 flex flex-col shrink-0 rounded-3xl overflow-hidden">
 
       {/* Logo */}
-      <a href="/HomePage" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
-              <span className="text-white font-bold text-sm">D</span>
-            </div>
-            <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">diversity</span>
-          </a>
+      <a href="/HomePageTeacher" className="flex items-center px-1 mb-6 mt-1">
+        <img
+          src={logo}
+          alt="Diversity"
+          className="h-16 w-auto object-contain"
+        />
+      </a>
 
       {/* Overview */}
-      <div className="mb-6">
-        <p className="text-gray-400 text-[11px] font-bold tracking-widest mb-2 px-1">
-          OVERVIEW
+      <div className="mb-1">
+        <p className="text-[10px] font-bold tracking-widest text-[#a7aae9] uppercase px-2 mb-1.5">
+          Overview
         </p>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-0.5">
           {OVERVIEW_ITEMS.map((item) => (
             <NavButton key={item.label} {...item} />
           ))}
         </div>
-      
-
-      {/* Community */}
-        
-        {COMMUNITY_ITEMS.map((item) => (
-          <NavButton key={item.label} {...item} />
-        ))}
       </div>
 
-      {/* User card */}
-      <div className="mt-auto">
-        <div className="flex items-center gap-3 bg-white rounded-2xl px-3 py-3 shadow-sm">
+      {/* Divider */}
+      <div className="mx-2 h-px bg-[#c8cbef]/50 my-2" />
 
-          {/* Avatar → profile page */}
+      {/* Community */}
+      <div className="mb-1">
+        <p className="text-[10px] font-bold tracking-widest text-[#a7aae9] uppercase px-2 mb-1.5">
+          Community
+        </p>
+        <div className="flex flex-col gap-0.5">
+          {COMMUNITY_ITEMS.map((item) => (
+            <NavButton key={item.label} {...item} />
+          ))}
+        </div>
+      </div>
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* User card */}
+      <div className="bg-white rounded-2xl px-3 py-3 shadow-sm">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => navigate("/FormTeacher")}
             title="Go to profile"
-            className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center shrink-0 hover:bg-purple-200 transition-colors duration-150"
+            className="w-9 h-9 rounded-xl bg-[#d2d4f5] flex items-center justify-center shrink-0 hover:bg-[#b8bbf0] transition-colors duration-150"
           >
-            <span className="text-purple-700 text-[10px] font-bold tracking-wide">
+            <span className="text-[#2e2c74] text-[10px] font-extrabold tracking-wide">
               {getInitials(USER.name)}
             </span>
           </button>
 
-          {/* Name + role */}
           <div className="flex-1 min-w-0">
             <p className="text-[12px] font-semibold text-gray-800 truncate">{USER.name}</p>
             <p className="text-[11px] text-gray-400 truncate">{USER.role}</p>
           </div>
 
-          {/* Logout */}
           <button
             title="Logout"
-            className="shrink-0 text-gray-400 hover:text-red-500 transition-colors duration-150 p-1 rounded-lg hover:bg-red-50"
+            onClick={handleLogout}
+            className="shrink-0 hover:opacity-80 transition-opacity p-1 rounded-lg hover:bg-red-50"
           >
-            <img
-              src={logoutIcon}
-              alt="logout"
-              className="w-4 h-4"
-              style={{ filter: "invert(60%) sepia(0%) saturate(0%) brightness(80%)" }}
-            />
+            <img src={logoutIcon} alt="logout" className="w-4 h-4" />
           </button>
-
         </div>
       </div>
-
     </div>
   );
 };
 
-export default Sidebateacher;
+export default SidebarTeacher;

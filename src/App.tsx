@@ -16,6 +16,8 @@ import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
 import ProtectedRoute from './components/ProtectedRoute';
 import  HomePageTeacher from './pages/HomePageTeacher'
 import AddCourse from './pages/AddCourse';
+import Profileteacher from './pages/Profileteacher';
+import Header from './components/Header';
 
 
 function App() {
@@ -47,10 +49,10 @@ function App() {
         <Route path="/BrowseCourse" element={<BrowseCourse />} />
 
         <Route path="/Profile" element={<Profile />} />
-
         <Route path="/ProfileStudent" element={<ProfileStudent />} />
+        <Route path="/Profileteacher" element={<Profileteacher/>} />
           <Route path="/AddCourse" element={<AddCourse />} />
-          
+          <Route path="/Header" element={<Header/>} />
       </Routes>
     </BrowserRouter>
   );
