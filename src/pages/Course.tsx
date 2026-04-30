@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchCourseById } from "../api/courses";
 import { fetchLessons } from "../api/lessons";
 import { fetchQuizByCourse } from "../api/quize";
-import { fetchCommentsByCourse } from "../api/course_commnts";
+import { addComment, fetchCommentsByCourse } from "../api/course_commnts";
 import { enrole, removeEnrollment } from "../api/enrollment";
 import { removeSavedCourse, saveCourse } from "../api/savedCourses";
 import type { CourseComment } from "../types/types"
@@ -57,7 +57,13 @@ const Course = () => {
     queryKey: ['comments', id],
     queryFn: () => fetchCommentsByCourse(id!),
   });
-  const [comments, setComments] = useState(commentsData?.data || []);
+  const [comments, setComments] = useState<CourseComment[]>([]);
+
+  useEffect(() => {
+    if (commentsData?.data) {
+      setComments(commentsData.data);
+    }
+  }, [commentsData]);
 
   // Set initial enrollment status based on fetched course data
   useEffect(() => {
@@ -97,7 +103,7 @@ const Course = () => {
     }
   });
 
-  //save to a course
+  //add save to a course
   const saveMutation = useMutation({
     mutationFn: () => saveCourse(id!),
     onSuccess: () => {
@@ -120,35 +126,93 @@ const Course = () => {
     }
   });
 
+  const commentMutation = useMutation({
+    mutationFn: (comment: string) => addComment(id!, comment),
+    onSuccess: (newCmnt) => {
+      setComments((prev) => [newCmnt, ...prev]);
+      setNewComment('');
+    },
+    onError: () => {
+      setError("Failed to add comment, please try again.");
+    }
+  });
 
-  if (!data || !lessons) return <p>Loading...</p>;
+  function handleComment(e: FormEvent) {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    commentMutation.mutate(newComment);
+  }
+  //loading state
+  if (!data || !lessons) return <>
+
+    <div className="w-full gap-x-2 flex justify-center items-center">
+      <div
+        className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full"
+      ></div>
+      <div
+        className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"
+      ></div>
+      <div
+        className="w-5 h-5 animate-pulse bg-[#6756cc] rounded-full animate-bounce"
+      ></div>
+    </div>
+
+  </>;
   const course = data.courses;
 
   const enrollmentCount = data.enrollmentCount;
 
-  if (courseLoading || lessonsLoading || commentsLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading courses</p>;
+  //loading state for comments and quiz
+  if (courseLoading || lessonsLoading || commentsLoading) return <>
 
+    <div className="w-full gap-x-2 flex justify-center items-center">
+      <div
+        className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full"
+      ></div>
+      <div
+        className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"
+      ></div>
+      <div
+        className="w-5 h-5 animate-pulse bg-[#6756cc] rounded-full animate-bounce"
+      ></div>
+    </div>
 
-  // Handle new comment submission
-  function handleComment(e: FormEvent) {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-
-    const fakeComment: CourseComment = {
-      id: Date.now().toString(),
-      comment: newComment,
-      user_id: 'me',
-      course_id: id!,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      User: { name: 'You' },
-      Course: { title: '' },
-    };
-
-    setComments((prev) => [fakeComment, ...prev]);
-    setNewComment('');
-  }
+  </>;;
+  if (error){
+    return (
+      <div className='w-full h-screen flex justify-center items-center'>
+        <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50">
+          <div
+            className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]"
+          >
+            <div className="flex gap-2">
+              <div className="text-[#d65563] bg-white/5 backdrop-blur-xl p-1 rounded-lg">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                  ></path>
+                </svg>
+              </div>
+              <div>
+                <p className="text-white">Something went wrong</p>
+                <p className="text-gray-500">Please try again.</p>
+              </div>
+            </div>
+          
+          </div>
+        </div>
+      </div>
+    )
+  };
 
 
   return (
@@ -371,21 +435,17 @@ const Course = () => {
                                 </div>
 
                                 {/* recommendation */}
-                                <p className={`mt-4 text-sm font-medium ${percentage >= 50 ? "text-[#78c192]" : "text-[#e7000b]"}`}>
-                                  <p className={`mt-4 text-sm font-medium ${percentage >= 50 ? "text-[#78c192]" : "text-[#e7000b]"}`}>
-                                    {percentage >= 50
-                                      ? "🎉 Great job! You passed the quiz."
-                                      : <p className="mt-4 text-sm font-medium text-[#e7000b]">
-                                        📚 You should repeat the course.{" "}
-                                        <Link
-                                          to={`/courses/${id}/lessons/${lessons[0].id}`}
-                                          className="underline text-[#2F35C2] hover:opacity-80"
-                                        >
-                                          Start from the beginning
-                                        </Link>
-                                      </p>}
-                                  </p>
-                                </p>
+                                <div className={`mt-4 text-sm font-medium ${percentage >= 50 ? "text-[#78c192]" : "text-[#e7000b]"}`}>
+                                  {percentage >= 50
+                                    ? "🎉 Great job! You passed the quiz."
+                                    : <>
+                                      📚 You should repeat the course.{" "}
+                                      <Link to={`/courses/${id}/lessons/${lessons[0].id}`} className="underline text-[#2F35C2] hover:opacity-80">
+                                        Start from the beginning
+                                      </Link>
+                                    </>
+                                  }
+                                </div>
                               </>
                             );
                           })()}
@@ -420,6 +480,7 @@ const Course = () => {
                   type="submit"
                   className="h-13 w-13 rounded-xl bg-[#585bc0] flex justify-center items-center text-white transition-colors hover:bg-[#585bc0]/80 disabled:cursor-not-allowed "
                   aria-label="Send comment"
+
                 >
                   <Send className="h-5 w-5" />
                 </button>

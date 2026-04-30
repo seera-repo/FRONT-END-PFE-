@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import SidebarTeacher from "../components/Sidebarteacher";
 import { useNavigate } from "react-router-dom";
 import AddCourse from "./AddCourse";
+import Sidebar from "../components/Sidebar";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type ProfileStatus = "none" | "pending" | "approved" | "rejected";
@@ -38,7 +39,7 @@ type Activity = {
 // ─── Mock data ────────────────────────────────────────────────────────────────
 const MOCK_PROFILE: TeacherProfile = {
   id: "uuid-123", isPsychologist: false, cv_URL: null,
-  descreption: "My bio", status: "approved",
+  descreption: "My bio", status: "pending",
   user_id: "user-1", createdAt: "2024-01-15T10:00:00Z", updatedAt: "2024-01-20T14:30:00Z"
 };
 
@@ -345,13 +346,12 @@ const HomePageTeacher = () => {
 
   return (
     <div className="flex h-screen bg-[#f5f5fb] overflow-hidden">
-      <SidebarTeacher />
 
       {localStatus === "none"     && <FormScreen     onSubmit={handleFormSubmit} />}
-      {localStatus === "pending"  && <PendingScreen />}
-      {localStatus === "rejected" && <RejectedScreen onResubmit={handleResubmit} />}
+      {localStatus === "pending"  && <> <Sidebar/><PendingScreen /></>}
+      {localStatus === "rejected" && <> <Sidebar/><RejectedScreen onResubmit={handleResubmit} /></>}
       {/* ✅ Pass navigate as prop to ApprovedDashboard */}
-      {localStatus === "approved" && <ApprovedDashboard navigate={navigate} />}
+      {localStatus === "approved" && <><SidebarTeacher /> <ApprovedDashboard navigate={navigate} /></>}
     </div>
   );
 };

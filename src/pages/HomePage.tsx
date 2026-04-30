@@ -2,12 +2,16 @@ import { useRef, useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import CourseCardHomepage from "../components/CourseCardHomepage";
 import ProfileCard from "../components/ProfileCard";
-import leftIcon  from "../assets/icons/leftswip.svg";
+import leftIcon from "../assets/icons/leftswip.svg";
 import rightIcon from "../assets/icons/rightswip.svg";
-import starIcon  from "../assets/icons/star.svg";
+import starIcon from "../assets/icons/star.svg";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getMyEnrollment } from "../api/enrollment";
+import { getMySavedCourses, saveCourse, removeSavedCourse } from "../api/savedCourses";
+
 
 type Course = {
-  id: number;
+  id: string;
   title: string;
   teacher: string;
   role: string;
@@ -15,39 +19,32 @@ type Course = {
   image: string;
 };
 
-const YOUR_COURSES: Course[] = [
-  { id: 1, title: "Introduction To Computer Science", teacher: "Mohand", role: "Software Developer", category: "CS BASICS",  image: "" },
-  { id: 2, title: "Web Development Fundamentals",     teacher: "Manel",  role: "Software Developer", category: "WEB DEV",    image: "" },
-  { id: 3, title: "Data Structures & Algorithms",     teacher: "Manel",  role: "Software Developer", category: "CS CORE",    image: "" },
-  { id: 4, title: "SQL Mastery",                      teacher: "Mohand", role: "Software Developer", category: "DATABASES",  image: "" },
-  { id: 5, title: "Computer Networks 101",            teacher: "Manel",  role: "Software Developer", category: "NETWORKING", image: "" },
-];
-
 const RECOMMENDED: Course[] = [
-  { id: 6,  title: "Python For Beginners",      teacher: "Mohand", role: "Software Developer", category: "PROGRAMMING", image: "" },
-  { id: 7,  title: "Database Design",           teacher: "Manel",  role: "Software Developer", category: "CS CORE",     image: "" },
-  { id: 8,  title: "UI/UX Design Basics",       teacher: "Manel",  role: "Software Developer", category: "DESIGN",      image: "" },
-  { id: 9,  title: "React Native Basics",       teacher: "Mohand", role: "Software Developer", category: "MOBILE",      image: "" },
-  { id: 10, title: "Intro to Machine Learning", teacher: "Manel",  role: "Software Developer", category: "AI",          image: "" },
+  { id: '6', title: "Python For Beginners", teacher: "Mohand", role: "Software Developer", category: "PROGRAMMING", image: "" },
+  { id: '7', title: "Database Design", teacher: "Manel", role: "Software Developer", category: "CS CORE", image: "" },
+  { id: '8', title: "UI/UX Design Basics", teacher: "Manel", role: "Software Developer", category: "DESIGN", image: "" },
+  { id: '9', title: "React Native Basics", teacher: "Mohand", role: "Software Developer", category: "MOBILE", image: "" },
+  { id: '10', title: "Intro to Machine Learning", teacher: "Manel", role: "Software Developer", category: "AI", image: "" },
 ];
 
-const ALL_COURSES = [...YOUR_COURSES, ...RECOMMENDED];
+
 const GAP = 16;
 
 type CourseRowProps = {
   title: string;
   icon?: string;
   courses: Course[];
-  savedIds: Set<number>;
-  onToggleSave: (id: number) => void;
+  savedIds: Set<string>;
+  onToggleSave: (id: string) => void;
   emptyMessage?: string;
 };
 
 function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage }: CourseRowProps) {
-  const trackRef   = useRef<HTMLDivElement>(null);
+
+  const trackRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [index,     setIndex]     = useState(0);
-  const [perPage,   setPerPage]   = useState(3);
+  const [index, setIndex] = useState(0);
+  const [perPage, setPerPage] = useState(3);
   const [cardWidth, setCardWidth] = useState(240);
 
   useEffect(() => {
@@ -67,7 +64,7 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
   }, []);
 
   const maxIndex = Math.max(0, courses.length - perPage);
-  const canLeft  = index > 0;
+  const canLeft = index > 0;
   const canRight = index < maxIndex;
 
   useEffect(() => {
@@ -80,14 +77,14 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
     setIndex((i) => Math.min(i, Math.max(0, courses.length - perPage)));
   }, [courses.length, perPage]);
 
-  const goLeft  = () => setIndex((i) => Math.max(0, i - 1));
+  const goLeft = () => setIndex((i) => Math.max(0, i - 1));
   const goRight = () => setIndex((i) => Math.min(maxIndex, i + 1));
 
   const touchStart = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].pageX; };
-  const onTouchEnd   = (e: React.TouchEvent) => {
+  const onTouchEnd = (e: React.TouchEvent) => {
     const delta = touchStart.current - e.changedTouches[0].pageX;
-    if (delta >  40) goRight();
+    if (delta > 40) goRight();
     if (delta < -40) goLeft();
   };
 
@@ -108,13 +105,13 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
             <button onClick={goLeft} disabled={!canLeft}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
                 ${canLeft ? "border-gray-300 bg-white hover:bg-gray-100 shadow-sm cursor-pointer"
-                          : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
+                  : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
               <img src={leftIcon} alt="left" className="w-4 h-4" />
             </button>
             <button onClick={goRight} disabled={!canRight}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
                 ${canRight ? "border-gray-300 bg-white hover:bg-gray-100 shadow-sm cursor-pointer"
-                           : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
+                  : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
               <img src={rightIcon} alt="right" className="w-4 h-4" />
             </button>
           </div>
@@ -158,15 +155,15 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
 
 type SavedRowProps = {
   courses: Course[];
-  savedIds: Set<number>;
-  onToggleSave: (id: number) => void;
+  savedIds: Set<string>;
+  onToggleSave: (id: string) => void;
 };
 
 function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
-  const trackRef     = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [index,     setIndex]     = useState(0);
-  const [perPage,   setPerPage]   = useState(3);
+  const [index, setIndex] = useState(0);
+  const [perPage, setPerPage] = useState(3);
   const [cardWidth, setCardWidth] = useState(240);
 
   useEffect(() => {
@@ -187,7 +184,7 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
 
   const needsCarousel = courses.length > perPage;
   const maxIndex = Math.max(0, courses.length - perPage);
-  const canLeft  = index > 0;
+  const canLeft = index > 0;
   const canRight = index < maxIndex;
 
   useEffect(() => {
@@ -201,15 +198,15 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
     if (!needsCarousel) setIndex(0);
   }, [needsCarousel]);
 
-  const goLeft  = () => setIndex((i) => Math.max(0, i - 1));
+  const goLeft = () => setIndex((i) => Math.max(0, i - 1));
   const goRight = () => setIndex((i) => Math.min(maxIndex, i + 1));
 
   const touchStart = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].pageX; };
-  const onTouchEnd   = (e: React.TouchEvent) => {
+  const onTouchEnd = (e: React.TouchEvent) => {
     if (!needsCarousel) return;
     const delta = touchStart.current - e.changedTouches[0].pageX;
-    if (delta >  40) goRight();
+    if (delta > 40) goRight();
     if (delta < -40) goLeft();
   };
 
@@ -229,13 +226,13 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
             <button onClick={goLeft} disabled={!canLeft}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
                 ${canLeft ? "border-gray-300 bg-white hover:bg-gray-100 shadow-sm cursor-pointer"
-                          : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
+                  : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
               <img src={leftIcon} alt="left" className="w-4 h-4" />
             </button>
             <button onClick={goRight} disabled={!canRight}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
                 ${canRight ? "border-gray-300 bg-white hover:bg-gray-100 shadow-sm cursor-pointer"
-                           : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
+                  : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
               <img src={rightIcon} alt="right" className="w-4 h-4" />
             </button>
           </div>
@@ -245,7 +242,7 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
       <div ref={containerRef}>
         {courses.length === 0 ? (
           <div className="flex items-center gap-3 text-gray-400 text-sm py-4 px-2">
-             Save a course by clicking the heart button.
+            Save a course by clicking the heart button.
           </div>
         ) : needsCarousel ? (
           /* Carousel — same pb-4 -mb-4 shadow fix */
@@ -292,17 +289,59 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
 }
 
 const HomePage = () => {
-  const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
+  const queryClient = useQueryClient();
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
 
-  const toggleSave = (id: number) => {
-    setSavedIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
+  const { data: enrollmentData, isLoading: enrollmentLoading } = useQuery({
+    queryKey: ["my-enrollments"],
+    queryFn: getMyEnrollment,
+  });
+
+  const YOUR_COURSES: Course[] = (enrollmentData?.data ?? []).map((e) => ({
+    id: e.course_id,
+    title: e.Course.title,
+    teacher: e.Course.Teacher.User.name,
+    role: "Software Developer",    // static for now, or remove from Course type
+    category: e.Course.Categorie.name,
+    image: e.Course.image_url ?? "",
+  }));
+
+  const { data: savedData, isLoading: saveLoading } = useQuery({
+    queryKey: ["my-saved-courses"],
+    queryFn: getMySavedCourses,
+  });
+
+  const savedCourses: Course[] = (savedData?.data ?? []).map((e) => ({
+    id: e.course_id,
+    title: e.Course.title,
+    teacher: e.Course.Teacher.User.name,
+    role: "Software Developer",
+    category: e.Course.Categorie.name,
+    image: e.Course.image_url ?? "",
+  }));
+  console.log("Saved courses data:", savedCourses);
+
+  const saveMutation = useMutation({
+    mutationFn: (courseId: string) => saveCourse(courseId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-saved-courses"] }),
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: (courseId: string) => removeSavedCourse(courseId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-saved-courses"] }),
+  });
+
+
+  const savedCourseIds = new Set(savedCourses.map((course) => course.id));
+
+  const toggleSave = (courseId: string) => {
+    if (savedCourseIds.has(courseId)) {
+      removeMutation.mutate(courseId);
+    } else {
+      saveMutation.mutate(courseId);
+    }
   };
-
-  const savedCourses = ALL_COURSES.filter((c) => savedIds.has(c.id));
+  if (enrollmentLoading || saveLoading) return <div>Loading...</div>;
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
@@ -343,19 +382,19 @@ const HomePage = () => {
         <CourseRow
           title="Your Courses"
           courses={YOUR_COURSES}
-          savedIds={savedIds}
+          savedIds={savedCourseIds}   // ← driven by API now
           onToggleSave={toggleSave}
         />
         <CourseRow
           title="Recommended For You"
           icon={starIcon}
           courses={RECOMMENDED}
-          savedIds={savedIds}
+          savedIds={savedCourseIds}
           onToggleSave={toggleSave}
         />
         <SavedRow
           courses={savedCourses}
-          savedIds={savedIds}
+          savedIds={savedCourseIds}
           onToggleSave={toggleSave}
         />
       </div>

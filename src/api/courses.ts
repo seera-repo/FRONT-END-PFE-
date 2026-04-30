@@ -6,7 +6,6 @@ type CoursesResponse = {
   courses: Course[];
 };
 
-
 // Define the filter shape
 interface CourseFilters {
   categorie_id?: string;
