@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom"
 import { jwtDecode } from "jwt-decode";
-
+import logo from "../assets/icons/logo.png";
 
 interface TokenPayload {
   id: string;
@@ -58,8 +58,10 @@ const navigate = useNavigate();
   return (
     <div className="Login">
       <div className="items-center justify-center flex flex-col min-h-screen bg-[#E3E2EB]">
+        
         <div className="bg-white p-8 rounded-3xl shadow-lg w-[420px] flex flex-col items-center">
-          <h1 className="flex items-center justify-center text-sm text-black-600 ">welcome to learn..!</h1>
+           <img src={logo}alt=""className="h-16" />
+         
           <p className=" items-center justify-center text-[#7268C7] text-[27px]">Welcome back</p>
 
           <p className="text-[#5B5B5B] mt-2 mb-5 flex items-center justify-center text-sm "> Sign in to continue your learning journey</p>

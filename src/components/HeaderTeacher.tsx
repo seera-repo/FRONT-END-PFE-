@@ -10,10 +10,10 @@ import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 const PURPLE_FILTER = "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
 
 const navLinks = [
-  { label: "Dashboard", href: "/HomePage",      icon: homeIcon    },
-  { label: "Courses",   href: "/BrowseCourse",  icon: folderIcon  },
+  { label: "Dashboard", href: "/HomePageTeacher",      icon: homeIcon    },
+  { label: "Browse Courses",   href: "/BrowseCourse",  icon: folderIcon  },
   { label: "Community", href: "/CommunityBlog", icon: peopleIcon  },
-  { label: "Profile",   href: "/Profile",       icon: profileIcon },
+  { label: "Profile",   href: "/profileteacher",       icon: profileIcon },
 ];
 
 function Header() {

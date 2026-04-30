@@ -1,6 +1,7 @@
 import {useState} from "react";
 import { EyeOff } from 'lucide-react'
 import {useNavigate} from "react-router-dom";
+import logo from "../assets/icons/logo.png";
 
 const signup = () => {
   const [email, setEmail] = useState("");
@@ -37,9 +38,10 @@ const signup = () => {
     <div className="signup">
       <div className="items-center justify-center flex flex-col min-h-screen bg-[#E3E2EB]">
         <div className="bg-white p-8 rounded-3xl shadow-lg w-[420px] flex flex-col items-center">
-          <h1 className="items-center justify-center flex text-sm text-black-600 mb-3">welcome to learn..!</h1>
+          <img src={logo}alt=""className="h-16" />
+          
          
-           <p className=" items-center justify-center text-[#7268C7] text-[27px]" >Creat your account</p>
+           <p className=" items-center justify-center text-[#2e2c74] text-[27px]" >Creat your account</p>
           
          <p className="text-[#5B5B5B] mt-2 mb-5  text-[15px] flex items-center justify-center"> Join our inclusive learning community today </p>
          

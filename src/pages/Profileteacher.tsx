@@ -3,7 +3,7 @@ import {
   BookOpen, Users, Star, CheckCircle2,
   Award, Heart, ArrowLeft
 } from "lucide-react";
-import Header from "../components/Header";
+import HeaderTeacher from "../components/HeaderTeacher";
 
 // Replace with real API call using teacher_id from useParams()
 const MOCK_TEACHER = {
@@ -62,7 +62,7 @@ const ProfileTeacher = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f5f9fb]">
-      <Header />
+      <HeaderTeacher />
 
       <main className="flex-1 mt-16 px-4 py-10 max-w-5xl mx-auto w-full">
 

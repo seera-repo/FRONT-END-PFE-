@@ -26,7 +26,7 @@ const OVERVIEW_ITEMS: NavItem[] = [
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
-  { label: "Community", icon: people, path: "/CommunityBlog" },
+  { label: "Community", icon: people, path: "/CommunityBlogTeacher" },
 ];
 
 function getInitials(name: string): string {
@@ -126,7 +126,7 @@ const SidebarTeacher = () => {
       <div className="bg-white rounded-2xl px-3 py-3 shadow-sm">
         <div className="flex items-center gap-2.5">
           <button
-            onClick={() => navigate("/FormTeacher")}
+            onClick={() => navigate("/Profileteacher")}
             title="Go to profile"
             className="w-9 h-9 rounded-xl bg-[#d2d4f5] flex items-center justify-center shrink-0 hover:bg-[#b8bbf0] transition-colors duration-150"
           >
