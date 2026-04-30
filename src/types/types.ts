@@ -25,7 +25,7 @@ export interface Teacher {
     name: string;
   };
 }
-interface Course {
+export interface Course {
   id: string;
   title: string;
   description: string;
@@ -80,6 +80,8 @@ export interface CourseByIdResponse {
   courses: Course;
   enrollmentCount: number;
   lessonCount: number;
+  isEnrolled: boolean;
+  isSaved: boolean;
 }
 
 export type CourseCardProps = {
@@ -113,8 +115,7 @@ export interface CommentsResponse {
   success: boolean;
   count: number;
   data: CourseComment[];
-} 
-
+}
 export interface User {
   id: string;
   name: string;
@@ -163,4 +164,69 @@ export interface PostComment {
 
   createdAt: string;
   updatedAt: string;
+}
+
+export type Category = {
+  id: string;
+  name: string;
+  createdAt: string; // or Date if you parse it
+  updatedAt: string; // or Date if you parse it
+};
+
+export type categoryResponse = {
+  success: boolean;
+  data: Category[];
+};
+
+export type enrollment = {
+    id: string;
+    user_id: string;
+    course_id: string;
+    updatedAt: string;
+    createdAt: string;
+}
+
+export type enrollmentResponse = {
+  message: string;
+  success: boolean;
+  data: enrollment
+};
+
+export interface Quize {
+  id: string;
+  question: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  correct_answer: "a" | "b" | "c" | "d";
+  course_id: string;
+}
+
+
+
+
+// Shared recommendation course shape
+export interface RecommendedCourse {
+  id: string;
+  title: string;
+  categorie_id: string;
+  categorie_name: string;
+  teacher_id: string;
+  teacher_name: string;
+}
+
+// Hybrid mode (user has enrollments)
+export interface HybridRecommendedCourse extends RecommendedCourse {
+  score: number;
+}
+
+// Popular mode (new user, no enrollments)
+export interface PopularRecommendedCourse extends RecommendedCourse {
+  enrollment_count: number;
+}
+
+export interface RecommendationResponse {
+  user_id?: string; // present in hybrid, absent in popular
+  recommendations: HybridRecommendedCourse[] | PopularRecommendedCourse[];
 }

@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom"
 import { jwtDecode } from "jwt-decode";
+
 
 interface TokenPayload {
   id: string;
@@ -8,13 +9,13 @@ interface TokenPayload {
   iat: number;
   exp: number;
 }
-
 const Login = () => {
+const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
-
+  
   const handleLogin = async () => {
     setError("");
 
@@ -30,35 +31,30 @@ const Login = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message);
+        setError(data.message || "Login failed");
         return;
       }
 
       if (data.token) {
-        const payload = jwtDecode<TokenPayload>(data.token);
+        const payload = jwtDecode(data.token) as TokenPayload;
 
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify({
           id: payload.id,
           role: payload.role
-        }));
-
-        // const token = localStorage.getItem("token");
-        // console.log("Stored token:", token); // ✅ should log the token 
-        // const user = JSON.parse(localStorage.getItem("user")!);
-
-        // console.log(user.id);   // ✅ works
-        // console.log(user.role); // ✅ works
+        })
+       );
 
         navigate("/HomePage");
       } else {
         setError("No token received from server");
       }
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       setError("Something went wrong. Please try again.");
-      console.error("Error:", error);
+      
     }
-  }
+  };
   return (
     <div className="Login">
       <div className="items-center justify-center flex flex-col min-h-screen bg-[#E3E2EB]">
@@ -67,36 +63,37 @@ const Login = () => {
           <p className=" items-center justify-center text-[#7268C7] text-[27px]">Welcome back</p>
 
           <p className="text-[#5B5B5B] mt-2 mb-5 flex items-center justify-center text-sm "> Sign in to continue your learning journey</p>
-          <p className="mr-65 mb-2">Email</p>
+          <p className="mr-76 mb-2">Email</p>
           <input
             type="text"
             placeholder="Enter your email"
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-full border px-4 p-2 outline-none border border-[#4957BD] w-[350px] flex items-center justify-center mb-3 placeholder:text-[14px] text-[#989797]">
+            className="rounded-full border px-4 p-2 outline-none border-[#4957BD] w-[350px] flex items-center justify-center mb-3 placeholder:text-[14px] text-[#989797]">
           </ input>
 
-          <p className="mr-67 mb-2">password</p>
+          <p className="mr-68 mb-2">password</p>
           <div className="relative">
             <input
               type="password"
               placeholder="Enter your password"
               onChange={(e) => setPassword(e.target.value)}
-              className="rounded-full border px-4 p-2 outline-none border w-[350px] border-[#4957BD] flex items-center justify-center placeholder:text-[14px] text-[#989797]">
-            </ input>
+              className="rounded-full border px-4 p-2 outline-none border w-[350px] border-[#4957BD] flex items-center justify-center placeholder:text-[14px] text-[#989797]"
+            />
           </div>
 
           {error && (
-            <p className="text-red-500 text-sm mt-3 text-center">{error}</p>
-          )}
-          <button
-            onClick={handleLogin}
-            className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[180px] block mt-10 flex items-center justify-center hover:opacity-80 transition">Login</ button>
-
+           <p className="text-red-500 text-sm mt-3 text-center">{error}</p>
+            )}
+            <p onClick={() => navigate('/Signup')}
+             className="text-[14px] hover:underline mt-3 text-right w-full cursor-pointer pr-3 text-[#7268C7]">Creat account
+            </p>
+         <button 
+         onClick={handleLogin}
+         className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[180px] block mt-5 flex items-center justify-center hover:opacity-80 transition">Login</button>
         </div>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

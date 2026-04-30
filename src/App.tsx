@@ -11,9 +11,12 @@ import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
-import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent'
+import ProfileStudent from './pages/ProfileStudent';
+import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
+import ProtectedRoute from './components/ProtectedRoute';
 import  HomePageTeacher from './pages/HomePageTeacher'
 import AddCourse from './pages/AddCourse';
+
 
 function App() {
   return (
@@ -42,10 +45,12 @@ function App() {
         <Route path="/NormalORTrisomyStudent" element={<NormalORTrisomyStudent />} />
        <Route path="/HomePageTeacher" element={<HomePageTeacher />} />
         <Route path="/BrowseCourse" element={<BrowseCourse />} />
-         
 
         <Route path="/Profile" element={<Profile />} />
-          <Route path="/AddCoures" element={<AddCourse />} />
+
+        <Route path="/ProfileStudent" element={<ProfileStudent />} />
+          <Route path="/AddCourse" element={<AddCourse />} />
+          
       </Routes>
     </BrowserRouter>
   );

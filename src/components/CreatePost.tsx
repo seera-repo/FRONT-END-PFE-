@@ -3,6 +3,8 @@ import { Send } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { createPost, type CreatePostInput } from "../api/postsApi";
 import { fetchMe } from "../api/userAPI";
+import Avatar from "../components/avatar";
+
 
 
 
@@ -15,7 +17,7 @@ export default function CreatePost() {
   const queryClient = useQueryClient();
 
   //  GET CURRENT USER
-  const { data: user, isLoading: userLoading } = useQuery({
+  const { data: user } = useQuery({
     queryKey: ["me"],
     queryFn: fetchMe,
   });
@@ -50,11 +52,7 @@ export default function CreatePost() {
       <div className="flex items-start gap-4">
 
         {/*  AVATAR */}
-        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">
-          {userLoading
-            ? "..."
-            : user?.name?.slice(0, 2).toUpperCase() || "??"}
-        </div>
+       <Avatar user={user} currentUserId={user?.id} />
 
 
        {/* TEXTAREA COLUMN */}

@@ -1,15 +1,21 @@
+////////////////////////// HOME PAGE ///////////////////////////////
+
 import { useRef, useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Sidebar from "../components/Sidebar";
 import CourseCardHomepage from "../components/CourseCardHomepage";
 import ProfileCard from "../components/ProfileCard";
-import leftIcon  from "../assets/icons/leftswip.svg";
+import leftIcon from "../assets/icons/leftswip.svg";
 import rightIcon from "../assets/icons/rightswip.svg";
-import starIcon  from "../assets/icons/star.svg";
+import starIcon from "../assets/icons/star.svg";
+import { fetchRecommendations } from "../api/recommendationApi";
+import type { RecommendationMode } from "../api/recommendationApi";
 
 
+//========================================= TYPES ==========================================//
 
 type Course = {
-  id: number;
+  id: string;
   title: string;
   teacher: string;
   role: string;
@@ -17,37 +23,51 @@ type Course = {
   image: string;
 };
 
-
-
-const YOUR_COURSES: Course[] = [
-  { id: 1, title: "Introduction To Computer Science", teacher: "Mohand", role: "Software Developer", category: "CS BASICS",  image: "" },
-  { id: 2, title: "Web Development Fundamentals",     teacher: "Manel",  role: "Software Developer", category: "WEB DEV",    image: "" },
-  { id: 3, title: "Data Structures & Algorithms",     teacher: "Manel",  role: "Software Developer", category: "CS CORE",    image: "" },
-  { id: 4, title: "SQL Mastery",                      teacher: "Mohand", role: "Software Developer", category: "DATABASES",  image: "" },
-  { id: 5, title: "Computer Networks 101",            teacher: "Manel",  role: "Software Developer", category: "NETWORKING", image: "" },
-];
-
-
-
-
-const GAP = 16;
-
 type CourseRowProps = {
   title: string;
   icon?: string;
   courses: Course[];
-  savedIds: Set<number>;
-  onToggleSave: (id: number) => void;
+  savedIds: Set<string>;
+  onToggleSave: (id: string) => void;
   emptyMessage?: string;
 };
 
+type SavedRowProps = {
+  courses: Course[];
+  savedIds: Set<string>;
+  onToggleSave: (id: string) => void;
+};
+
+
+//========================================= CONSTANTS ==========================================//
+
+const GAP = 16;
+
+const YOUR_COURSES: Course[] = [
+  { id: "1", title: "Introduction To Computer Science", teacher: "Mohand", role: "Software Developer", category: "CS BASICS",  image: "" },
+  { id: "2", title: "Web Development Fundamentals",     teacher: "Manel",  role: "Software Developer", category: "WEB DEV",    image: "" },
+  { id: "3", title: "Data Structures & Algorithms",     teacher: "Manel",  role: "Software Developer", category: "CS CORE",    image: "" },
+  { id: "4", title: "SQL Mastery",                      teacher: "Mohand", role: "Software Developer", category: "DATABASES",  image: "" },
+  { id: "5", title: "Computer Networks 101",            teacher: "Manel",  role: "Software Developer", category: "NETWORKING", image: "" },
+];
+
+const ALL_COURSES = [...YOUR_COURSES];
+
+
+//========================================= COURSE ROW COMPONENT ==========================================//
+
 function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage }: CourseRowProps) {
+
+  //================= REFS =================//
   const trackRef   = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  //================= STATE =================//
   const [index,     setIndex]     = useState(0);
   const [perPage,   setPerPage]   = useState(3);
   const [cardWidth, setCardWidth] = useState(240);
 
+  //================= MEASURE ON RESIZE =================//
   useEffect(() => {
     const measure = () => {
       const w = wrapperRef.current?.clientWidth ?? 0;
@@ -64,23 +84,27 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
     return () => ro.disconnect();
   }, []);
 
-  const maxIndex = Math.max(0, courses.length - perPage);
-  const canLeft  = index > 0;
-  const canRight = index < maxIndex;
-
+  //================= SCROLL ON INDEX CHANGE =================//
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
     el.scrollTo({ left: index * (cardWidth + GAP), behavior: "smooth" });
   }, [index, cardWidth]);
 
+  //================= CLAMP INDEX WHEN COURSES CHANGE =================//
   useEffect(() => {
     setIndex((i) => Math.min(i, Math.max(0, courses.length - perPage)));
   }, [courses.length, perPage]);
 
+  //================= NAVIGATION =================//
+  const maxIndex = Math.max(0, courses.length - perPage);
+  const canLeft  = index > 0;
+  const canRight = index < maxIndex;
+
   const goLeft  = () => setIndex((i) => Math.max(0, i - 1));
   const goRight = () => setIndex((i) => Math.min(maxIndex, i + 1));
 
+  //================= TOUCH SWIPE =================//
   const touchStart = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].pageX; };
   const onTouchEnd   = (e: React.TouchEvent) => {
@@ -89,11 +113,11 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
     if (delta < -40) goLeft();
   };
 
-
-
-  
+  //================= RENDER =================//
   return (
     <section className="mb-7">
+
+      {/* HEADER */}
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-bold tracking-widest uppercase text-gray-800 flex items-center gap-2">
           {icon && <img src={icon} alt="" className="w-4 h-4 shrink-0" />}
@@ -104,6 +128,8 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
             </span>
           )}
         </h2>
+
+        {/* NAVIGATION BUTTONS */}
         {courses.length > perPage && (
           <div className="flex gap-2">
             <button onClick={goLeft} disabled={!canLeft}
@@ -122,16 +148,12 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
         )}
       </div>
 
+      {/* COURSE CARDS */}
       {courses.length === 0 ? (
         <div className="flex items-center gap-3 text-gray-400 text-sm py-4 px-2">
           {emptyMessage ?? "Nothing here yet."}
         </div>
       ) : (
-        /*
-          KEY FIX: instead of overflow-hidden (which clips shadows),
-          we use overflow-hidden only on x, and add pb-4 + -mb-4 trick
-          so the bottom shadow is visible while horizontal overflow is still clipped.
-        */
         <div ref={wrapperRef} className="overflow-hidden pb-4 -mb-4">
           <div
             ref={trackRef}
@@ -153,23 +175,26 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
           </div>
         </div>
       )}
+
     </section>
   );
 }
 
-type SavedRowProps = {
-  courses: Course[];
-  savedIds: Set<number>;
-  onToggleSave: (id: number) => void;
-};
+
+//========================================= SAVED ROW COMPONENT ==========================================//
 
 function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
+
+  //================= REFS =================//
   const trackRef     = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  //================= STATE =================//
   const [index,     setIndex]     = useState(0);
   const [perPage,   setPerPage]   = useState(3);
   const [cardWidth, setCardWidth] = useState(240);
 
+  //================= MEASURE ON RESIZE =================//
   useEffect(() => {
     const measure = () => {
       const w = containerRef.current?.clientWidth ?? 0;
@@ -186,11 +211,13 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
     return () => ro.disconnect();
   }, []);
 
+  //================= CAROUSEL LOGIC =================//
   const needsCarousel = courses.length > perPage;
   const maxIndex = Math.max(0, courses.length - perPage);
   const canLeft  = index > 0;
   const canRight = index < maxIndex;
 
+  //================= SCROLL ON INDEX CHANGE =================//
   useEffect(() => {
     if (!needsCarousel) return;
     const el = trackRef.current;
@@ -198,13 +225,16 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
     el.scrollTo({ left: index * (cardWidth + GAP), behavior: "smooth" });
   }, [index, cardWidth, needsCarousel]);
 
+  //================= RESET INDEX WHEN NOT CAROUSEL =================//
   useEffect(() => {
     if (!needsCarousel) setIndex(0);
   }, [needsCarousel]);
 
+  //================= NAVIGATION =================//
   const goLeft  = () => setIndex((i) => Math.max(0, i - 1));
   const goRight = () => setIndex((i) => Math.min(maxIndex, i + 1));
 
+  //================= TOUCH SWIPE =================//
   const touchStart = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].pageX; };
   const onTouchEnd   = (e: React.TouchEvent) => {
@@ -214,8 +244,11 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
     if (delta < -40) goLeft();
   };
 
+  //================= RENDER =================//
   return (
     <section className="mb-7">
+
+      {/* HEADER */}
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-bold tracking-widest uppercase text-gray-800 flex items-center gap-2">
           Saved Courses
@@ -225,6 +258,8 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
             </span>
           )}
         </h2>
+
+        {/* NAVIGATION BUTTONS */}
         {needsCarousel && (
           <div className="flex gap-2">
             <button onClick={goLeft} disabled={!canLeft}
@@ -243,13 +278,15 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
         )}
       </div>
 
+      {/* COURSE CARDS */}
       <div ref={containerRef}>
         {courses.length === 0 ? (
           <div className="flex items-center gap-3 text-gray-400 text-sm py-4 px-2">
-             Save a course by clicking the heart button.
+            Save a course by clicking the heart button.
           </div>
         ) : needsCarousel ? (
-          /* Carousel — same pb-4 -mb-4 shadow fix */
+
+          /* CAROUSEL */
           <div className="overflow-hidden pb-4 -mb-4">
             <div
               ref={trackRef}
@@ -270,8 +307,10 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
               ))}
             </div>
           </div>
+
         ) : (
-          /* Grid — pb-4 so bottom shadows show */
+
+          /* GRID */
           <div
             className="grid gap-4 pb-4 -mb-4"
             style={{ gridTemplateColumns: `repeat(${perPage}, 1fr)` }}
@@ -286,16 +325,41 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
               />
             ))}
           </div>
+
         )}
       </div>
+
     </section>
   );
 }
 
-const HomePage = () => {
-  const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
 
-  const toggleSave = (id: number) => {
+//========================================= HOME PAGE ==========================================//
+
+const HomePage = () => {
+
+  //================= STATE =================//
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+
+  //================= FETCH RECOMMENDATIONS =================//
+  const { data: recData, isLoading: recLoading, isError: recError } = useQuery({
+    queryKey: ["recommendations"],
+    queryFn: fetchRecommendations,
+  });
+
+  const recMode: RecommendationMode = recData?.mode ?? "popular";
+
+  const RECOMMENDED: Course[] = (recData?.courses ?? []).map((c) => ({
+    id: c.id,
+    title: c.title,
+    teacher: c.teacher_name,
+    role: "",
+    category: c.categorie_name,
+    image: "",
+  }));
+
+  //================= SAVE TOGGLE =================//
+  const toggleSave = (id: string) => {
     setSavedIds((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
@@ -305,13 +369,14 @@ const HomePage = () => {
 
   const savedCourses = ALL_COURSES.filter((c) => savedIds.has(c.id));
 
+  //================= RENDER =================//
   return (
     <div className="flex h-screen bg-white overflow-hidden">
       <Sidebar />
 
       <div className="flex-1 overflow-y-auto p-6" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
 
-        {/* Hero */}
+        {/* HERO */}
         <div className="relative overflow-hidden rounded-3xl mb-8 bg-[#2e2c74]">
           <div className="absolute -top-10 -right-10 w-52 h-52 bg-purple-500/30 rounded-full blur-3xl" />
           <div className="absolute -bottom-10 -left-6  w-40 h-40 bg-indigo-400/20 rounded-full blur-2xl" />
@@ -341,26 +406,42 @@ const HomePage = () => {
           </div>
         </div>
 
+        {/* YOUR COURSES */}
         <CourseRow
           title="Your Courses"
           courses={YOUR_COURSES}
           savedIds={savedIds}
           onToggleSave={toggleSave}
         />
-        <CourseRow
-          title="Recommended For You"
-          icon={starIcon}
-          courses={RECOMMENDED}
-          savedIds={savedIds}
-          onToggleSave={toggleSave}
-        />
+
+        {/* RECOMMENDED COURSES */}
+        {recLoading ? (
+          <div className="text-sm text-gray-400 py-4 px-2 animate-pulse">
+            Loading recommendations...
+          </div>
+        ) : recError ? (
+          <div className="text-sm text-red-400 py-4 px-2">
+            Could not load recommendations.
+          </div>
+        ) : (
+          <CourseRow
+            title={recMode === "hybrid" ? "Recommended For You" : "Popular Courses"}
+            icon={starIcon}
+            courses={RECOMMENDED}
+            savedIds={savedIds}
+            onToggleSave={toggleSave}
+            emptyMessage="No recommendations available."
+          />
+        )}
+
+        {/* SAVED COURSES */}
         <SavedRow
           courses={savedCourses}
           savedIds={savedIds}
           onToggleSave={toggleSave}
         />
-      </div>
 
+      </div>
     </div>
   );
 };

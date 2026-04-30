@@ -1,9 +1,13 @@
+
+
+
 ////////////////////////// POST COMMENT COMPONENT ///////////////////////////////
 import { useState, useRef, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { MoreHorizontal, Pencil, Trash2 ,Check, X} from "lucide-react";
 import { getUser } from "../api/auth"
 import type { PostComment } from "../types/types";
+import Avatar from "./avatar";
 
 
 
@@ -42,9 +46,25 @@ export default function PostComment({ comment, onDelete, onUpdate }: Props) {
     <div className="flex gap-3">
 
       {/* COMMENT AVATAR */}
-      <div className="w-10 h-10 shrink-0 rounded-full bg-gray-300 flex items-center justify-center text-xs font-semibold text-gray-600">
-        {(comment as PostComment & { User?: { name: string } }).User?.name?.slice(0, 2).toUpperCase() || "??"}
-      </div>
+   <Avatar 
+  user={
+    comment.user
+      ? comment.user
+      : "User" in comment && typeof (comment as Record<string, unknown>).User === "object"
+        ? (comment as { User?: { name: string }; user_id: string }).User
+          ? {
+              id: comment.user_id,
+              name: (comment as { User?: { name: string } }).User!.name,
+            }
+          : undefined
+        : undefined
+  }
+  currentUserId={currentUser?.id}
+  size="w-10 h-10" 
+/>
+
+
+
 
       {/* COMMENT BUBBLE */}
       <div className="relative bg-[#d2d4f5]/30 border border-[#d2d4f5]/40 rounded-2xl px-4 py-3 w-full min-w-0">
@@ -143,3 +163,7 @@ export default function PostComment({ comment, onDelete, onUpdate }: Props) {
     </div>
   );
 }
+
+
+
+

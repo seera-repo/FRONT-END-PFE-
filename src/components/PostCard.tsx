@@ -8,6 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Post, PostComment as PostCommentType } from "../types/types";
 import { fetchComments, addComment, likePost, deleteComment ,updateComment, deletePost,updatePost} from "../api/postsApi";
+import Avatar from "../components/avatar";
 
 
 //========================================= TYPES ==================================//
@@ -164,9 +165,7 @@ const updatePostMutation = useMutation({
         <div className="flex items-center gap-3">
 
           {/* AVATAR */}
-          <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">
-            {post.user?.name?.slice(0, 2).toUpperCase() || "UN"}
-          </div>
+          <Avatar user={post.user} currentUserId={currentUser?.id}  />
 
           {/* NAME + TIME */}
           <div>
