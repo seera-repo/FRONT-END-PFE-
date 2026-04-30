@@ -19,7 +19,6 @@ import  HomePageTeacher from './pages/HomePageTeacher'
 import AddCourse from './pages/AddCourse';
 import Profileteacher from './pages/Profileteacher';
 import Header from './components/Header';
-import Testb from './pages/testb';
 
 function App() {
   return (
