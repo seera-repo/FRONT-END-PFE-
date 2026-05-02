@@ -197,3 +197,19 @@ export interface homepageResponse {
   count: number;
   data: Enrollment[];
 }
+
+export type TeacherProfile = {
+  id: string;
+  user_id: string;
+  isPsychologist: boolean;
+  cv_URL: string | null;
+  descreption: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TeacherProfileResponse = {
+  success: boolean;
+  teacher: TeacherProfile | null;
+};

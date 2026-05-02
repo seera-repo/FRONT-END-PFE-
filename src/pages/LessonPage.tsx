@@ -28,7 +28,7 @@ function LessonPage() {
         ></div>
       </div>
     )
-  };;
+  };
 
   const lessons = lessonsData ?? [];
 

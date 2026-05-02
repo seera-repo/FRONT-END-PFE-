@@ -30,7 +30,6 @@ export async function removeSavedCourse(courseId: string) {
 
 export async function getMySavedCourses(): Promise<homepageResponse>{
   const res = await apiFetch<homepageResponse>(`api/saved-courses/me`);
-  console.log("save course response:", res); // Debug log
   if (!res.success) {
     throw new Error("Failed to fetch lessons");
   }

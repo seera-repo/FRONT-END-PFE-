@@ -290,7 +290,7 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
 
 const HomePage = () => {
   const queryClient = useQueryClient();
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  //const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
 
   const { data: enrollmentData, isLoading: enrollmentLoading } = useQuery({
     queryKey: ["my-enrollments"],
@@ -319,7 +319,6 @@ const HomePage = () => {
     category: e.Course.Categorie.name,
     image: e.Course.image_url ?? "",
   }));
-  console.log("Saved courses data:", savedCourses);
 
   const saveMutation = useMutation({
     mutationFn: (courseId: string) => saveCourse(courseId),
@@ -341,7 +340,21 @@ const HomePage = () => {
       saveMutation.mutate(courseId);
     }
   };
-  if (enrollmentLoading || saveLoading) return <div>Loading...</div>;
+  if (enrollmentLoading || saveLoading) {
+    return (
+      <div className="w-full h-screen gap-x-2 flex justify-center items-center">
+        <div
+          className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full"
+        ></div>
+        <div
+          className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"
+        ></div>
+        <div
+          className="w-5 h-5 animate-pulse bg-[#6756cc] rounded-full animate-bounce"
+        ></div>
+      </div>
+    )
+  };
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">

@@ -17,7 +17,6 @@ export async function addComment(
       body: JSON.stringify({ comment }),
     }
   );
-  console.log("API Response for adding comment:", res); // Debug log
   if (!res.success) {
     throw new Error('Failed to add comment');
   }
