@@ -10,7 +10,11 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchCourseById } from "../api/courses";
 import { fetchLessons } from "../api/lessons";
 import { fetchQuizByCourse } from "../api/quize";
+<<<<<<< HEAD
 import { addComment, fetchCommentsByCourse } from "../api/course_commnts";
+=======
+import { fetchCommentsByCourse } from "../api/course_comments";
+>>>>>>> main
 import { enrole, removeEnrollment } from "../api/enrollment";
 import { removeSavedCourse, saveCourse } from "../api/savedCourses";
 import type { CourseComment } from "../types/types"

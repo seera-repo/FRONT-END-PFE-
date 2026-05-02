@@ -118,6 +118,55 @@ export interface CommentsResponse {
   count: number;
   data: CourseComment[];
 }
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role_id?: string;
+  isSick?: boolean;
+  emailVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+
+export interface PublicUser {
+  id: string;
+  name: string;
+}
+
+export interface Post {
+  id: string;
+  title: string;
+  content: string;
+
+  user_id: string;
+  user?: PublicUser;
+
+  likes: number;
+  isSpecialized: boolean;
+   
+
+  createdAt: string;
+  updatedAt: string;
+  isLikedByCurrentUser?: boolean;
+  comments?: PostComment[];
+    commentsCount?: number;
+}
+
+
+export interface PostComment {
+  id: string;
+  comment: string;
+
+  user_id: string;
+  user?: PublicUser;
+
+  post_id: string;
+
+  createdAt: string;
+  updatedAt: string;
+}
 
 export type Category = {
   id: string;
@@ -213,3 +262,30 @@ export type TeacherProfileResponse = {
   success: boolean;
   teacher: TeacherProfile | null;
 };
+
+
+
+// Shared recommendation course shape
+export interface RecommendedCourse {
+  id: string;
+  title: string;
+  categorie_id: string;
+  categorie_name: string;
+  teacher_id: string;
+  teacher_name: string;
+}
+
+// Hybrid mode (user has enrollments)
+export interface HybridRecommendedCourse extends RecommendedCourse {
+  score: number;
+}
+
+// Popular mode (new user, no enrollments)
+export interface PopularRecommendedCourse extends RecommendedCourse {
+  enrollment_count: number;
+}
+
+export interface RecommendationResponse {
+  user_id?: string; // present in hybrid, absent in popular
+  recommendations: HybridRecommendedCourse[] | PopularRecommendedCourse[];
+}
