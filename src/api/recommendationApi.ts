@@ -26,7 +26,7 @@ export async function fetchRecommendations(): Promise<RecommendationResult> {
   const data = await apiFetch<RecommendationResponse>(
     `api/recommendations/${user.id}`
   );
-
+console.log("Fetched recommendations:", data);
   const recommendations = data.recommendations;
 
   // safer hybrid detection (based on backend contract)

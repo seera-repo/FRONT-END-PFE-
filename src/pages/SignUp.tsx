@@ -21,10 +21,6 @@ const signup = () => {
         body: JSON.stringify({ email, name, password }),
       });
 
-<<<<<<< HEAD
-
-=======
->>>>>>> main
       const data = await res.json();
       if (!res.ok) {
         setError(data.message);

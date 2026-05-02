@@ -1,5 +1,5 @@
 ////////////////////////// HOME PAGE ///////////////////////////////
-
+import { useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import CourseCardHomepage from "../components/CourseCardHomepage";
@@ -44,8 +44,9 @@ const GAP = 16;
 
 //========================================= COURSE ROW COMPONENT ==========================================//
 
-function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage }: CourseRowProps) {
 
+function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage }: CourseRowProps) {
+  const navigate = useNavigate();
   //================= REFS =================//
   const trackRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -150,12 +151,14 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
           >
             {courses.map((course) => (
               <div key={course.id} className="shrink-0" style={{ width: cardWidth, pointerEvents: "auto" }}>
-                <CourseCardHomepage
-                  title={course.title} teacher={course.teacher} role={course.role}
-                  category={course.category} image={course.image}
-                  saved={savedIds.has(course.id)}
-                  onToggleSave={() => onToggleSave(course.id)}
-                />
+                <div onClick={() => navigate(`/course/${course.id}`)} className="cursor-pointer">
+                  <CourseCardHomepage
+                    title={course.title} teacher={course.teacher} role={course.role}
+                    category={course.category} image={course.image}
+                    saved={savedIds.has(course.id)}
+                    onToggleSave={() => onToggleSave(course.id)}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -168,6 +171,7 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
 
 
 function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
+  const navigate = useNavigate();
   const trackRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -276,12 +280,14 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
             >
               {courses.map((course) => (
                 <div key={course.id} className="shrink-0" style={{ width: cardWidth, pointerEvents: "auto" }}>
-                  <CourseCardHomepage
-                    title={course.title} teacher={course.teacher} role={course.role}
-                    category={course.category} image={course.image}
-                    saved={savedIds.has(course.id)}
-                    onToggleSave={() => onToggleSave(course.id)}
-                  />
+                  <div onClick={() => navigate(`/course/${course.id}`)} className="cursor-pointer">
+                    <CourseCardHomepage
+                      title={course.title} teacher={course.teacher} role={course.role}
+                      category={course.category} image={course.image}
+                      saved={savedIds.has(course.id)}
+                      onToggleSave={() => onToggleSave(course.id)}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -295,6 +301,7 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
             style={{ gridTemplateColumns: `repeat(${perPage}, 1fr)` }}
           >
             {courses.map((course) => (
+              <div onClick={() => navigate(`/course/${course.id}`)} className="cursor-pointer">
               <CourseCardHomepage
                 key={course.id}
                 title={course.title} teacher={course.teacher} role={course.role}
@@ -302,6 +309,7 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
                 saved={savedIds.has(course.id)}
                 onToggleSave={() => onToggleSave(course.id)}
               />
+              </div>
             ))}
           </div>
 
@@ -314,7 +322,6 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
 
 const HomePage = () => {
   const queryClient = useQueryClient();
-  //const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
 
   const { data: enrollmentData, isLoading: enrollmentLoading } = useQuery({
     queryKey: ["my-enrollments"],
