@@ -8,9 +8,12 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCourses } from '../api/courses';
 import { fetchCategories } from '../api/categories';
 import { useDeferredValue } from 'react';
+import { fetchProfileStudent } from '../api/user';
 
 
 const BrowseCourse = () => {
+
+  //get categories for filters
   const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: fetchCategories
@@ -21,21 +24,78 @@ const BrowseCourse = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const deferredSearch = useDeferredValue(searchQuery);
 
+  //get user profile 
+  const { data: user } = useQuery({
+    queryKey: ['profile'],
+    queryFn: fetchProfileStudent,
+  });
+
+  // Fetch courses with filters and search
   const { data: courses = [], isLoading, error } = useQuery({
-    queryKey: ['courses', activeCategorie.id, deferredSearch],
+    queryKey: ['courses', activeCategorie.id, deferredSearch, user?.isSick],
     queryFn: () => fetchCourses({
       categorie_id: activeCategorie.id === 1 ? undefined : String(activeCategorie.id),
-      search: deferredSearch || undefined
+      search: deferredSearch || undefined,
+      // isSpecialized: user?.isSick ? true : undefined, // ✅ only filter if sick
     }),
-    placeholderData: (previousData) => previousData // keeps old data while fetching new
+    placeholderData: (previousData) => previousData
   });
 
   const handleFilter = (categorie: typeof allCategories[0]) => {
     setActiveCategorie(categorie); // just update state, useQuery handles the rest
   };
 
-  if (isLoading || isLoadingCategories) return <p>Loading...</p>;
-  if (error) return <p>Error loading courses</p>;
+  if (isLoading || isLoadingCategories) {
+    return (
+      <div className="w-full h-screen gap-x-2 flex justify-center items-center">
+        <div
+          className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full"
+        ></div>
+        <div
+          className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"
+        ></div>
+        <div
+          className="w-5 h-5 animate-pulse bg-[#6756cc] rounded-full animate-bounce"
+        ></div>
+      </div>
+    )
+  };
+
+  if (error) {
+    return (
+      <div className='w-full h-screen flex justify-center items-center'>
+        <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50">
+          <div
+            className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]"
+          >
+            <div className="flex gap-2">
+              <div className="text-[#d65563] bg-white/5 backdrop-blur-xl p-1 rounded-lg">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                  ></path>
+                </svg>
+              </div>
+              <div>
+                <p className="text-white">Something went wrong</p>
+                <p className="text-gray-500">Please try again.</p>
+              </div>
+            </div>
+          
+          </div>
+        </div>
+      </div>
+    )
+  };
   return (
     <>
       <Header />
@@ -113,7 +173,7 @@ const BrowseCourse = () => {
           )}
         </section>
       </section>
-      
+
     </>
   )
 }

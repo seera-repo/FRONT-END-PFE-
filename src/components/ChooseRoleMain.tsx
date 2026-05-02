@@ -70,16 +70,16 @@ function ChooseRoleMain() {
                     Tell us a bit about yourself so we can personalize your experience
                 </p>
                 <div className="chooseFlex flex flex-row gap-[30px] mt-[60px] ml-0">
-                    <div className="choosePart relative w-[350px] h-[460px] flex flex-col items-center justify-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out cursor-pointer hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]" 
-                    onClick={(e) => { const btn = e.currentTarget; btn.classList.add('clicked'); sendData2(); setTimeout(() => { navigate('/HomePage') }, 1000) }} >
+                    <div className="choosePart relative w-[350px] h-[460px] flex flex-col items-center justify-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out cursor-pointer hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]"
+                        onClick={(e) => { const btn = e.currentTarget; btn.classList.add('clicked'); sendData2(); setTimeout(() => { navigate('/HomePage') }, 1000) }} >
                         <img className="w-[150px] h-[150px] rounded-[20px] object-contain" src={myPic2}></img>
                         <h2 id="choosePartTitleRole1" className="font-['Geist',sans-serif] text-[25px] font-semibold mt-[15px] text-[#202020]">I'm a Student</h2>
                         <p id="choosePartTextRole1" className="text-[#202020] font-['Geist',sans-serif] text-[17px] font-normal w-[300px] mt-[10px] text-center">Learn new skills, explore courses, and grow at your own pac</p>
                         <a className="choosePartLinkRole font-['Geist',sans-serif] text-[17px] font-medium mt-[40px] text-[#702DFF]">GetStarted  </a>
                     </div>
-                    <div className="choosePart relative w-[350px] h-[460px] flex flex-col items-center justify-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out cursor-pointer hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]" 
-                    //needs to change navigation to ttchr form 
-                    onClick={(e) => { const btn = e.currentTarget; btn.classList.add("clicked"); sendData(); setTimeout(() => { navigate('/HomePage') }, 1000) }} >
+                    <div className="choosePart relative w-[350px] h-[460px] flex flex-col items-center justify-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out cursor-pointer hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]"
+                        //needs to change navigation to ttchr form 
+                        onClick={(e) => { const btn = e.currentTarget; btn.classList.add("clicked"); sendData(); setTimeout(() => { navigate('/FormTeacher') }, 1000) }} >
                         <img className="w-[150px] h-[150px] rounded-[20px] object-contain" src={myPic5}></img>
                         <h2 id="choosePartTitleRole2" className="font-['Geist',sans-serif] text-[25px] font-semibold text-[#202020] mt-[15px]">I'm a Teacher</h2>
                         <p id="choosePartTextRole2" className="text-[#202020] font-['Geist',sans-serif] text-[19px] font-normal w-[350px] mt-[10px] text-center">Create courses, inspire students, and make a real impact</p>
@@ -88,8 +88,8 @@ function ChooseRoleMain() {
                 </div>
                 <p className="cursor-default settingsChooseText font-['Geist',sans-serif] text-[20px] font-normal text-[#202020] mt-[40px]">Not sure yet? You can change this later in settings</p>
                 <a id="skipRole" className="font-['Geist',sans-serif] text-[17px] font-medium mt-[20px] mb-[50px] text-[#702DFF] relative top-[20px] cursor-pointer hover:text-[#702DFF]"
-                 onClick={() => navigate('/HomePage')}>
-                    skip for now 
+                    onClick={() => navigate('/HomePage')}>
+                    skip for now
                 </a>
             </div>
         </>

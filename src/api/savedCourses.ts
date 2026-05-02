@@ -1,4 +1,5 @@
 import { apiFetch } from "./apiClient";
+import type { homepageResponse } from '../types/types';
 
 type ApiResponse = {
   success: boolean;
@@ -24,5 +25,13 @@ export async function removeSavedCourse(courseId: string) {
   if (!res.success) {
     throw new Error('Failed to remove saved course');
   };
-  return res.message ;
+  return res.message;
+}
+
+export async function getMySavedCourses(): Promise<homepageResponse>{
+  const res = await apiFetch<homepageResponse>(`api/saved-courses/me`);
+  if (!res.success) {
+    throw new Error("Failed to fetch lessons");
+  }
+  return res;
 }

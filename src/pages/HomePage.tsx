@@ -1,13 +1,15 @@
 ////////////////////////// HOME PAGE ///////////////////////////////
 
 import { useRef, useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import Sidebar from "../components/Sidebar";
 import CourseCardHomepage from "../components/CourseCardHomepage";
 import ProfileCard from "../components/ProfileCard";
 import leftIcon from "../assets/icons/leftswip.svg";
 import rightIcon from "../assets/icons/rightswip.svg";
 import starIcon from "../assets/icons/star.svg";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getMyEnrollment } from "../api/enrollment";
+import { getMySavedCourses, saveCourse, removeSavedCourse } from "../api/savedCourses";
 import { fetchRecommendations } from "../api/recommendationApi";
 import type { RecommendationMode } from "../api/recommendationApi";
 
@@ -38,33 +40,19 @@ type SavedRowProps = {
   onToggleSave: (id: string) => void;
 };
 
-
-//========================================= CONSTANTS ==========================================//
-
 const GAP = 16;
-
-const YOUR_COURSES: Course[] = [
-  { id: "1", title: "Introduction To Computer Science", teacher: "Mohand", role: "Software Developer", category: "CS BASICS",  image: "" },
-  { id: "2", title: "Web Development Fundamentals",     teacher: "Manel",  role: "Software Developer", category: "WEB DEV",    image: "" },
-  { id: "3", title: "Data Structures & Algorithms",     teacher: "Manel",  role: "Software Developer", category: "CS CORE",    image: "" },
-  { id: "4", title: "SQL Mastery",                      teacher: "Mohand", role: "Software Developer", category: "DATABASES",  image: "" },
-  { id: "5", title: "Computer Networks 101",            teacher: "Manel",  role: "Software Developer", category: "NETWORKING", image: "" },
-];
-
-const ALL_COURSES = [...YOUR_COURSES];
-
 
 //========================================= COURSE ROW COMPONENT ==========================================//
 
 function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage }: CourseRowProps) {
 
   //================= REFS =================//
-  const trackRef   = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   //================= STATE =================//
-  const [index,     setIndex]     = useState(0);
-  const [perPage,   setPerPage]   = useState(3);
+  const [index, setIndex] = useState(0);
+  const [perPage, setPerPage] = useState(3);
   const [cardWidth, setCardWidth] = useState(240);
 
   //================= MEASURE ON RESIZE =================//
@@ -84,7 +72,10 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
     return () => ro.disconnect();
   }, []);
 
-  //================= SCROLL ON INDEX CHANGE =================//
+  const maxIndex = Math.max(0, courses.length - perPage);
+  const canLeft = index > 0;
+  const canRight = index < maxIndex;
+
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
@@ -96,20 +87,15 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
     setIndex((i) => Math.min(i, Math.max(0, courses.length - perPage)));
   }, [courses.length, perPage]);
 
-  //================= NAVIGATION =================//
-  const maxIndex = Math.max(0, courses.length - perPage);
-  const canLeft  = index > 0;
-  const canRight = index < maxIndex;
-
-  const goLeft  = () => setIndex((i) => Math.max(0, i - 1));
+  const goLeft = () => setIndex((i) => Math.max(0, i - 1));
   const goRight = () => setIndex((i) => Math.min(maxIndex, i + 1));
 
   //================= TOUCH SWIPE =================//
   const touchStart = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].pageX; };
-  const onTouchEnd   = (e: React.TouchEvent) => {
+  const onTouchEnd = (e: React.TouchEvent) => {
     const delta = touchStart.current - e.changedTouches[0].pageX;
-    if (delta >  40) goRight();
+    if (delta > 40) goRight();
     if (delta < -40) goLeft();
   };
 
@@ -135,13 +121,13 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
             <button onClick={goLeft} disabled={!canLeft}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
                 ${canLeft ? "border-gray-300 bg-white hover:bg-gray-100 shadow-sm cursor-pointer"
-                          : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
+                  : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
               <img src={leftIcon} alt="left" className="w-4 h-4" />
             </button>
             <button onClick={goRight} disabled={!canRight}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
                 ${canRight ? "border-gray-300 bg-white hover:bg-gray-100 shadow-sm cursor-pointer"
-                           : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
+                  : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
               <img src={rightIcon} alt="right" className="w-4 h-4" />
             </button>
           </div>
@@ -181,17 +167,11 @@ function CourseRow({ title, icon, courses, savedIds, onToggleSave, emptyMessage 
 }
 
 
-//========================================= SAVED ROW COMPONENT ==========================================//
-
 function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
-
-  //================= REFS =================//
-  const trackRef     = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  //================= STATE =================//
-  const [index,     setIndex]     = useState(0);
-  const [perPage,   setPerPage]   = useState(3);
+  const [index, setIndex] = useState(0);
+  const [perPage, setPerPage] = useState(3);
   const [cardWidth, setCardWidth] = useState(240);
 
   //================= MEASURE ON RESIZE =================//
@@ -214,7 +194,7 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
   //================= CAROUSEL LOGIC =================//
   const needsCarousel = courses.length > perPage;
   const maxIndex = Math.max(0, courses.length - perPage);
-  const canLeft  = index > 0;
+  const canLeft = index > 0;
   const canRight = index < maxIndex;
 
   //================= SCROLL ON INDEX CHANGE =================//
@@ -230,17 +210,16 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
     if (!needsCarousel) setIndex(0);
   }, [needsCarousel]);
 
-  //================= NAVIGATION =================//
-  const goLeft  = () => setIndex((i) => Math.max(0, i - 1));
+  const goLeft = () => setIndex((i) => Math.max(0, i - 1));
   const goRight = () => setIndex((i) => Math.min(maxIndex, i + 1));
 
   //================= TOUCH SWIPE =================//
   const touchStart = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].pageX; };
-  const onTouchEnd   = (e: React.TouchEvent) => {
+  const onTouchEnd = (e: React.TouchEvent) => {
     if (!needsCarousel) return;
     const delta = touchStart.current - e.changedTouches[0].pageX;
-    if (delta >  40) goRight();
+    if (delta > 40) goRight();
     if (delta < -40) goLeft();
   };
 
@@ -265,13 +244,13 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
             <button onClick={goLeft} disabled={!canLeft}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
                 ${canLeft ? "border-gray-300 bg-white hover:bg-gray-100 shadow-sm cursor-pointer"
-                          : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
+                  : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
               <img src={leftIcon} alt="left" className="w-4 h-4" />
             </button>
             <button onClick={goRight} disabled={!canRight}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
                 ${canRight ? "border-gray-300 bg-white hover:bg-gray-100 shadow-sm cursor-pointer"
-                           : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
+                  : "border-gray-200 bg-gray-50 opacity-40 cursor-not-allowed"}`}>
               <img src={rightIcon} alt="right" className="w-4 h-4" />
             </button>
           </div>
@@ -333,13 +312,48 @@ function SavedRow({ courses, savedIds, onToggleSave }: SavedRowProps) {
   );
 }
 
-
-//========================================= HOME PAGE ==========================================//
-
 const HomePage = () => {
+  const queryClient = useQueryClient();
+  //const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
 
-  //================= STATE =================//
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const { data: enrollmentData, isLoading: enrollmentLoading } = useQuery({
+    queryKey: ["my-enrollments"],
+    queryFn: getMyEnrollment,
+  });
+
+  const YOUR_COURSES: Course[] = (enrollmentData?.data ?? []).map((e) => ({
+    id: e.course_id,
+    title: e.Course.title,
+    teacher: e.Course.Teacher.User.name,
+    role: "Software Developer",    // static for now, or remove from Course type
+    category: e.Course.Categorie.name,
+    image: e.Course.image_url ?? "",
+  }));
+
+  const { data: savedData, isLoading: saveLoading } = useQuery({
+    queryKey: ["my-saved-courses"],
+    queryFn: getMySavedCourses,
+  });
+
+  const savedCourses: Course[] = (savedData?.data ?? []).map((e) => ({
+    id: e.course_id,
+    title: e.Course.title,
+    teacher: e.Course.Teacher.User.name,
+    role: "Software Developer",
+    category: e.Course.Categorie.name,
+    image: e.Course.image_url ?? "",
+  }));
+
+  const saveMutation = useMutation({
+    mutationFn: (courseId: string) => saveCourse(courseId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-saved-courses"] }),
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: (courseId: string) => removeSavedCourse(courseId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-saved-courses"] }),
+  });
+
 
   //================= FETCH RECOMMENDATIONS =================//
   const { data: recData, isLoading: recLoading, isError: recError } = useQuery({
@@ -357,17 +371,30 @@ const HomePage = () => {
     category: c.categorie_name,
     image: "",
   }));
+  const savedCourseIds = new Set(savedCourses.map((course) => course.id));
 
-  //================= SAVE TOGGLE =================//
-  const toggleSave = (id: string) => {
-    setSavedIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
+  const toggleSave = (courseId: string) => {
+    if (savedCourseIds.has(courseId)) {
+      removeMutation.mutate(courseId);
+    } else {
+      saveMutation.mutate(courseId);
+    }
   };
-
-  const savedCourses = ALL_COURSES.filter((c) => savedIds.has(c.id));
+  if (enrollmentLoading || saveLoading) {
+    return (
+      <div className="w-full h-screen gap-x-2 flex justify-center items-center">
+        <div
+          className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full"
+        ></div>
+        <div
+          className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"
+        ></div>
+        <div
+          className="w-5 h-5 animate-pulse bg-[#6756cc] rounded-full animate-bounce"
+        ></div>
+      </div>
+    )
+  }
 
   //================= RENDER =================//
   return (
@@ -410,7 +437,7 @@ const HomePage = () => {
         <CourseRow
           title="Your Courses"
           courses={YOUR_COURSES}
-          savedIds={savedIds}
+          savedIds={savedCourseIds}   // ← driven by API now
           onToggleSave={toggleSave}
         />
 
@@ -428,7 +455,7 @@ const HomePage = () => {
             title={recMode === "hybrid" ? "Recommended For You" : "Popular Courses"}
             icon={starIcon}
             courses={RECOMMENDED}
-            savedIds={savedIds}
+            savedIds={savedCourseIds}
             onToggleSave={toggleSave}
             emptyMessage="No recommendations available."
           />
@@ -437,7 +464,7 @@ const HomePage = () => {
         {/* SAVED COURSES */}
         <SavedRow
           courses={savedCourses}
-          savedIds={savedIds}
+          savedIds={savedCourseIds}
           onToggleSave={toggleSave}
         />
 

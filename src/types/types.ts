@@ -26,6 +26,8 @@ export interface Teacher {
   };
 }
 export interface Course {
+  role: string;
+  image: string;
   id: string;
   title: string;
   description: string;
@@ -203,6 +205,63 @@ export interface Quize {
   course_id: string;
 }
 
+export  type apicommntResponse = {
+  success: boolean;
+  data: CommentData;
+};
+
+export type CommentData = {
+  id: string;
+  comment: string;
+  user_id: string;
+  course_id: string;
+  updatedAt: string; // ISO date string
+  createdAt: string; // ISO date string
+};
+
+export interface Enrollment {
+  id: string;
+  user_id: string;
+  course_id: string;
+  createdAt: string;
+  updatedAt: string;
+  Course: {
+    id: string;
+    title: string;
+    description: string;
+    image_url: string | null;
+    Categorie: {
+      name: string;
+    };
+    Teacher: {
+      User: {
+        name: string;
+      };
+    };
+  };
+}
+
+export interface homepageResponse {
+  success: boolean;
+  count: number;
+  data: Enrollment[];
+}
+
+export type TeacherProfile = {
+  id: string;
+  user_id: string;
+  isPsychologist: boolean;
+  cv_URL: string | null;
+  descreption: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TeacherProfileResponse = {
+  success: boolean;
+  teacher: TeacherProfile | null;
+};
 
 
 

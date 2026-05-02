@@ -14,7 +14,8 @@ import Profile from './pages/Profile';
 import ProfileStudent from './pages/ProfileStudent';
 import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
 import ProtectedRoute from './components/ProtectedRoute';
-import  HomePageTeacher from './pages/HomePageTeacher'
+import  HomePageTeacher from './pages/HomePageTeacher';
+import FormTeacher from './pages/FormTeacher';
 import AddCourse from './pages/AddCourse';
 
 
@@ -50,7 +51,9 @@ function App() {
 
         <Route path="/ProfileStudent" element={<ProfileStudent />} />
           <Route path="/AddCourse" element={<AddCourse />} />
-          
+
+          <Route path="/formTeacher" element={<FormTeacher />} />
+
       </Routes>
     </BrowserRouter>
   );

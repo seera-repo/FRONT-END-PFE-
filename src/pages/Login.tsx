@@ -50,7 +50,6 @@ const navigate = useNavigate();
         setError("No token received from server");
       }
     } catch (err) {
-      console.error(err);
       setError("Something went wrong. Please try again.");
       
     }
