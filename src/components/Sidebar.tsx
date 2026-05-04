@@ -4,6 +4,7 @@ import home from "../assets/icons/home.svg";
 import folder from "../assets/icons/folder.svg";
 import logoutIcon from "../assets/icons/logout.svg";
 import people from "../assets/icons/people.svg";
+import { fetchProfileStudent } from "../api/user";
 
 const PURPLE_FILTER = "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
 
