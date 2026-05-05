@@ -14,7 +14,7 @@ import Profile from './pages/Profile';
 import ProfileStudent from './pages/ProfileStudent';
 import NormalORTrisomyStudent from './pages/NormalORTrisomyStudent';
 import ProtectedRoute from './components/ProtectedRoute';
-import  HomePageTeacher from './pages/HomePageTeacher';
+import HomePageTeacher from './pages/HomePageTeacher';
 import FormTeacher from './pages/FormTeacher';
 import AddCourse from './pages/AddCourse';
 
@@ -23,36 +23,69 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<LandingPage />} />
-
+        <Route path="/" element={<LandingPage />} />
         <Route path="/Signup" element={<Signup />} />
-
         <Route path="/Login" element={<Login />} />
-
-        <Route path="/HomePage" element={<HomePage />} />
-
-        <Route path="/BrowseCourse" element={<BrowseCourse />} />
-
-        <Route path="/course/:id" element={<Course />} />
-
-        <Route path="/courses/:id/lessons/:lessonId" element={<LessonPage />} />
-
-        <Route path="/CommunityBlog" element={<CommunityBlog />} />
-
         <Route path="/ChooseRole" element={<ChooseRole />} />
+        <Route path="/ChooseCommunity" element={<ChooseComunity />} />
 
-        <Route path="/ChooseComunity" element={<ChooseComunity />} />
+        
 
-        <Route path="/NormalORTrisomyStudent" element={<NormalORTrisomyStudent />} />
-       <Route path="/HomePageTeacher" element={<HomePageTeacher />} />
-        <Route path="/BrowseCourse" element={<BrowseCourse />} />
+// Teacher only
+        <Route path="/HomePageTeacher"
+          element={<ProtectedRoute allowedRoles={["Teacher"]}>
+            <HomePageTeacher />
+          </ProtectedRoute>} />
 
-        <Route path="/Profile" element={<Profile />} />
+        <Route path="/AddCourse"
+          element={<ProtectedRoute allowedRoles={["Teacher"]}>
+            <AddCourse />
+          </ProtectedRoute>} />
 
-        <Route path="/ProfileStudent" element={<ProfileStudent />} />
-          <Route path="/AddCourse" element={<AddCourse />} />
+          //add idit cource + profile...
 
-          <Route path="/formTeacher" element={<FormTeacher />} />
+
+// Student only
+        <Route path="/formTeacher"
+          element={<ProtectedRoute allowedRoles={["Student"]}>
+            <FormTeacher />
+          </ProtectedRoute>} />
+
+        <Route path="/ProfileStudent"
+          element={<ProtectedRoute allowedRoles={["Student"]}>
+            <ProfileStudent />
+          </ProtectedRoute>} />
+
+        <Route path="/NormalORTrisomyStudent"
+          element={<ProtectedRoute allowedRoles={["Student"]}>
+            <NormalORTrisomyStudent />
+          </ProtectedRoute>} />
+
+          <Route path="/HomePage"
+          element={<ProtectedRoute allowedRoles={["Student"]}>
+            <HomePage />
+          </ProtectedRoute>} />
+
+//  Student and Teacher and admin
+        <Route path="/BrowseCourse"
+          element={<ProtectedRoute allowedRoles={["Student", "Teacher", "Admin"]}>
+            <BrowseCourse />
+          </ProtectedRoute>} />
+
+        <Route path="/course/:id"
+          element={<ProtectedRoute allowedRoles={["Student", "Teacher", "Admin"]}>
+            <Course />
+          </ProtectedRoute>} />
+
+        <Route path="/courses/:id/lessons/:lessonId"
+          element={<ProtectedRoute allowedRoles={["Student", "Teacher", "Admin"]}>
+            <LessonPage />
+          </ProtectedRoute>} />
+
+        <Route path="/CommunityBlog"
+          element={<ProtectedRoute allowedRoles={["Student", "Teacher", "Admin"]}>
+            <CommunityBlog />
+          </ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>

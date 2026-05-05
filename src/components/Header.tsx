@@ -3,21 +3,27 @@ import CommunityIcon from '../assets/icons/people.svg';
 import CoursesIcon from '../assets/icons/folder.svg';
 import DashboardIcon from '../assets/icons/home.svg';
 import LogoutIcon from '../assets/icons/logout.svg';
-
+import { getUser } from '../api/auth';
 import { useNavigate, Outlet} from 'react-router-dom';
 
 
 function Header() {
+    const user = getUser();
+
   const navLinks = [
-    { label: "Dashboard", href: "/HomePage", icon: DashboardIcon },
-
+    { 
+      label: "Dashboard", 
+      href: user?.role === "Teacher" ? "/HomePageTeacher" : "/HomePage", 
+      icon: DashboardIcon 
+    },
     { label: "Courses", href: "/BrowseCourse", icon: CoursesIcon },
-
     { label: "Community", href: "/CommunityBlog", icon: CommunityIcon },
-
-    { label: "Profile", href: "/Profile", icon: ProfileIcon },
+    { 
+      label: "Profile", 
+      href: user?.role === "Teacher" ? "/ProfileTeacher" : "/ProfileStudent", 
+      icon: ProfileIcon 
+    },
   ];
-
   const navigate = useNavigate();
 
   return (

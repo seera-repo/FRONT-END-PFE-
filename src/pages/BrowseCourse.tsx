@@ -127,7 +127,7 @@ const BrowseCourse = () => {
         {/* Filters + Grid */}
         <section className='px-6 py-10 bg-violet-50/50 flex flex-col h-full w-full max-w-7xl mx-auto'>
           {/* Filters */}
-          <div className="mb-5 flex flex-wrap items-center justify-start gap-2 mx-auto max-w-7xl ">
+          <div className="mb-5 flex flex-wrap items-center justify-center gap-2 mx-auto max-w-7xl ">
             <Filter className="mr-1 h-4 w-4 text-muted-foreground" />
             {allCategories.map((cat) => (
               <button

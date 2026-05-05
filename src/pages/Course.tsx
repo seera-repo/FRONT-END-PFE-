@@ -233,7 +233,7 @@ const Course = () => {
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-8">
           <div className="mx-auto max-w-5xl">
             <Link
-              to="/BrowseCourses"
+              to="/BrowseCourse"
               className="mb-4 inline-flex items-center gap-2 rounded-lg bg-[#f5f9fb]/80 px-3 py-1.5 text-sm font-medium text-foreground backdrop-blur-sm transition-colors hover:bg-[#f5f9fb]"
             >
               <ArrowLeft className="h-4 w-4" />
