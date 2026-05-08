@@ -39,7 +39,7 @@ function CourseCard({ course }: CourseCardProps) {
           By{" "}
           <span className="font-medium text-black">
 {/* username */}
-            {course.Teacher.id}
+            {course.Teacher.User.name}
           </span>
         </p>
 
@@ -47,11 +47,11 @@ function CourseCard({ course }: CourseCardProps) {
 
           <span className="flex items-center gap-1">
 {/* nbr inrollments */}
-            <Users className="h-3.5 w-3.5" /> {course.id}
+            <Users className="h-3.5 w-3.5" /> {course.enrollmentsCount} students
           </span>
           <span className="flex items-center gap-1">
 {/* nbr lessons */}
-            <BookOpen className="h-3.5 w-3.5" /> {course.id} lessons
+            <BookOpen className="h-3.5 w-3.5" /> {course.lessonsCount} lessons
           </span>
 
         </div>

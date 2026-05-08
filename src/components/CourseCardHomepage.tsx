@@ -20,7 +20,7 @@ const CourseCardHomepage = ({
   onToggleSave,
 }: Props) => {
   return (
-    <div className="bg-white rounded-[20px] p-5 w-full max-w-[500px] relative shadow-down">
+    <div className="bg-white rounded-[20px] p-5 w-full max-w-[500px] relative shadow-md">
      
       <button
         onClick={onToggleSave}
