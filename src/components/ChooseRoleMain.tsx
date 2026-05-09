@@ -98,8 +98,8 @@ function ChooseRoleMain() {
                 </div>
                 <p className="cursor-default settingsChooseText font-['Geist',sans-serif] text-[20px] font-normal text-[#202020] mt-[40px]">Not sure yet? You can change this later in settings</p>
                 <a id="skipRole" className="font-['Geist',sans-serif] text-[17px] font-medium mt-[20px] mb-[50px] text-[#702DFF] relative top-[20px] cursor-pointer hover:text-[#702DFF]"
-                 onClick={() => navigate('/HomePage')}>
-                    skip for now 
+                    onClick={() => navigate('/HomePage')}>
+                    skip for now
                 </a>
             </div>
         </>

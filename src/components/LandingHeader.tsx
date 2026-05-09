@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from 'react-router-dom';
- 
+
 function LandingHeader() {
   const mainLinks = [
     { label: "Home", href: "#Home" },

@@ -1,11 +1,12 @@
- import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronRight, PlayCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronRight, PlayCircle } from "lucide-react";
 import { Link, useParams } from 'react-router-dom';
 import Header from "../components/Header";
 import { fetchLessons } from "../api/lessons";
 import { useQuery } from "@tanstack/react-query";
-//import ReactPlayer from "react-player";
+import ReactPlayer from "react-player";
 
 function LessonPage() {
+  //const Player = ReactPlayer as any;
 
   const { id, lessonId } = useParams();
 
@@ -14,7 +15,21 @@ function LessonPage() {
     queryFn: () => fetchLessons(id!),
   });
 
-  if (lessonsLoading) return <p>Loading...</p>;
+  if (lessonsLoading) {
+    return (
+      <div className="w-full h-screen gap-x-2 flex justify-center items-center">
+        <div
+          className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full"
+        ></div>
+        <div
+          className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"
+        ></div>
+        <div
+          className="w-5 h-5 animate-pulse bg-[#6756cc] rounded-full animate-bounce"
+        ></div>
+      </div>
+    )
+  };
 
   const lessons = lessonsData ?? [];
 
@@ -43,7 +58,7 @@ function LessonPage() {
             aria-label="Breadcrumb"
           >
             <Link
-              to="/BrowseCourses"
+              to="/BrowseCourse"
               className="transition-colors hover:text-[#19232a]"
             >
               Courses
@@ -79,15 +94,14 @@ function LessonPage() {
               </h1>
 
               {/* Video Player */}
-              <div className="mt-6 overflow-hidden border-[#d4e5ea] rounded-2xl shadow-sm bg-white flex flex-col gap-6  border py-6 ">
-                <div className="flex aspect-video items-center justify-center ">
-                  <div className="flex flex-col items-center gap-3">
-                      <video
-                        src={lesson.vedio_url}
-                        controls
-                        className="w-full h-full rounded-lg"
-                      />
-                  </div>
+              <div className="mt-6 overflow-hidden border-[#d4e5ea] rounded-2xl shadow-sm bg-white border py-6">
+                <div className="px-6">
+                  <ReactPlayer
+                    src={lesson.vedio_url}
+                    controls={true}
+                    width="100%"
+                    height="450px"
+                  />
                 </div>
               </div>
 

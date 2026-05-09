@@ -149,7 +149,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value: boolean | "indeterminate") => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
       </div>
@@ -158,7 +158,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       <div className="flex items-center justify-center">
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value: boolean | "indeterminate") => row.toggleSelected(!!value)}
           aria-label="Select row"
         />
       </div>
@@ -449,8 +449,7 @@ export function DataTable({
               { value: "past-performance", label: "Past Performance", badge: "3" },
               { value: "key-personnel", label: "Key Personnel", badge: "2" },
               { value: "focus-documents", label: "Focus Documents" },
-            ] as const
-          ).map(({ value, label, badge }) => (
+            ] as const).map(({ value, label, badge }: { value: string; label: string; badge?: string | number }) => (
             <TabsTrigger
               key={value}
               value={value}
@@ -502,7 +501,7 @@ export function DataTable({
                     className="capitalize"
                     style={{ color: "#202020" }}
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    onCheckedChange={(value: boolean | "indeterminate") => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -559,9 +558,9 @@ export function DataTable({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -613,7 +612,7 @@ export function DataTable({
               </Label>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
-                onValueChange={(value) => table.setPageSize(Number(value))}
+                onValueChange={(value: string) => table.setPageSize(Number(value))} // changed
               >
                 <SelectTrigger
                   size="sm"

@@ -1,37 +1,71 @@
-////////////////////////// CREATE POST COMPONENT ///////////////////////////////
-
 import { useState, useRef } from "react";
 import { Send } from "lucide-react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { createPost, type CreatePostInput } from "../api/postsApi";
+import { fetchMe } from "../api/userAPI";
+import Avatar from "../components/avatar";
 
-type CreatePostProps = {
-  addPost: (text: string) => void;
-  userName?: string;
-};
 
-export default function CreatePost({ addPost, userName = "You" }: CreatePostProps) {
+
+
+//=============================== CREATE POST COMPONENT =================================
+export default function CreatePost() {
+
+  const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const queryClient = useQueryClient();
 
-  // SEND POST FUNCTION
+  //  GET CURRENT USER
+  const { data: user } = useQuery({
+    queryKey: ["me"],
+    queryFn: fetchMe,
+  });
+
+  // CREATE POST
+  const mutation = useMutation({
+    mutationFn: (data: CreatePostInput) => createPost(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+
   const handleSend = () => {
-    if (text.trim() === "") return;
+    if (!text.trim()) return;
 
-    addPost(text);
+    mutation.mutate({
+       title: title.trim() || "Post",
+      content: text,
+    });
+
     setText("");
+    setTitle("");
 
-    // Reset textarea height
-    if (textareaRef.current) textareaRef.current.style.height = "auto";
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
   };
-
+//======================================= RENDER ==================================
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col gap-4 border border-[#d2d4f5] w-full max-w-2xl">
 
-      {/* AVATAR + TEXTAREA */}
       <div className="flex items-start gap-4">
-        {/* Avatar */}
-        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold text-gray-600">
-          {userName.slice(0, 2).toUpperCase()}
-        </div>
+
+        {/*  AVATAR */}
+       <Avatar user={user} currentUserId={user?.id} />
+
+
+       {/* TEXTAREA COLUMN */}
+     <div className="flex flex-col gap-2 flex-1">
+
+        {/* TITLE INPUT */}
+        <input
+          type="text"
+          placeholder="Title (optional)"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full bg-white rounded-2xl px-5 py-3 text-sm font-semibold outline-none border border-gray-200 focus:border-[#4C4FC1] focus:ring-1 focus:ring-[#4C4FC1]/20 transition placeholder-gray-400"
+        />
 
         {/* TEXTAREA */}
         <textarea
@@ -40,8 +74,6 @@ export default function CreatePost({ addPost, userName = "You" }: CreatePostProp
           value={text}
           onChange={(e) => {
             setText(e.target.value);
-
-            // Auto-grow height
             const el = e.target;
             el.style.height = "auto";
             el.style.height = el.scrollHeight + "px";
@@ -52,17 +84,17 @@ export default function CreatePost({ addPost, userName = "You" }: CreatePostProp
               handleSend();
             }
           }}
-          className="flex-1 bg-white rounded-2xl px-5 py-4 text-sm outline-none border border-[#d2d4f5] focus:border-[#2F35C2] focus:ring-1 focus:ring-[#2F35C2] transition placeholder-gray-400 overflow-hidden"
+        className=" bg-white rounded-2xl px-5 py-4 text-sm outline-none border  border-gray-200 focus:border-[#4C4FC1] focus:ring-1 focus:ring-[#4C4FC1]/20 transition placeholder-gray-400 overflow-hidden"
           rows={1}
         />
       </div>
+      </div>
 
-      {/* SEND BUTTON */}
       <div className="flex justify-end">
         <button
           onClick={handleSend}
-          className="px-5 py-2 rounded-full bg-purple-900 flex items-center justify-center hover:bg-purple-800 transition text-white"
-        >
+          disabled={mutation.isPending}
+          className="px-5 py-2 rounded-full flex items-center justify-center transition disabled:opacity-50 cursor-pointer"style={{ backgroundColor: "rgba(112, 45, 255, 0.2)", color: "#2F327D" }}      >
           <Send size={18} />
         </button>
       </div>

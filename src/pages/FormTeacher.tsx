@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SidebarTeacher from "../components/Sidebarteacher";
+import { createTeacherProfile } from "../api/teacher";
+import { useMutation } from "@tanstack/react-query";
 
 /**
  * FormTeacher — shown ONCE after teacher signup.
@@ -10,11 +12,25 @@ import SidebarTeacher from "../components/Sidebarteacher";
 const FormTeacher = () => {
   const navigate = useNavigate();
   const [isPsychologist, setIsPsychologist] = useState(false);
-  const [bio, setBio]                       = useState("");
-  const [cvFile, setCvFile]                 = useState<File | null>(null);
-  const [dragging, setDragging]             = useState(false);
-  const [submitted, setSubmitted]           = useState(false);
+  const [bio, setBio] = useState("");
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+
+  // inside the component:
+  const { mutate: submitProfile, isPending } = useMutation({
+    mutationFn: createTeacherProfile,
+    onSuccess: () => setSubmitted(true),
+    onError: () => alert("Failed to submit profile. Try again."),
+  });
+
+  const handleSubmit = () => {
+    if (!bio.trim() || !cvFile) return;
+    submitProfile({ isPsychologist, descreption: bio, cvFile });
+  };
+
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -26,15 +42,6 @@ const FormTeacher = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setCvFile(file);
-  };
-
-  const handleSubmit = () => {
-    if (!bio.trim()) return;
-    // Mark as submitted so this form never shows again
-    localStorage.setItem("teacher_profile_submitted", "true");
-    // Store status as pending (admin hasn't approved yet)
-    localStorage.setItem("teacher_approval_status", "pending");
-    setSubmitted(true);
   };
 
   // ── Confirmation screen shown after submit ────────────────────────────────
@@ -63,7 +70,7 @@ const FormTeacher = () => {
               <span className="text-xs text-amber-700 font-medium">Pending Approval</span>
             </div>
             <button
-              onClick={() => navigate("/HomePageTeacher")}
+              onClick={() => navigate("/HomePage")}
               className="w-full bg-[#2e2c74] hover:bg-purple-900 text-white font-semibold text-sm py-3.5 rounded-2xl transition-colors duration-200 shadow-md"
             >
               Go to Dashboard
@@ -161,8 +168,8 @@ const FormTeacher = () => {
                 onDrop={handleDrop}
                 className={`border-2 border-dashed rounded-2xl px-6 py-10 flex flex-col items-center justify-center cursor-pointer transition-colors duration-200
                   ${dragging ? "border-purple-400 bg-purple-50"
-                  : cvFile   ? "border-green-300 bg-green-50"
-                             : "border-gray-200 hover:border-purple-300 hover:bg-purple-50/30"}`}
+                    : cvFile ? "border-green-300 bg-green-50"
+                      : "border-gray-200 hover:border-purple-300 hover:bg-purple-50/30"}`}
               >
                 {cvFile ? (
                   <>
@@ -194,7 +201,7 @@ const FormTeacher = () => {
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
-              Submit for Approval
+              {isPending ? "Submitting..." : "Submit for Approval"}
             </button>
 
           </div>

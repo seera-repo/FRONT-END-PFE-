@@ -3,23 +3,29 @@ import CommunityIcon from '../assets/icons/people.svg';
 import CoursesIcon from '../assets/icons/folder.svg';
 import DashboardIcon from '../assets/icons/home.svg';
 import LogoutIcon from '../assets/icons/logout.svg';
-
-import { useNavigate, Outlet } from 'react-router-dom';
+import { getUser } from '../api/auth';
+import { useNavigate, Outlet} from 'react-router-dom';
 
 
 function Header() {
+    const user = getUser();
+
   const navLinks = [
-    { label: "Dashboard", href: "/HomePage", icon: DashboardIcon },
-
+    { 
+      label: "Dashboard", 
+      href: user?.role === "Teacher" ? "/HomePageTeacher" : "/HomePage", 
+      icon: DashboardIcon 
+    },
     { label: "Courses", href: "/BrowseCourse", icon: CoursesIcon },
-
     { label: "Community", href: "/CommunityBlog", icon: CommunityIcon },
-
-    { label: "Profile", href: "/Profile", icon: ProfileIcon },
+    { 
+      label: "Profile", 
+      href: user?.role === "Teacher" ? "/ProfileTeacher" : "/ProfileStudent", 
+      icon: ProfileIcon 
+    },
   ];
-
   const navigate = useNavigate();
-  
+
   return (
     <>
       <header className='fixed top-0 left-0 z-50 pt-4 pb-4 w-full bg-[#d2d4f5] shadow-[0_10px_15px_rgba(0,0,0,0.1)]'>
@@ -40,8 +46,8 @@ function Header() {
                   className="group flex items-center gap-x-2 text-[14px] py-1 px-4 rounded-4xl cursor-pointer"
                 >
                   {
-                    link.icon && <img src={link.icon} alt={link.label} 
-                     className="transition-all group-hover:opacity-50"
+                    link.icon && <img src={link.icon} alt={link.label}
+                      className="transition-all group-hover:opacity-50"
                     />
                   }
 
@@ -57,7 +63,10 @@ function Header() {
 
           </ul>
           <button className='flex items-center gap-x-2  font-semibold  mr-9 text-[18px] hover:text-red-700 hover:bg-red-100/50 px-4 py-1 rounded-4xl transition duration-300 ease-in-out cursor-pointer ml-8 text-[#F13E3E]'
-            onClick={() => navigate('/')}>
+            onClick={() => {
+              localStorage.clear();
+              navigate('/');
+            }}>
             <img src={LogoutIcon} alt="logout" />
             Logout
           </button>

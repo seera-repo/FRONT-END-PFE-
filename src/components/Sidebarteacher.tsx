@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import home      from "../assets/icons/home.svg";
-import folder    from "../assets/icons/folder.svg";
+import home from "../assets/icons/home.svg";
+import folder from "../assets/icons/folder.svg";
 import logoutIcon from "../assets/icons/logout.svg";
-import people    from "../assets/icons/people.svg";
+import people from "../assets/icons/people.svg";
 
 const PURPLE_FILTER = "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
 
@@ -14,8 +14,8 @@ type NavItem = {
 };
 
 const OVERVIEW_ITEMS: NavItem[] = [
-  { label: "Dashboard", icon: home,   path: "/HomePageTeacher"              },
-  
+  { label: "Dashboard", icon: home, path: "/HomePageTeacher" },
+
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
@@ -37,16 +37,16 @@ function getInitials(name: string): string {
 }
 
 const Sidebateacher = () => {
-  const navigate  = useNavigate();
-  const location  = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [hovered, setHovered] = useState<string | null>(null);
 
   // Active is driven by the current URL path, not local state
   const isActive = (path: string) => location.pathname === path;
 
   const NavButton = ({ label, icon, path }: NavItem) => {
-    const active      = isActive(path);
-    const isHov       = hovered === label;
+    const active = isActive(path);
+    const isHov = hovered === label;
     const applyPurple = active || isHov;
 
     return (
@@ -76,11 +76,11 @@ const Sidebateacher = () => {
 
       {/* Logo */}
       <a href="/HomePage" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
-              <span className="text-white font-bold text-sm">D</span>
-            </div>
-            <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">diversity</span>
-          </a>
+        <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
+          <span className="text-white font-bold text-sm">D</span>
+        </div>
+        <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">diversity</span>
+      </a>
 
       {/* Overview */}
       <div className="mb-6">
@@ -92,10 +92,10 @@ const Sidebateacher = () => {
             <NavButton key={item.label} {...item} />
           ))}
         </div>
-      
 
-      {/* Community */}
-        
+
+        {/* Community */}
+
         {COMMUNITY_ITEMS.map((item) => (
           <NavButton key={item.label} {...item} />
         ))}
@@ -126,6 +126,10 @@ const Sidebateacher = () => {
           <button
             title="Logout"
             className="shrink-0 text-gray-400 hover:text-red-500 transition-colors duration-150 p-1 rounded-lg hover:bg-red-50"
+            onClick={() => {
+              localStorage.clear();
+              navigate('/');
+            }}
           >
             <img
               src={logoutIcon}
