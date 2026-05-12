@@ -2,6 +2,7 @@ import Header from "../components/Header"
 import {ChevronRight} from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchProfileStudent } from '../api/user'
+import Footer from "../components/Footer"
 
 const ProfileStudent = () => {
   const { data: user, isLoading, isError } = useQuery({
@@ -97,6 +98,7 @@ if (isError) return <p>Something went wrong</p>
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   )
 }

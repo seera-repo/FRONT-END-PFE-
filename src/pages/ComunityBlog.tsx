@@ -6,6 +6,7 @@ import PostCard from "../components/PostCard";
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchPosts } from "../api/postsApi";
+import Footer from "../components/Footer";
 
 export default function CommunityPage() {
 
@@ -57,6 +58,7 @@ export default function CommunityPage() {
           <PostCard key={post.id} post={post} />
         ))}
       </div>
+      <Footer/>
     </>
   );
 }

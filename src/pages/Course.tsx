@@ -14,6 +14,7 @@ import { addComment, fetchCommentsByCourse } from "../api/course_comments";
 import { enrole, removeEnrollment } from "../api/enrollment";
 import { removeSavedCourse, saveCourse } from "../api/savedCourses";
 import type { CourseComment } from "../types/types"
+import Footer from "../components/Footer";
 
 
 const Course = () => {
@@ -178,7 +179,7 @@ const Course = () => {
     </div>
 
   </>;;
-  if (error){
+  if (error) {
     return (
       <div className='w-full h-screen flex justify-center items-center'>
         <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50">
@@ -207,7 +208,7 @@ const Course = () => {
                 <p className="text-gray-500">Please try again.</p>
               </div>
             </div>
-          
+
           </div>
         </div>
       </div>
@@ -496,8 +497,10 @@ const Course = () => {
 
         </div>
       </main >
+      <Footer />
 
     </div >
+
   )
 }
 

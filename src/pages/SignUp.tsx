@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { EyeOff } from 'lucide-react'
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
+interface TokenPayload {
+  id: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
 
 const signup = () => {
   const [email, setEmail] = useState("");
@@ -25,9 +33,24 @@ const signup = () => {
       if (!res.ok) {
         setError(data.message);
         return;
-      } else {
-        navigate('/NormalORTrisomyStudent');
       }
+      if (data.token) {
+        const payload = jwtDecode(data.token) as TokenPayload;
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify({
+          id: payload.id,
+          role: payload.role
+        })
+        );
+
+        navigate('/NormalORTrisomyStudent');
+      } else {
+        setError("No token received from server");
+      }
+
+
+
     } catch (error) {
       setError("Something went wrong");
     }
@@ -71,8 +94,8 @@ const signup = () => {
           {error && (
             <p className="text-red-500 text-sm mt-3 text-center">{error}</p>
           )}
-          <h1 onClick={() => navigate('/Login')}
-            className="text-[14px] hover:underline mt-3 text-right w-full cursor-pointer pr-3 text-[#7268C7]">i already have an account</h1>
+          <nav onClick={() => navigate('/Login')}
+            className="text-[14px] hover:underline mt-3 text-right w-full cursor-pointer pr-3 text-[#7268C7]">i already have an account</nav>
           <button
             onClick={handleLogin}
             className="text-white rounded-full px-4 py-1.5 bg-[#495CBD] w-[150px] block mt-7  hover:opacity-80 transition items-center justify-center flex ">signUp</ button>

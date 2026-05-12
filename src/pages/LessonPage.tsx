@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import { fetchLessons } from "../api/lessons";
 import { useQuery } from "@tanstack/react-query";
 import ReactPlayer from "react-player";
+import Footer from "../components/Footer";
 
 function LessonPage() {
   //const Player = ReactPlayer as any;
