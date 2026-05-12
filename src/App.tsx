@@ -53,7 +53,7 @@ function App() {
         <Route path="/Profileteacher" element={<Profileteacher/>} />
        <Route path="/AddCourse" element={<AddCourse />} />
         <Route path="/Header" element={<Header/>} />
-        <Route path="/Testb" element={<Testb/>} />
+      
       </Routes>
     </BrowserRouter>
   );
