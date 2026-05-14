@@ -1,17 +1,11 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-<<<<<<< HEAD
-import logo       from "../assets/icons/logo.png";
-import home       from "../assets/icons/home.svg";
-import folder     from "../assets/icons/folder.svg";
-import logoutIcon from "../assets/icons/logout.svg";
-import people     from "../assets/icons/people.svg";
-=======
+
+import logo from "../assets/icons/logo.png";
 import home from "../assets/icons/home.svg";
 import folder from "../assets/icons/folder.svg";
 import logoutIcon from "../assets/icons/logout.svg";
 import people from "../assets/icons/people.svg";
->>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
 
 const PURPLE_FILTER =
   "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
@@ -22,19 +16,14 @@ type NavItem = {
   path: string;
 };
 
-// Inline data-URI for an "add" icon since there's no add.svg in the project
+// Inline add icon
 const addIconSrc =
   "data:image/svg+xml,%3Csvg width='17' height='17' viewBox='0 0 17 17' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.5 3.5V13.5M3.5 8.5H13.5' stroke='%23202020' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E";
 
 const OVERVIEW_ITEMS: NavItem[] = [
-<<<<<<< HEAD
-  { label: "Dashboard",  icon: home,       path: "/HomePageTeacher" },
-  { label: "Add Course", icon: addIconSrc, path: "/AddCourse"       },
-  { label: "Browse Courses", icon: folder,     path: "/BrowseCourse" },
-=======
   { label: "Dashboard", icon: home, path: "/HomePageTeacher" },
-
->>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
+  { label: "Add Course", icon: addIconSrc, path: "/AddCourse" },
+  { label: "Browse Courses", icon: folder, path: "/BrowseCourse" },
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
@@ -50,13 +39,9 @@ function getInitials(name: string): string {
     .join("");
 }
 
-<<<<<<< HEAD
 const USER = { name: "Dr. Khalil", role: "Teacher" };
 
 const SidebarTeacher = () => {
-=======
-const Sidebateacher = () => {
->>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
   const navigate = useNavigate();
   const location = useLocation();
   const [hovered, setHovered] = useState<string | null>(null);
@@ -74,15 +59,16 @@ const Sidebateacher = () => {
         onMouseEnter={() => setHovered(label)}
         onMouseLeave={() => setHovered(null)}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 w-full text-left
-          ${active
-            ? "bg-white text-[#2e2c74] shadow-sm"
-            : "text-[#4a4d6e] hover:bg-white/60 hover:text-[#2e2c74]"
+          ${
+            active
+              ? "bg-white text-[#2e2c74] shadow-sm"
+              : "text-[#4a4d6e] hover:bg-white/60 hover:text-[#2e2c74]"
           }`}
       >
         <img
           src={icon}
           alt={label}
-          className="w-4 h-4 shrink-0 transition-all duration-200"
+          className="w-4 h-4 shrink-0"
           style={{ filter: applyPurple ? PURPLE_FILTER : "none" }}
         />
         {label}
@@ -98,22 +84,17 @@ const Sidebateacher = () => {
 
   return (
     <div className="w-56 h-screen bg-[#A7AAE9]/30 p-4 flex flex-col shrink-0 rounded-3xl overflow-hidden">
-
       {/* Logo */}
-<<<<<<< HEAD
-      <a href="/HomePageTeacher" className="flex items-center px-1 mb-6 mt-1">
-        <img
-          src={logo}
-          alt="Diversity"
-          className="h-16 w-auto object-contain"
-        />
-=======
-      <a href="/HomePage" className="flex items-center gap-2">
+      <a href="/HomePageTeacher" className="flex items-center gap-2 mb-6 mt-1">
+        <img src={logo} alt="Diversity" className="h-16 w-auto object-contain" />
+
         <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
           <span className="text-white font-bold text-sm">D</span>
         </div>
-        <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">diversity</span>
->>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
+
+        <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">
+          diversity
+        </span>
       </a>
 
       {/* Overview */}
@@ -121,21 +102,17 @@ const Sidebateacher = () => {
         <p className="text-[10px] font-bold tracking-widest text-[#a7aae9] uppercase px-2 mb-1.5">
           Overview
         </p>
+
         <div className="flex flex-col gap-0.5">
           {OVERVIEW_ITEMS.map((item) => (
             <NavButton key={item.label} {...item} />
           ))}
         </div>
-<<<<<<< HEAD
-=======
 
-
-        {/* Community */}
-
+        {/* Community shortcut */}
         {COMMUNITY_ITEMS.map((item) => (
           <NavButton key={item.label} {...item} />
         ))}
->>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
       </div>
 
       {/* Divider */}
@@ -146,6 +123,7 @@ const Sidebateacher = () => {
         <p className="text-[10px] font-bold tracking-widest text-[#a7aae9] uppercase px-2 mb-1.5">
           Community
         </p>
+
         <div className="flex flex-col gap-0.5">
           {COMMUNITY_ITEMS.map((item) => (
             <NavButton key={item.label} {...item} />
@@ -161,31 +139,24 @@ const Sidebateacher = () => {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => navigate("/Profileteacher")}
-            title="Go to profile"
-            className="w-9 h-9 rounded-xl bg-[#d2d4f5] flex items-center justify-center shrink-0 hover:bg-[#b8bbf0] transition-colors duration-150"
+            className="w-9 h-9 rounded-xl bg-[#d2d4f5] flex items-center justify-center"
           >
-            <span className="text-[#2e2c74] text-[10px] font-extrabold tracking-wide">
+            <span className="text-[#2e2c74] text-[10px] font-extrabold">
               {getInitials(USER.name)}
             </span>
           </button>
 
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-semibold text-gray-800 truncate">{USER.name}</p>
+            <p className="text-[12px] font-semibold text-gray-800 truncate">
+              {USER.name}
+            </p>
             <p className="text-[11px] text-gray-400 truncate">{USER.role}</p>
           </div>
 
           <button
             title="Logout"
-<<<<<<< HEAD
             onClick={handleLogout}
-            className="shrink-0 hover:opacity-80 transition-opacity p-1 rounded-lg hover:bg-red-50"
-=======
-            className="shrink-0 text-gray-400 hover:text-red-500 transition-colors duration-150 p-1 rounded-lg hover:bg-red-50"
-            onClick={() => {
-              localStorage.clear();
-              navigate('/');
-            }}
->>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
+            className="shrink-0 p-1 rounded-lg hover:bg-red-50 hover:text-red-500 transition"
           >
             <img src={logoutIcon} alt="logout" className="w-4 h-4" />
           </button>
