@@ -6,7 +6,6 @@ import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 import Course from './pages/Course';
 import CommunityBlog from './pages/ComunityBlog';
-import CommunityBlogTeacher from './pages/ComunityBlogTeacher';
 import ChooseComunity from './pages/ChooseCommunity';
 import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
@@ -19,13 +18,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePageTeacher from './pages/HomePageTeacher';
 import FormTeacher from './pages/FormTeacher';
 import AddCourse from './pages/AddCourse';
-
-import Profileteacher from './pages/Profileteacher';
-import Header from './components/Header';
-
 import AdminDashBoard from './pages/page';
 import VerifyEmail from './pages/VerifyEmail';
-
 
 function App() {
   return (
@@ -35,19 +29,8 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/Signup" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
-
-
-        <Route path="/HomePage" element={<HomePage />} />
-
-        <Route path="/BrowseCourse" element={<BrowseCourse />} />
-
-        <Route path="/course/:id" element={<Course />} />
-
-        <Route path="/courses/:id/lessons/:lessonId" element={<LessonPage />} />
-
-        <Route path="/CommunityBlog" element={<CommunityBlog />} />
-        <Route path="/CommunityBlogTeacher" element={<CommunityBlogTeacher />} />
-
+        <Route path="/ChooseRole" element={<ChooseRole />} />
+        <Route path="/ChooseCommunity" element={<ChooseComunity />} />
 
 //admin only
         <Route path='/db' element={<ProtectedRoute allowedRoles={["Admin"]}>
@@ -55,6 +38,11 @@ function App() {
           </ProtectedRoute>} />
         
 
+// Teacher only
+        <Route path="/HomePageTeacher"
+          element={<ProtectedRoute allowedRoles={["Teacher"]}>
+            <HomePageTeacher />
+          </ProtectedRoute>} />
 
         <Route path="/AddCourse"
           element={<ProtectedRoute allowedRoles={["Teacher"]}>
@@ -106,7 +94,6 @@ function App() {
             <CommunityBlog />
           </ProtectedRoute>} />
         <Route path="/AdminDashBoard" element={<Page />} />
-
       </Routes>
     </BrowserRouter>
   );
