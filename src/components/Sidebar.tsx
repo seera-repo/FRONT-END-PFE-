@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import logo from "../assets/icons/logo.png";
@@ -17,6 +17,11 @@ type NavItem = {
   label: string;
   icon: string;
   path: string;
+};
+
+type User = {
+  name: string;
+  role: string;
 };
 
 const OVERVIEW_ITEMS: NavItem[] = [
@@ -38,14 +43,42 @@ function getInitials(name: string): string {
     .join("");
 }
 
-const USER = { name: "Ahmed Khalil", role: "Student" };
-
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [hovered, setHovered] = useState<string | null>(null);
 
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const isActive = (path: string) => location.pathname === path;
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          navigate("/");
+          return;
+        }
+
+        const data = await fetchProfileStudent(token);
+
+        setUser({
+          name: data.name,
+          role: data.role?.name || "Student",
+        });
+      } catch (err) {
+        console.error("Failed to load user:", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
+  }, []);
 
   const NavButton = ({ label, icon, path }: NavItem) => {
     const active = isActive(path);
@@ -78,7 +111,6 @@ const Sidebar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.clear();
     navigate("/");
   };
 
@@ -87,19 +119,7 @@ const Sidebar = () => {
 
       {/* Logo */}
       <a href="/HomePage" className="flex items-center px-1 mb-6 mt-1 gap-2">
-        <img
-          src={logo}
-          alt="Diversity"
-          className="h-16 w-auto object-contain"
-        />
-
-        <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
-          <span className="text-white font-bold text-sm">D</span>
-        </div>
-
-        <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">
-          diversity
-        </span>
+        <img src={logo} alt="Diversity" className="h-16 w-auto object-contain" />
       </a>
 
       {/* Overview */}
@@ -115,7 +135,6 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Divider */}
       <div className="mx-2 h-px bg-[#c8cbef]/50 my-2" />
 
       {/* Community */}
@@ -131,40 +150,42 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Spacer */}
       <div className="flex-1" />
 
       {/* User card */}
       <div className="bg-white rounded-2xl px-3 py-3 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => navigate("/ProfileStudent")}
-            title="Go to profile"
-            className="w-9 h-9 rounded-xl bg-[#d2d4f5] flex items-center justify-center shrink-0 hover:bg-[#b8bbf0] transition-colors duration-150"
-          >
-            <span className="text-[#2e2c74] text-[10px] font-extrabold tracking-wide">
-              {getInitials(USER.name)}
-            </span>
-          </button>
+        {loading ? (
+          <p className="text-sm text-gray-400">Loading...</p>
+        ) : user ? (
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => navigate("/ProfileStudent")}
+              className="w-9 h-9 rounded-xl bg-[#d2d4f5] flex items-center justify-center"
+            >
+              <span className="text-[#2e2c74] text-[10px] font-extrabold">
+                {getInitials(user.name)}
+              </span>
+            </button>
 
-          <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-semibold text-gray-800 truncate">
-              {USER.name}
-            </p>
+            <div className="flex-1 min-w-0">
+              <p className="text-[12px] font-semibold text-gray-800 truncate">
+                {user.name}
+              </p>
+              <p className="text-[11px] text-gray-400 truncate">
+                {user.role}
+              </p>
+            </div>
 
-            <p className="text-[11px] text-gray-400 truncate">
-              {USER.role}
-            </p>
+            <button
+              onClick={handleLogout}
+              className="text-gray-400 hover:text-red-500 p-1"
+            >
+              <img src={logoutIcon} className="w-4 h-4" />
+            </button>
           </div>
-
-          <button
-            title="Logout"
-            onClick={handleLogout}
-            className="shrink-0 text-gray-400 hover:text-red-500 transition-colors duration-150 p-1 rounded-lg hover:bg-red-50"
-          >
-            <img src={logoutIcon} alt="logout" className="w-4 h-4" />
-          </button>
-        </div>
+        ) : (
+          <p className="text-sm text-red-400">Failed to load user</p>
+        )}
       </div>
     </div>
   );
