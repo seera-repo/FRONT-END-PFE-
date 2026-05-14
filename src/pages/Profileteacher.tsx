@@ -119,10 +119,10 @@ function ProfileTeacher() {
               <div className="flex gap-2">
                 <button
                   onClick={() => navigate("/AddCourse")}
-                  className="flex items-center gap-2 bg-white text-[#2e2c74] text-sm font-semibold px-4 py-2 rounded-xl hover:bg-purple-50 transition-colors shadow-md"
+                  className="flex items-center gap-1 bg-white text-[#2e2c74] text-sm font-semibold px-4 py-2 rounded-xl hover:bg-purple-50 transition-colors shadow-md"
                 >
-                  <BookOpen className="w-4 h-4" />
-                  New Course
+                
+                +   Add Course
                 </button>
                 <button
                   onClick={() => { localStorage.clear(); navigate("/"); }}
@@ -135,25 +135,7 @@ function ProfileTeacher() {
             </div>
           </div>
 
-          {/* Stats bar */}
-          <div className="relative z-10 mx-8 -mb-6 bg-white rounded-2xl shadow-xl border border-gray-100 px-6 py-4 grid grid-cols-4 gap-4">
-            {[
-              { icon: BookOpen, value: courses.length, label: "Courses", color: "text-indigo-600", bg: "bg-indigo-50" },
-              { icon: Users, value: totalStudents, label: "Students", color: "text-emerald-600", bg: "bg-emerald-50" },
-              { icon: Heart, value: totalLikes, label: "Total Likes", color: "text-rose-500", bg: "bg-rose-50" },
-              { icon: Star, value: courses.filter(c => (c.likes || 0) > 10).length, label: "Top Courses", color: "text-amber-500", bg: "bg-amber-50" },
-            ].map((stat, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center`}>
-                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
-                </div>
-                <div>
-                  <p className="text-xl font-bold text-gray-900">{stat.value}</p>
-                  <p className="text-xs text-gray-400 font-medium">{stat.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          
         </div>
 
         {/* Content */}
@@ -231,12 +213,7 @@ function ProfileTeacher() {
           <div className="col-span-2 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-gray-700 uppercase tracking-widest">My Courses</h2>
-              <button
-                onClick={() => navigate("/AddCourse")}
-                className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors flex items-center gap-1"
-              >
-                + Add Course
-              </button>
+              
             </div>
 
             {courses.length === 0 ? (
