@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+<<<<<<< HEAD
 import logo       from "../assets/icons/logo.png";
 import home       from "../assets/icons/home.svg";
 import folder     from "../assets/icons/folder.svg";
 import logoutIcon from "../assets/icons/logout.svg";
 import people     from "../assets/icons/people.svg";
+=======
+import home from "../assets/icons/home.svg";
+import folder from "../assets/icons/folder.svg";
+import logoutIcon from "../assets/icons/logout.svg";
+import people from "../assets/icons/people.svg";
+>>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
 
 const PURPLE_FILTER =
   "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
@@ -20,9 +27,14 @@ const addIconSrc =
   "data:image/svg+xml,%3Csvg width='17' height='17' viewBox='0 0 17 17' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.5 3.5V13.5M3.5 8.5H13.5' stroke='%23202020' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E";
 
 const OVERVIEW_ITEMS: NavItem[] = [
+<<<<<<< HEAD
   { label: "Dashboard",  icon: home,       path: "/HomePageTeacher" },
   { label: "Add Course", icon: addIconSrc, path: "/AddCourse"       },
   { label: "Browse Courses", icon: folder,     path: "/BrowseCourse" },
+=======
+  { label: "Dashboard", icon: home, path: "/HomePageTeacher" },
+
+>>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
@@ -38,9 +50,13 @@ function getInitials(name: string): string {
     .join("");
 }
 
+<<<<<<< HEAD
 const USER = { name: "Dr. Khalil", role: "Teacher" };
 
 const SidebarTeacher = () => {
+=======
+const Sidebateacher = () => {
+>>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
   const navigate = useNavigate();
   const location = useLocation();
   const [hovered, setHovered] = useState<string | null>(null);
@@ -48,8 +64,8 @@ const SidebarTeacher = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const NavButton = ({ label, icon, path }: NavItem) => {
-    const active      = isActive(path);
-    const isHov       = hovered === label;
+    const active = isActive(path);
+    const isHov = hovered === label;
     const applyPurple = active || isHov;
 
     return (
@@ -84,12 +100,20 @@ const SidebarTeacher = () => {
     <div className="w-56 h-screen bg-[#A7AAE9]/30 p-4 flex flex-col shrink-0 rounded-3xl overflow-hidden">
 
       {/* Logo */}
+<<<<<<< HEAD
       <a href="/HomePageTeacher" className="flex items-center px-1 mb-6 mt-1">
         <img
           src={logo}
           alt="Diversity"
           className="h-16 w-auto object-contain"
         />
+=======
+      <a href="/HomePage" className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
+          <span className="text-white font-bold text-sm">D</span>
+        </div>
+        <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">diversity</span>
+>>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
       </a>
 
       {/* Overview */}
@@ -102,6 +126,16 @@ const SidebarTeacher = () => {
             <NavButton key={item.label} {...item} />
           ))}
         </div>
+<<<<<<< HEAD
+=======
+
+
+        {/* Community */}
+
+        {COMMUNITY_ITEMS.map((item) => (
+          <NavButton key={item.label} {...item} />
+        ))}
+>>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
       </div>
 
       {/* Divider */}
@@ -142,8 +176,16 @@ const SidebarTeacher = () => {
 
           <button
             title="Logout"
+<<<<<<< HEAD
             onClick={handleLogout}
             className="shrink-0 hover:opacity-80 transition-opacity p-1 rounded-lg hover:bg-red-50"
+=======
+            className="shrink-0 text-gray-400 hover:text-red-500 transition-colors duration-150 p-1 rounded-lg hover:bg-red-50"
+            onClick={() => {
+              localStorage.clear();
+              navigate('/');
+            }}
+>>>>>>> 4826becb12119d61aab9f18f7502bfb5b3111cca
           >
             <img src={logoutIcon} alt="logout" className="w-4 h-4" />
           </button>

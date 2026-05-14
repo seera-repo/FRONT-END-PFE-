@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo       from "../assets/icons/logo.png";
-import home       from "../assets/icons/home.svg";
-import folder     from "../assets/icons/folder.svg";
+
+import logo from "../assets/icons/logo.png";
+import home from "../assets/icons/home.svg";
+import folder from "../assets/icons/folder.svg";
 import logoutIcon from "../assets/icons/logout.svg";
-import people     from "../assets/icons/people.svg";
+import people from "../assets/icons/people.svg";
 import profileSvg from "../assets/icons/profile.svg";
+
+import { fetchProfileStudent } from "../api/user";
 
 const PURPLE_FILTER =
   "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
@@ -17,13 +20,13 @@ type NavItem = {
 };
 
 const OVERVIEW_ITEMS: NavItem[] = [
-  { label: "Dashboard", icon: home,       path: "/HomePage"      },
-  { label: "Courses",   icon: folder,     path: "/BrowseCourse"  },
+  { label: "Dashboard", icon: home, path: "/HomePage" },
+  { label: "Courses", icon: folder, path: "/BrowseCourse" },
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
-  { label: "Community", icon: people,     path: "/CommunityBlog"  },
-  { label: "Profile",   icon: profileSvg, path: "/ProfileStudent" },
+  { label: "Community", icon: people, path: "/CommunityBlog" },
+  { label: "Profile", icon: profileSvg, path: "/ProfileStudent" },
 ];
 
 function getInitials(name: string): string {
@@ -45,8 +48,8 @@ const Sidebar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const NavButton = ({ label, icon, path }: NavItem) => {
-    const active      = isActive(path);
-    const isHov       = hovered === label;
+    const active = isActive(path);
+    const isHov = hovered === label;
     const applyPurple = active || isHov;
 
     return (
@@ -55,9 +58,10 @@ const Sidebar = () => {
         onMouseEnter={() => setHovered(label)}
         onMouseLeave={() => setHovered(null)}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 w-full text-left
-          ${active
-            ? "bg-white text-[#2e2c74] shadow-sm"
-            : "text-[#4a4d6e] hover:bg-white/60 hover:text-[#2e2c74]"
+          ${
+            active
+              ? "bg-white text-[#2e2c74] shadow-sm"
+              : "text-[#4a4d6e] hover:bg-white/60 hover:text-[#2e2c74]"
           }`}
       >
         <img
@@ -74,6 +78,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.clear();
     navigate("/");
   };
 
@@ -81,12 +86,20 @@ const Sidebar = () => {
     <div className="w-56 h-screen bg-[#A7AAE9]/30 p-4 flex flex-col shrink-0 rounded-3xl overflow-hidden">
 
       {/* Logo */}
-      <a href="/" className="flex items-center px-1 mb-6 mt-1">
+      <a href="/HomePage" className="flex items-center px-1 mb-6 mt-1 gap-2">
         <img
           src={logo}
           alt="Diversity"
           className="h-16 w-auto object-contain"
         />
+
+        <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
+          <span className="text-white font-bold text-sm">D</span>
+        </div>
+
+        <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">
+          diversity
+        </span>
       </a>
 
       {/* Overview */}
@@ -94,6 +107,7 @@ const Sidebar = () => {
         <p className="text-[10px] font-bold tracking-widest text-[#a7aae9] uppercase px-2 mb-1.5">
           Overview
         </p>
+
         <div className="flex flex-col gap-0.5">
           {OVERVIEW_ITEMS.map((item) => (
             <NavButton key={item.label} {...item} />
@@ -109,6 +123,7 @@ const Sidebar = () => {
         <p className="text-[10px] font-bold tracking-widest text-[#a7aae9] uppercase px-2 mb-1.5">
           Community
         </p>
+
         <div className="flex flex-col gap-0.5">
           {COMMUNITY_ITEMS.map((item) => (
             <NavButton key={item.label} {...item} />
@@ -133,14 +148,19 @@ const Sidebar = () => {
           </button>
 
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-semibold text-gray-800 truncate">{USER.name}</p>
-            <p className="text-[11px] text-gray-400 truncate">{USER.role}</p>
+            <p className="text-[12px] font-semibold text-gray-800 truncate">
+              {USER.name}
+            </p>
+
+            <p className="text-[11px] text-gray-400 truncate">
+              {USER.role}
+            </p>
           </div>
 
           <button
             title="Logout"
             onClick={handleLogout}
-            className="shrink-0 hover:opacity-80 transition-opacity p-1 rounded-lg hover:bg-red-50"
+            className="shrink-0 text-gray-400 hover:text-red-500 transition-colors duration-150 p-1 rounded-lg hover:bg-red-50"
           >
             <img src={logoutIcon} alt="logout" className="w-4 h-4" />
           </button>

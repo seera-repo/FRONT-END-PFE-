@@ -1,22 +1,42 @@
-import homeIcon    from '../assets/icons/home.svg';
-import peopleIcon  from '../assets/icons/people.svg';
-import folderIcon  from '../assets/icons/folder.svg';
+import homeIcon from '../assets/icons/home.svg';
+import peopleIcon from '../assets/icons/people.svg';
+import folderIcon from '../assets/icons/folder.svg';
 import profileIcon from '../assets/icons/profile.svg';
-import logoutIcon  from '../assets/icons/logout.svg';
-import logo        from '../assets/icons/logo.png';
+import logoutIcon from '../assets/icons/logout.svg';
+import logo from '../assets/icons/logo.png';
 
+import { getUser } from '../api/auth';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 
-const PURPLE_FILTER = "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
-
-const navLinks = [
-  { label: "Dashboard", href: "/HomePage",      icon: homeIcon    },
-  { label: "Courses",   href: "/BrowseCourse",  icon: folderIcon  },
-  { label: "Community", href: "/CommunityBlog", icon: peopleIcon  },
-  { label: "Profile",   href: "/Profile",       icon: profileIcon },
-];
+const PURPLE_FILTER =
+  "invert(20%) sepia(90%) saturate(600%) hue-rotate(240deg) brightness(90%)";
 
 function Header() {
+  const user = getUser();
+
+  const navLinks = [
+    {
+      label: "Dashboard",
+      href: user?.role === "Teacher" ? "/HomePageTeacher" : "/HomePage",
+      icon: homeIcon
+    },
+    {
+      label: "Courses",
+      href: "/BrowseCourse",
+      icon: folderIcon
+    },
+    {
+      label: "Community",
+      href: "/CommunityBlog",
+      icon: peopleIcon
+    },
+    {
+      label: "Profile",
+      href: user?.role === "Teacher" ? "/ProfileTeacher" : "/ProfileStudent",
+      icon: profileIcon
+    },
+  ];
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,6 +48,7 @@ function Header() {
         .nav-icon {
           transition: filter 0.2s ease;
         }
+
         .nav-link:hover .nav-icon,
         .nav-link.active .nav-icon {
           filter: ${PURPLE_FILTER};
@@ -50,8 +71,12 @@ function Header() {
           <ul className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
               const active = isActive(link.href);
+
               return (
-                <li key={link.label}>
+                <li
+                  key={link.label}
+                  className="group flex items-center gap-x-2"
+                >
                   <a
                     href={link.href}
                     className={`nav-link flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
@@ -67,6 +92,7 @@ function Header() {
                       alt={link.label}
                       className="nav-icon w-4 h-4 shrink-0"
                     />
+
                     {link.label}
                   </a>
                 </li>
@@ -76,20 +102,28 @@ function Header() {
 
           {/* ── Logout ── */}
           <button
-            onClick={() => navigate('/')}
             className="nav-link flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-[#F13E3E] hover:bg-red-50 transition-all duration-150 cursor-pointer"
+            onClick={() => {
+              localStorage.clear();
+              navigate('/');
+            }}
           >
             <img
               src={logoutIcon}
               alt="logout"
               className="w-4 h-4 transition-all duration-200"
-              style={{ filter: "invert(40%) sepia(80%) saturate(500%) hue-rotate(320deg)" }}
+              style={{
+                filter:
+                  "invert(40%) sepia(80%) saturate(500%) hue-rotate(320deg)"
+              }}
             />
+
             Logout
           </button>
 
         </nav>
       </header>
+
       <Outlet />
     </>
   );

@@ -1,35 +1,36 @@
 import { useNavigate } from "react-router-dom";
+import {useState } from 'react';
+import { fetchGeneralCommunity } from "../api/community";
+import { fetchInclusiveCommunity } from "../api/community";
 const myPic3 = new URL("../assets/images/community-general.jpg", import.meta.url).href;
 const myPic6 = new URL("../assets/images/community-special.jpg", import.meta.url).href;
 function ChooseCommunityMain() {
 
     const navigate = useNavigate();
-    const sendData3 = () => {
-        fetch("http://localhost:3000/api/your-route", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                community: "Generel Community"
-            }),
-        })
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.error(err));
-    };
-    const sendData4 = () => {
-        fetch("http://localhost:3000/api/your-route", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                community: "inclusive Community"
-            }),
-        }).then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.error(err));
-    };
+    const [loading, setLoading] = useState(false);    
+    const [error, setError] = useState<string | null>(null);
+    async function handleInclusiveCommunity() {
+        setLoading(true);
+        try {
+            await fetchInclusiveCommunity();
+            // redirect or show success
+        } catch (err) {
+            setError("Something went wrong, try again");
+        } finally {
+            setLoading(false);
+        }
+    }
+    async function handleGeneralCommunity() {
+        setLoading(true);
+        try {
+            await fetchGeneralCommunity();
+            // redirect or show success
+        } catch (err) {
+            setError("Something went wrong, try again");
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <>
             
@@ -42,7 +43,7 @@ function ChooseCommunityMain() {
                     <div className="choosePartCommunity relative max-w-[400px] w-[350px] h-[460px] flex flex-col items-center justify-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[filter,opacity] duration-[3000ms] ease-in-out cursor-pointer hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]" onClick={(e) => {
                         const btn = e.currentTarget;
                         btn.classList.add("clicked");
-                        sendData3();
+                        handleGeneralCommunity();
                         setTimeout(() => {
                             navigate('/NormalOrTrisomyStudent');
                         }, 1000);
@@ -55,7 +56,7 @@ function ChooseCommunityMain() {
                     <div className="choosePartCommunity relative max-w-[400px] w-[350px] h-[460px] flex flex-col items-center justify-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[filter,opacity] duration-[3000ms] ease-in-out cursor-pointer hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]" onClick={(e) => {
                         const btn = e.currentTarget;
                         btn.classList.add("clicked");
-                        sendData4();
+                        handleInclusiveCommunity();
                         setTimeout(() => {
                             navigate('/NormalOrTrisomyStudent');
                         }, 1000);

@@ -1,4 +1,5 @@
 import heart from "../assets/icons/heart.svg";
+import { TeacherAvatar } from "../utils";
  
 type Props = {
   title: string;
@@ -15,7 +16,6 @@ const CourseCardHomepage = ({
   teacher,
   role,
   category,
-  image,
   saved = false,
   onToggleSave,
 }: Props) => {
@@ -45,11 +45,7 @@ const CourseCardHomepage = ({
  
      
       <div className="flex items-center mt-5 gap-3">
-        <img
-          src={image}
-          alt="user"
-          className="w-10 h-10 rounded-full object-cover"
-        />
+         <TeacherAvatar name={teacher} />
         <div>
           <p className="text-sm font-semibold text-gray-800">{teacher}</p>
           <p className="text-xs text-gray-500">{role}</p>

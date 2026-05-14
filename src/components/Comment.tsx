@@ -13,7 +13,7 @@ function Comment(data: CourseComment) {
         <div className="flex-1 rounded-2xl bg-white shadow-2xs p-4 w-150">
           <div className="flex items-center gap-2 w-150">
             <span className="text-sm font-semibold">
-              {data.User.name}
+              {data.User?.name ?? 'Anonymous'}
             </span>
           </div>
           <p className="mt-1.5 text-sm leading-relaxed ">
