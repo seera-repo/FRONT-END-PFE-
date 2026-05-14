@@ -9,6 +9,7 @@ import { fetchCourses } from '../api/courses';
 import { fetchCategories } from '../api/categories';
 import { useDeferredValue } from 'react';
 import { fetchProfileStudent } from '../api/user';
+import Footer from '../components/Footer';
 
 
 const BrowseCourse = () => {
@@ -36,7 +37,7 @@ const BrowseCourse = () => {
     queryFn: () => fetchCourses({
       categorie_id: activeCategorie.id === 1 ? undefined : String(activeCategorie.id),
       search: deferredSearch || undefined,
-      // isSpecialized: user?.isSick ? true : undefined, // ✅ only filter if sick
+      isSpecialized: user?.isSick ? true : undefined, // ✅ only filter if sick
     }),
     placeholderData: (previousData) => previousData
   });
@@ -99,7 +100,7 @@ const BrowseCourse = () => {
   return (
     <>
       <Header />
-      <section className='relative mt-5 overflow-auto scrollbar-hide scroll-smooth sm:py-20 py-6 flex flex-col justify-center items-center  min-h-screen bg-background '>
+      <section className='relative mt-5 overflow-auto scrollbar-hide scroll-smooth sm:pt-20 pt-6 flex flex-col justify-center items-center  min-h-screen bg-background '>
 
         <div className='flex flex-col justify-center m-4 item-center gap-y-2 text-center'>
           <h1 className=' text-[#2F327D] mt-10  text-balance text-3xl font-extrabold  md:text-4xl lg:text-5xl '>
@@ -173,6 +174,7 @@ const BrowseCourse = () => {
           )}
         </section>
       </section>
+      <Footer />
 
     </>
   )

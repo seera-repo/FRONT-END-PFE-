@@ -3,7 +3,8 @@ import peopleIcon from '../assets/icons/people.svg';
 import folderIcon from '../assets/icons/folder.svg';
 import profileIcon from '../assets/icons/profile.svg';
 import logoutIcon from '../assets/icons/logout.svg';
-import logo from '../assets/icons/logo.png';
+
+import logo from '../assets/images/Asset_14x.png';
 
 import { getUser } from '../api/auth';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
@@ -17,22 +18,35 @@ function Header() {
   const navLinks = [
     {
       label: "Dashboard",
-      href: user?.role === "Teacher" ? "/HomePageTeacher" : "/HomePage",
+      href:
+        user?.role === "Admin"
+          ? "/db"
+          : user?.role === "Teacher"
+          ? "/HomePageTeacher"
+          : "/HomePage",
       icon: homeIcon
     },
+
     {
       label: "Courses",
       href: "/BrowseCourse",
       icon: folderIcon
     },
+
     {
       label: "Community",
       href: "/CommunityBlog",
       icon: peopleIcon
     },
+
     {
       label: "Profile",
-      href: user?.role === "Teacher" ? "/ProfileTeacher" : "/ProfileStudent",
+      href:
+        user?.role === "Admin"
+          ? "/ProfileAdmin"
+          : user?.role === "Teacher"
+          ? "/ProfileTeacher"
+          : "/ProfileStudent",
       icon: profileIcon
     },
   ];
@@ -55,15 +69,18 @@ function Header() {
         }
       `}</style>
 
-      <header className="fixed top-0 left-0 z-50 w-full bg-[#A7AAE9]/30 backdrop-blur-md border-b border-[#A7AAE9]/40 shadow-sm">
+      <header className="fixed top-0 left-0 z-50 w-full bg-[#d2d4f5] backdrop-blur-md border-b border-[#A7AAE9]/40 shadow-[0_10px_15px_rgba(0,0,0,0.1)]">
         <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
           {/* ── Logo ── */}
-          <a href="/HomePage" className="flex items-center shrink-0">
+          <a
+            href="/"
+            className="flex flex-row justify-center items-center gap-x-2 shrink-0"
+          >
             <img
               src={logo}
-              alt="diversity logo"
-              className="h-14 w-auto object-contain"
+              alt="Logo"
+              className="h-15 w-auto object-contain"
             />
           </a>
 

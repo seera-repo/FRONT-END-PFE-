@@ -52,7 +52,7 @@ const HomePageTeacher = () => {
       {status === "pending" && <> <Sidebar /><PendingScreen /></>}
       {status === "rejected" && <> <Sidebar /><RejectedScreen onResubmit={handleResubmit} /></>}
       {/* ✅ Pass navigate as prop to ApprovedDashboard */}
-      {status === "approved" && <><SidebarTeacher /> <ApprovedDashboard navigate={navigate} /></>}
+      {status === "approved" && <><SidebarTeacher /><ApprovedDashboard /></>}
     </div>
   );
 };

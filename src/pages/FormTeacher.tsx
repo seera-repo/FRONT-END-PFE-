@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SidebarTeacher from "../components/Sidebarteacher";
 import { createTeacherProfile } from "../api/teacher";
 import { useMutation } from "@tanstack/react-query";
+import Footer from "../components/Footer";
 
 /**
  * FormTeacher — shown ONCE after teacher signup.
@@ -207,6 +208,7 @@ const FormTeacher = () => {
           </div>
         </div>
       </main>
+     
     </div>
   );
 };

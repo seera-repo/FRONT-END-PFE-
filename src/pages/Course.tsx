@@ -14,6 +14,7 @@ import { addComment, fetchCommentsByCourse } from "../api/course_comments";
 import { enrole, removeEnrollment } from "../api/enrollment";
 import { removeSavedCourse, saveCourse } from "../api/savedCourses";
 import type { CourseComment } from "../types/types"
+import Footer from "../components/Footer";
 
 
 const Course = () => {
@@ -178,7 +179,7 @@ const Course = () => {
     </div>
 
   </>;;
-  if (error){
+  if (error) {
     return (
       <div className='w-full h-screen flex justify-center items-center'>
         <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50">
@@ -207,7 +208,7 @@ const Course = () => {
                 <p className="text-gray-500">Please try again.</p>
               </div>
             </div>
-          
+
           </div>
         </div>
       </div>
@@ -291,7 +292,18 @@ const Course = () => {
                 <p className="mt-6 text-base leading-relaxed text-[#4d555e]">
                   {course.description}
                 </p>
-
+                {/* Course Document */}
+                {course.document && (
+                  <a
+                    href={course.document}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[#d4e5ea] bg-[#f5f9fb] px-4 py-3 text-sm font-semibold text-[#2F35C2] transition-colors hover:bg-[#e8f0f3]"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    View Course Document
+                  </a>
+                )}
                 {/* Action Buttons */}
                 <div className="mt-8 flex flex-wrap gap-3">
                   <button
@@ -496,8 +508,10 @@ const Course = () => {
 
         </div>
       </main >
+      <Footer />
 
     </div >
+
   )
 }
 

@@ -19,17 +19,23 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePageTeacher from './pages/HomePageTeacher';
 import FormTeacher from './pages/FormTeacher';
 import AddCourse from './pages/AddCourse';
+
 import Profileteacher from './pages/Profileteacher';
 import Header from './components/Header';
+
+import AdminDashBoard from './pages/page';
+import VerifyEmail from './pages/VerifyEmail';
+
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/Signup" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
-<<<<<<< HEAD
+
 
         <Route path="/HomePage" element={<HomePage />} />
 
@@ -42,6 +48,12 @@ function App() {
         <Route path="/CommunityBlog" element={<CommunityBlog />} />
         <Route path="/CommunityBlogTeacher" element={<CommunityBlogTeacher />} />
 
+
+//admin only
+        <Route path='/db' element={<ProtectedRoute allowedRoles={["Admin"]}>
+            <AdminDashBoard />
+          </ProtectedRoute>} />
+        
 
 
         <Route path="/AddCourse"

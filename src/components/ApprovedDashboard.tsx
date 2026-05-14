@@ -1,131 +1,183 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { fetchMyCourses } from "../api/courses";
-import { useQuery } from "@tanstack/react-query";
-import type { myCourse } from "../api/courses";
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { apiFetch } from "../api/apiClient";
+import {
+  BookOpen, Users, Plus, Eye, Trash2,
+  MessageSquare, Clock, ChevronRight, Star
+} from "lucide-react";
 
+// ── delete course API ──────────────────────────────────────────────
+async function deleteCourse(courseId: string): Promise<void> {
+  await apiFetch(`api/courses/${courseId}`, { method: "DELETE" });
+}
 
-// ─── 4. APPROVED DASHBOARD ────────────────────────────────────────────────────
-// ✅ navigate is passed as a prop so it works inside this component
-const ApprovedDashboard = ({ navigate }: { navigate: ReturnType<typeof useNavigate> }) => {
+// ── component ─────────────────────────────────────────────────────
+export default function ApprovedDashboard() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  //fech my courses
-  const { data: myCourses, isLoading: enrollmentLoading } = useQuery({
+  const { data: courses = [], isLoading } = useQuery({
     queryKey: ["my-courses"],
     queryFn: fetchMyCourses,
   });
 
+  const { mutate: handleDelete } = useMutation({
+    mutationFn: deleteCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-courses"] });
+    },
+  });
 
-  const COURSES = (myCourses ?? []).map((c) => ({
-    id: c.id,
-    title: c.title,
-    category: c.Categorie.name,
-    image: c.image_url ?? null,
-    likes: c.likes,
-    students: c.students,
-    status: "published" as const,
-  }));
+  // ── derived stats ──────────────────────────────────────────────
+  const totalCourses = courses.length;
+  const totalStudents = courses.reduce((sum, c) => sum + (c.students ?? 0), 0);
+  const totalLikes = courses.reduce((sum, c) => sum + (c.likes ?? 0), 0);
 
+  const STATS = [
+    { label: "Total Courses", value: totalCourses, icon: BookOpen },
+    { label: "Total Students", value: totalStudents, icon: Users },
+    { label: "Total Likes", value: totalLikes, icon: Star },
+  ];
 
-  if (enrollmentLoading) return (
-    <div className="w-full h-screen gap-x-2 flex justify-center items-center">
-      <div
-        className="w-5 bg-[#d991c2] animate-pulse h-5 rounded-full"
-      ></div>
-      <div
-        className="w-5 animate-pulse h-5 bg-[#9869b8] rounded-full animate-bounce"
-      ></div>
-      <div
-        className="w-5 h-5 animate-pulse bg-[#6756cc] rounded-full animate-bounce"
-      ></div>
-    </div>
-  )
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex justify-center items-center gap-2">
+        <div className="w-5 h-5 bg-[#d991c2] rounded-full animate-pulse" />
+        <div className="w-5 h-5 bg-[#9869b8] rounded-full animate-pulse" />
+        <div className="w-5 h-5 bg-[#6756cc] rounded-full animate-pulse" />
+      </div>
+    );
+  }
 
   return (
-    <main className="flex-1 overflow-y-auto p-6" style={{ scrollbarWidth: "none" }}>
-      {/* Hero */}
-      <div className="relative overflow-hidden rounded-3xl mb-6 bg-[#2e2c74]">
-        <div className="absolute -top-10 -right-10 w-52 h-52 bg-purple-500/30 rounded-full blur-3xl" />
-        <div className="absolute -bottom-8 -left-6  w-40 h-40 bg-indigo-400/20 rounded-full blur-2xl" />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        <div className="relative z-10 px-10 py-9 flex items-center justify-between">
-          <div>
-            <span className="inline-flex items-center gap-1.5 bg-white/15 text-white/90 text-[11px] font-semibold px-3 py-1 rounded-full mb-3 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              Teacher Dashboard
-            </span>
-            <h1 className="text-white text-2xl font-extrabold leading-snug mb-1">
-              Welcome back,<br /><span className="text-purple-300">Dr. Ahmed Khalil</span>
-            </h1>
-          </div>
-          <div className="hidden lg:flex flex-col gap-2 mr-2">
-            {/* ✅ Fixed: navigate is now available here */}
-            <button
-              onClick={() => navigate("/AddCourse")}
-              className="bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-              New Course
-            </button>
-            <button
-              onClick={() => navigate("/Profileteacher")}
-              className="bg-white text-[#2e2c74] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-purple-50 transition-colors flex items-center gap-2"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-              View Profile
-            </button>
-          </div>
+    <main className="flex-1 overflow-y-auto px-8 py-8">
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1a1a2e]">My Dashboard</h1>
+          <p className="text-sm text-gray-400 mt-0.5">Here's what's happening with your courses</p>
         </div>
+        <button
+          onClick={() => navigate("/addCourse")}
+          className="flex items-center gap-2 bg-[#2e2c74] text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-[#3d3a9e] transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          New Course
+        </button>
       </div>
 
-      {/* Courses */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between mb-1">
-          <h2 className="text-sm font-bold tracking-widest uppercase text-gray-600">My Courses</h2>
-          {/* ✅ Fixed: this button also navigates correctly */}
-          <button
-            onClick={() => navigate("/AddCourse")}
-            className="text-xs font-semibold text-purple-600 hover:text-purple-800 transition-colors flex items-center gap-1"
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        {STATS.map((s) => (
+          <div
+            key={s.label}
+            className="bg-white rounded-2xl p-5 shadow-sm border border-[#e8e8f4] flex flex-col gap-3"
           >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-            New Course
-          </button>
-        </div>
-
-        {COURSES.map((c) => (
-          <div key={c.id} className="bg-white rounded-2xl px-5 py-4 shadow-md hover:shadow-lg transition-shadow duration-200">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="bg-purple-100 text-purple-600 text-[10px] font-bold px-2 py-0.5 rounded-full">{c.category}</span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.status === "published" ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>{c.status}</span>
-                </div>
-                <p className="text-sm font-bold text-gray-800 truncate">{c.title}</p>
-                <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                    {c.students} students
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                    {c.likes}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                {/* ✅ Edit button navigates to edit page with course id */}
-                <button
-                  onClick={() => navigate(`/EditCourse/${c.id}`)}
-                  className="text-xs text-purple-600 hover:text-purple-800 font-semibold transition-colors px-3 py-1.5 rounded-lg hover:bg-purple-50"
-                >
-                  Edit
-                </button>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#2e2c74] uppercase tracking-wide">
+                {s.label}
+              </span>
+              <div className="w-8 h-8 rounded-xl bg-[#A7AAE9]/20 flex items-center justify-center">
+                <s.icon className="w-4 h-4 text-[#2e2c74]" />
               </div>
             </div>
+            <p className="text-3xl font-bold text-[#1a1a2e]">{s.value}</p>
           </div>
         ))}
       </div>
+
+      {/* Courses table */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#e8e8f4] overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0f0f8]">
+          <div className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-[#2e2c74]" />
+            <h2 className="text-sm font-bold text-[#1a1a2e]">My Courses</h2>
+          </div>
+        </div>
+
+        {courses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+            <BookOpen className="w-10 h-10 mb-3 opacity-30" />
+            <p className="text-sm">No courses yet</p>
+            <button
+              onClick={() => navigate("/AddCourse")}
+              className="mt-4 text-xs text-[#2e2c74] font-semibold hover:underline"
+            >
+              Create your first course
+            </button>
+          </div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs text-gray-400 bg-[#fafafa]">
+                <th className="px-6 py-3 font-semibold">Course</th>
+                <th className="px-6 py-3 font-semibold">Category</th>
+                <th className="px-6 py-3 font-semibold">Students</th>
+                <th className="px-6 py-3 font-semibold">Likes</th>
+                <th className="px-6 py-3 font-semibold">Type</th>
+                <th className="px-6 py-3 font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {courses.map((c) => (
+                <tr
+                  key={c.id}
+                  className="border-t border-[#f0f0f8] hover:bg-[#fafafe] transition-colors"
+                >
+                  <td className="px-6 py-3 font-medium text-[#1a1a2e]">{c.title}</td>
+                  <td className="px-6 py-3">
+                    <span className="text-xs bg-[#A7AAE9]/20 text-[#2e2c74] px-2 py-1 rounded-full font-medium">
+                      {c.Categorie?.name ?? "—"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-3 text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <Users className="w-3 h-3" /> {c.students ?? 0}
+                    </span>
+                  </td>
+                  <td className="px-6 py-3 text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <Star className="w-3 h-3" /> {c.likes ?? 0}
+                    </span>
+                  </td>
+                  <td className="px-6 py-3">
+                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                      c.isSpecialized
+                        ? "bg-purple-50 text-purple-600"
+                        : "bg-blue-50 text-blue-600"
+                    }`}>
+                      {c.isSpecialized ? "Specialized" : "General"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        title="View course"
+                        onClick={() => navigate(`/course/${c.id}`)}
+                        className="p-1.5 rounded-lg hover:bg-[#A7AAE9]/20 text-[#2e2c74] transition-colors"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        title="Delete course"
+                        onClick={() => {
+                          if (confirm(`Delete "${c.title}"?`)) handleDelete(c.id);
+                        }}
+                        className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
     </main>
   );
 }
-export default ApprovedDashboard;
