@@ -37,7 +37,7 @@ const BrowseCourse = () => {
     queryFn: () => fetchCourses({
       categorie_id: activeCategorie.id === 1 ? undefined : String(activeCategorie.id),
       search: deferredSearch || undefined,
-      // isSpecialized: user?.isSick ? true : undefined, // ✅ only filter if sick
+      isSpecialized: user?.isSick ? true : undefined, // ✅ only filter if sick
     }),
     placeholderData: (previousData) => previousData
   });

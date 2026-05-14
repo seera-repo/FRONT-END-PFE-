@@ -5,6 +5,7 @@ import { createCourse } from "../api/courses";
 import { createLesson } from "../api/lessons";
 import { fetchCategories } from "../api/categories";
 import { useQuery } from '@tanstack/react-query';
+import type { Quize } from "../types/types";
 
 interface CourseAttributes {
   title: string;
@@ -113,8 +114,6 @@ const LessonCard = ({ lesson, index, total, onChangeText, onChangeFile, onDelete
               onChange={e => onChangeText(lesson.id, "title", e.target.value)}
               placeholder="e.g. Introduction to Variables" />
           </div>
-
-          {/* Video file upload */}
           <div>
             <Label text="Video File" required />
             <div
@@ -139,7 +138,6 @@ const LessonCard = ({ lesson, index, total, onChangeText, onChangeFile, onDelete
                 onChange={e => { const f = e.target.files?.[0]; if (f) onChangeFile(lesson.id, f); }} />
             </div>
           </div>
-
           <div>
             <Label text="Description" />
             <textarea className={inputCls + " resize-none"} rows={3}
@@ -153,6 +151,47 @@ const LessonCard = ({ lesson, index, total, onChangeText, onChangeFile, onDelete
   );
 };
 
+// ─── Quiz Preview Card ────────────────────────────────────────────────────────
+const ANSWER_LABELS = ["a", "b", "c", "d"] as const;
+const OPTION_KEYS = ["option_a", "option_b", "option_c", "option_d"] as const;
+
+const QuizPreview = ({ questions }: { questions: Quize[] }) => (
+  <div className="flex flex-col gap-4">
+    {questions.map((q, i) => (
+      <div key={q.id ?? i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <p className="text-sm font-semibold text-gray-800 mb-3">
+          {i + 1}. {q.question}
+        </p>
+        <div className="grid grid-cols-1 gap-2">
+          {OPTION_KEYS.map((key, oi) => {
+            const isCorrect = ANSWER_LABELS[oi] === q.correct_answer;
+            return (
+              <div key={key}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm transition-colors
+                  ${isCorrect
+                    ? "border-green-300 bg-green-50 text-green-700 font-semibold"
+                    : "border-gray-100 bg-[#f9f9fc] text-gray-600"
+                  }`}
+              >
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                  ${isCorrect ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"}`}>
+                  {ANSWER_LABELS[oi].toUpperCase()}
+                </span>
+                {q[key]}
+                {isCorrect && (
+                  <svg className="w-4 h-4 ml-auto text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 const AddCourse = () => {
   const navigate = useNavigate();
@@ -164,6 +203,12 @@ const AddCourse = () => {
   const docRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"details" | "lessons">("details");
+
+  // Quiz state
+  const [quizQuestions, setQuizQuestions] = useState<Quize[]>([]);
+  const [quizGenerating, setQuizGenerating] = useState(false);
+  const [quizError, setQuizError] = useState<string | null>(null);
+  const [publishedCourseId, setPublishedCourseId] = useState<string | null>(null);
 
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
@@ -199,7 +244,6 @@ const AddCourse = () => {
       prev.filter(l => l.id !== lessonId).map((l, i) => ({ ...l, order_index: i + 1 }))
     );
 
-  // ← two separate updaters, no confusion
   const updateLessonText = (lessonId: string, field: "title" | "description", value: string) =>
     setLessons(prev => prev.map(l => l.id === lessonId ? { ...l, [field]: value } : l));
 
@@ -214,15 +258,43 @@ const AddCourse = () => {
   const canPublish = courseValid && lessonsValid && lessons.length > 0;
   const lessonIssues = lessons.filter(l => !l.title.trim() || !l.vedio_url).length;
 
-  // selected category name for preview
   const selectedCategoryName = categories.find(c => c.id === course.categorie_id)?.name ?? "";
 
-  const handleSave = async () => {
+  // ─── Generate / Regenerate quiz ───────────────────────────────────────────
+  const handleGenerateQuiz = async (courseIdToUse: string) => {
+    setQuizGenerating(true);
+    setQuizError(null);
+    try {
+      const token = localStorage.getItem("token"); // or wherever you store it
 
-  if (!canPublish) return;
+      const res = await fetch(`http://localhost:3000/api/quizes/${courseIdToUse}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+
+      // check before parsing
+      const text = await res.text();
+      if (!text) throw new Error("Empty response from server");
+
+      const data = JSON.parse(text);
+      if (!data.success) throw new Error(data.message ?? "Failed to generate quiz");
+      setQuizQuestions(data.data);
+      setActiveTab("lessons");
+    } catch (err: any) {
+      setQuizError(err.message ?? "Something went wrong");
+    } finally {
+      setQuizGenerating(false);
+    }
+  };
+  // ─── Publish ──────────────────────────────────────────────────────────────
+  const handleSave = async () => {
     if (!canPublish) return;
     setSaving(true);
     try {
+      // Step 1 — create course
       const { course: createdCourse } = await createCourse({
         title: course.title,
         description: course.description,
@@ -232,6 +304,7 @@ const AddCourse = () => {
         docFile: docFile,
       });
 
+      // Step 2 — create lessons
       for (const lesson of lessons) {
         if (!lesson.vedio_url) continue;
         await createLesson(createdCourse.id, {
@@ -242,7 +315,14 @@ const AddCourse = () => {
         });
       }
 
-      navigate("/HomePageTeacher");
+      setPublishedCourseId(createdCourse.id);
+
+      // Step 3 — generate quiz if doc was uploaded
+      if (docFile) {
+        await handleGenerateQuiz(createdCourse.id);
+      } else {
+        navigate("/HomePageTeacher");
+      }
     } catch (err) {
       console.error(err);
       alert("Something went wrong. Please try again.");
@@ -273,14 +353,14 @@ const AddCourse = () => {
           </div>
           <button
             onClick={handleSave}
-            disabled={!canPublish || saving}
+            disabled={!canPublish || saving || !!publishedCourseId}
             className="px-5 py-2 rounded-xl bg-[#2e2c74] hover:bg-purple-900 text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 mt-1"
           >
             {saving
               ? <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
               : <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             }
-            {isEdit ? "Save Changes" : "Publish Course"}
+            {publishedCourseId ? "Published ✓" : isEdit ? "Save Changes" : "Publish Course"}
           </button>
         </div>
 
@@ -357,7 +437,10 @@ const AddCourse = () => {
               <SectionCard title="Course Document" icon={
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
               }>
-                <p className="text-xs text-gray-400 -mt-3">Optional — attach a PDF syllabus or course material</p>
+                <p className="text-xs text-gray-400 -mt-3">
+                  Optional — attach a PDF syllabus or course material.{" "}
+                  <span className="text-purple-500 font-semibold">A quiz will be auto-generated from it on publish.</span>
+                </p>
                 {docFile || course.document ? (
                   <div className="flex items-center gap-3 bg-purple-50 border border-purple-200 rounded-xl px-4 py-3">
                     <svg className="w-8 h-8 text-purple-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
@@ -425,7 +508,7 @@ const AddCourse = () => {
                   )}
                   <div className="flex items-center gap-2 mb-2">
                     <span className="bg-purple-100 text-purple-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      {selectedCategoryName || "CATEGORY"}  {/* ← fixed */}
+                      {selectedCategoryName || "CATEGORY"}
                     </span>
                     {course.isSpecialized && (
                       <span className="bg-amber-100 text-amber-600 text-[10px] font-bold px-2 py-0.5 rounded-full">Specialized</span>
@@ -488,6 +571,74 @@ const AddCourse = () => {
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                   Back to details
                 </button>
+              </div>
+            )}
+
+            {/* ── Quiz Section (only after course is published) ── */}
+            {publishedCourseId && (
+              <div className="mt-2 bg-white rounded-2xl shadow-md p-6 flex flex-col gap-5">
+                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-purple-500">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                    </span>
+                    <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wide">AI-Generated Quiz</h2>
+                    {quizQuestions.length > 0 && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                        {quizQuestions.length} questions saved
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Regenerate button */}
+                  <button
+                    onClick={() => handleGenerateQuiz(publishedCourseId)}
+                    disabled={quizGenerating}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2e2c74] hover:bg-purple-900 text-white text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {quizGenerating ? (
+                      <>
+                        <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        Regenerate
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {quizError && (
+                  <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600">
+                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    {quizError}
+                  </div>
+                )}
+
+                {quizGenerating && (
+                  <div className="flex flex-col items-center gap-3 py-8 text-gray-400">
+                    <svg className="w-8 h-8 animate-spin text-purple-400" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                    <p className="text-sm font-medium">Generating quiz from document...</p>
+                  </div>
+                )}
+
+                {!quizGenerating && quizQuestions.length > 0 && (
+                  <>
+                    <p className="text-xs text-gray-400 -mt-3">
+                      Review the questions below. Not happy? Hit Regenerate for a fresh set.
+                    </p>
+                    <QuizPreview questions={quizQuestions} />
+                    <button
+                      onClick={() => navigate("/HomePageTeacher")}
+                      className="mt-2 w-full py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                      Done — Go to Dashboard
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
