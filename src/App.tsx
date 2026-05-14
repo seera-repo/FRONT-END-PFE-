@@ -20,6 +20,7 @@ import FormTeacher from './pages/FormTeacher';
 import AddCourse from './pages/AddCourse';
 import AdminDashBoard from './pages/page';
 import VerifyEmail from './pages/VerifyEmail';
+import TeacherProfile from './pages/Profileteacher';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path='/db' element={<ProtectedRoute allowedRoles={["Admin"]}>
             <AdminDashBoard />
           </ProtectedRoute>} />
+
         
 
 // Teacher only
@@ -49,7 +51,10 @@ function App() {
             <AddCourse />
           </ProtectedRoute>} />
 
-          //add idit cource + profile...
+        <Route path="/profileTeacher"
+          element={<ProtectedRoute allowedRoles={["Teacher"]}>
+            <TeacherProfile />
+          </ProtectedRoute>} />profileTeacher          //add idit cource + profile...
 
 
 // Student only
