@@ -88,7 +88,7 @@ function ChooseRoleMain() {
                         btn.classList.add("clicked");
                         handleTeacherRole();
                         setTimeout(() => {
-                            navigate('/NormalOrTrisomyStudent');
+                            navigate('/formTeacher');
                         }, 1000);}}>
                         <img className="w-[150px] h-[150px] rounded-[20px] object-contain" src={myPic5}></img>
                         <h2 id="choosePartTitleRole2" className="font-['Geist',sans-serif] text-[25px] font-semibold text-[#202020] mt-[15px]">I'm a Teacher</h2>

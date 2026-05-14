@@ -18,18 +18,24 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePageTeacher from './pages/HomePageTeacher';
 import FormTeacher from './pages/FormTeacher';
 import AddCourse from './pages/AddCourse';
-
+import AdminDashBoard from './pages/page';
+import VerifyEmail from './pages/VerifyEmail';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/Signup" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/ChooseRole" element={<ChooseRole />} />
         <Route path="/ChooseCommunity" element={<ChooseComunity />} />
 
+//admin only
+        <Route path='/db' element={<ProtectedRoute allowedRoles={["Admin"]}>
+            <AdminDashBoard />
+          </ProtectedRoute>} />
         
 
 // Teacher only

@@ -208,8 +208,7 @@ const FormTeacher = () => {
           </div>
         </div>
       </main>
-      <Footer />
-
+     
     </div>
   );
 };
