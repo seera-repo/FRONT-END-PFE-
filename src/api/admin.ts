@@ -93,3 +93,47 @@ export async function createCategory(name: string): Promise<AdminCategory> {
 export async function deleteCategory(id: string): Promise<void> {
   await apiFetch(`api/categories/${id}`, { method: "DELETE" });
 }
+
+// ── POSTS ────────────────────────────────────────────────────────
+export type AdminPost = {
+  id: string;
+  title: string;
+  content: string;
+  likes: number;
+  isSpecialized: boolean;
+  user_id: string;
+  createdAt: string;
+  commentsCount: number;
+  User?: { name: string; isSick: boolean };
+};
+
+export async function getAllPosts(): Promise<AdminPost[]> {
+  const res = await apiFetch<{ success: boolean; data: AdminPost[] }>("api/posts");
+  return res.data;
+}
+
+export async function deletePostAdmin(id: string): Promise<void> {
+  await apiFetch(`api/posts/${id}/admin`, { method: "DELETE" });
+}
+
+
+export type AdminComment = {
+  id: string;
+  comment: string;
+  user_id: string;
+  post_id: string;
+  createdAt: string;
+  User?: { name: string };
+  Post?: { title: string };
+};
+
+export async function getCommentsByPost(post_id: string): Promise<AdminComment[]> {
+  const res = await apiFetch<{ success: boolean; data: AdminComment[] }>(
+    `api/comments/post/${post_id}`
+  );
+  return res.data;
+}
+
+export async function deleteCommentAdmin(id: string): Promise<void> {
+  await apiFetch(`api/comments/${id}/admin`, { method: "DELETE" });
+}
