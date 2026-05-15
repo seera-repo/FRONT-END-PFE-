@@ -231,11 +231,11 @@ const Course = () => {
         <div className="absolute inset-0 bg-linear-to-t from-[#f2f2f5] via-violet-50/50 to-transparent" />
 
         {/* Bottom content */}
-        <div className="absolute bottom-0 left-0 right-0 px-6 pb-8">
+        <div className="absolute bottom-0 left-0 right-0 px-6 ">
           <div className="mx-auto max-w-5xl">
             <Link
               to="/BrowseCourse"
-              className="mb-4 inline-flex items-center gap-2 rounded-lg bg-[#f5f9fb]/80 px-3 py-1.5 text-sm font-medium text-foreground backdrop-blur-sm transition-colors hover:bg-[#f5f9fb]"
+              className="mb-8 inline-flex items-center gap-2 rounded-lg bg-[#f5f9fb]/80 px-3 py-1.5 text-sm font-medium text-foreground backdrop-blur-sm transition-colors hover:bg-[#f5f9fb]"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Courses
@@ -243,16 +243,16 @@ const Course = () => {
           </div>
         </div>
       </div>
-      <main className="flex-1 flex justify-center items-start min-h-screen bg-[#f2f2f5] pt-8">
+      <main className="flex-1 border-0 flex justify-center items-start min-h-screen bg-[#f2f2f5] ">
         {/* Hero Banner */}
 
 
-        <div className=" px-6 pb-12 w-250 ">
+        <div className="border-0 px-6 pb-12 w-250 ">
           {/* Course Header */}
           {/* Main Column */}
           <div className="flex-1 ">
             {/*course info */}
-            <div className="rounded-2xl w-full shadow-lg bg-white flex flex-col gap-6 border py-6 ">
+            <div className="rounded-2xl border-0 w-full shadow-lg bg-white flex flex-col gap-6 border py-6 ">
 
               <div className="px-8">
                 <div className="flex flex-wrap items-center gap-3">
