@@ -64,7 +64,7 @@ function ChooseRoleMain() {
         <>
             <style>{styles}</style>
             <div id="chooseRole" className="h-[1000px] bg-white pt-[150px] w-full flex flex-col items-center">
-                <h1 id="chooseTitleRole" className="cursor-default font-['Geist',sans-serif] text-[60px] font-[550] mt-0 text-[#202020]">Welcome to Smart CS!</h1>
+                <h1 id="chooseTitleRole" className="cursor-default font-['Geist',sans-serif] text-[60px] font-[550] mt-0 text-[#202020]">Welcome to Diversity!</h1>
                 <p id="chooseTextRole" className="cursor-default font-['Geist',sans-serif] text-[23px] font-normal mt-0 text-[#202020]">
                     Tell us a bit about yourself so we can personalize your experience
                 </p>

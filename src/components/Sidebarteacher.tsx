@@ -23,7 +23,7 @@ const addIconSrc =
 const OVERVIEW_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: home, path: "/HomePageTeacher" },
   { label: "Add Course", icon: addIconSrc, path: "/AddCourse" },
-  { label: "Browse Courses", icon: folder, path: "/BrowseCourse" },
+  { label: "Browse Courses", icon: folder, path: "/BrowseCourseTeacher" },
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
@@ -87,14 +87,6 @@ const SidebarTeacher = () => {
       {/* Logo */}
       <a href="/HomePageTeacher" className="flex items-center gap-2 mb-6 mt-1">
         <img src={logo} alt="Diversity" className="h-16 w-auto object-contain" />
-
-        <div className="w-8 h-8 rounded-lg bg-[#2e2c74] flex items-center justify-center">
-          <span className="text-white font-bold text-sm">D</span>
-        </div>
-
-        <span className="text-xl font-bold text-[#1a1a2e] tracking-tight">
-          diversity
-        </span>
       </a>
 
       {/* Overview */}
@@ -115,22 +107,9 @@ const SidebarTeacher = () => {
         ))}
       </div>
 
-      {/* Divider */}
-      <div className="mx-2 h-px bg-[#c8cbef]/50 my-2" />
 
-      {/* Community */}
-      <div className="mb-1">
-        <p className="text-[10px] font-bold tracking-widest text-[#a7aae9] uppercase px-2 mb-1.5">
-          Community
-        </p>
 
-        <div className="flex flex-col gap-0.5">
-          {COMMUNITY_ITEMS.map((item) => (
-            <NavButton key={item.label} {...item} />
-          ))}
-        </div>
-      </div>
-
+      
       {/* Spacer */}
       <div className="flex-1" />
 
