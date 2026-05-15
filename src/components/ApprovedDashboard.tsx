@@ -4,7 +4,7 @@ import { fetchMyCourses } from "../api/courses";
 import { apiFetch } from "../api/apiClient";
 import {
   BookOpen, Users, Plus, Eye, Trash2,
-  MessageSquare, Clock, ChevronRight, Star
+  MessageSquare, Clock, ChevronRight, Star , Pencil
 } from "lucide-react";
 
 // ── delete course API ──────────────────────────────────────────────
@@ -160,6 +160,15 @@ export default function ApprovedDashboard() {
                       >
                         <Eye className="w-3.5 h-3.5" />
                       </button>
+
+    {/* ── NEW: Edit button ── */}
+    <button
+      title="Edit course"
+      onClick={() => navigate(`/EditCourse/${c.id}`)}
+      className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 transition-colors"
+    >
+      <Pencil className="w-3.5 h-3.5" />
+    </button>
                       <button
                         title="Delete course"
                         onClick={() => {

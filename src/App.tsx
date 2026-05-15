@@ -23,6 +23,7 @@ import AddCourse from './pages/AddCourse';
 import AdminDashBoard from './pages/page';
 import VerifyEmail from './pages/VerifyEmail';
 import TeacherProfile from './pages/Profileteacher';
+import EditCourse from './pages/EditCourse';
 
 function App() {
   return (
@@ -61,6 +62,10 @@ function App() {
             <CommunityBlogTeacher />
           </ProtectedRoute>} />
 
+<Route path="/EditCourse"
+          element={<ProtectedRoute allowedRoles={["Teacher", "Admin"]}>
+            <EditCourse />
+          </ProtectedRoute>} />
 
         <Route path="/profileTeacher"
           element={<ProtectedRoute allowedRoles={["Teacher"]}>
