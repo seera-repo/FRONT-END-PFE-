@@ -4,7 +4,7 @@ import { fetchMyCourses } from "../api/courses";
 import { apiFetch } from "../api/apiClient";
 import {
   BookOpen, Users, Plus, Eye, Trash2,
-  MessageSquare, Clock, ChevronRight, Star , Pencil
+  MessageSquare, Clock, ChevronRight, Star, Pencil
 } from "lucide-react";
 
 // ── delete course API ──────────────────────────────────────────────
@@ -143,11 +143,10 @@ export default function ApprovedDashboard() {
                     </span>
                   </td>
                   <td className="px-6 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                      c.isSpecialized
+                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${c.isSpecialized
                         ? "bg-purple-50 text-purple-600"
                         : "bg-blue-50 text-blue-600"
-                    }`}>
+                      }`}>
                       {c.isSpecialized ? "Specialized" : "General"}
                     </span>
                   </td>
@@ -161,14 +160,14 @@ export default function ApprovedDashboard() {
                         <Eye className="w-3.5 h-3.5" />
                       </button>
 
-    {/* ── NEW: Edit button ── */}
-    <button
-      title="Edit course"
-      onClick={() => navigate(`/EditCourse/${c.id}`)}
-      className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 transition-colors"
-    >
-      <Pencil className="w-3.5 h-3.5" />
-    </button>
+                      {/* ── NEW: Edit button ── */}
+                      <button
+                        title="Edit course"
+                        onClick={() => navigate(`/EditCourse/${c.id}`)}
+                        className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 transition-colors"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
                       <button
                         title="Delete course"
                         onClick={() => {

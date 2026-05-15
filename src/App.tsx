@@ -38,10 +38,10 @@ function App() {
 
 //admin only
         <Route path='/db' element={<ProtectedRoute allowedRoles={["Admin"]}>
-            <AdminDashBoard />
-          </ProtectedRoute>} />
+          <AdminDashBoard />
+        </ProtectedRoute>} />
 
-        
+
 
 // Teacher only
         <Route path="/HomePageTeacher"
@@ -53,16 +53,16 @@ function App() {
           element={<ProtectedRoute allowedRoles={["Teacher"]}>
             <AddCourse />
           </ProtectedRoute>} />
-           <Route path="/BrowseCourseTeacher"
-          element={<ProtectedRoute allowedRoles={[ "Teacher", "Admin"]}>
+        <Route path="/BrowseCourseTeacher"
+          element={<ProtectedRoute allowedRoles={["Teacher", "Admin"]}>
             <BrowseCourseTeacher />
-          </ProtectedRoute>} /> 
-          <Route path="/CommunityBlogTeacher"
+          </ProtectedRoute>} />
+        <Route path="/CommunityBlogTeacher"
           element={<ProtectedRoute allowedRoles={["Teacher", "Admin"]}>
             <CommunityBlogTeacher />
           </ProtectedRoute>} />
 
-<Route path="/EditCourse"
+        <Route path="/EditCourse/:id"
           element={<ProtectedRoute allowedRoles={["Teacher", "Admin"]}>
             <EditCourse />
           </ProtectedRoute>} />
@@ -73,7 +73,7 @@ function App() {
           </ProtectedRoute>} />profileTeacher          //add idit cource + profile...
 
 
-// Student only
+        // Student only
         <Route path="/formTeacher"
           element={<ProtectedRoute allowedRoles={["Student"]}>
             <FormTeacher />
@@ -89,7 +89,7 @@ function App() {
             <NormalORTrisomyStudent />
           </ProtectedRoute>} />
 
-          <Route path="/HomePage"
+        <Route path="/HomePage"
           element={<ProtectedRoute allowedRoles={["Student"]}>
             <HomePage />
           </ProtectedRoute>} />
