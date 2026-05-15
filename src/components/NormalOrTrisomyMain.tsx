@@ -56,33 +56,44 @@ function NormalOrTrisomyMain() {
         <>
             <style>{styles}</style>
             <div id="NormalOrTrisomy" className="h-[1000px] bg-white pt-[150px] w-full flex flex-col items-center">
-                <h1 id="chooseTitleNormalOrTrisomy" className="cursor-default font-['Geist',sans-serif] text-[50px] font-[550] mt-0 ml-[-140px] w-[1000px] text-[#202020] text-center whitespace-nowrap">Are you a Normal Student or Trisomy 21 Student?</h1>
-                <p id="chooseTextNormalOrTrisomy" className="cursor-default font-['Geist',sans-serif] text-[23px] font-normal mt-[10px] text-[#202020]">
-                    Choose the learning experience that works best for you
-                </p>
+               <div className="flex flex-col items-center text-center">
+  <h1
+    id="chooseTitleNormalOrTrisomy"
+    className="cursor-default text-[30px] mt-0 text-[#2e2c74] whitespace-nowrap"
+  >
+    Are you a Normal Student or Trisomy 21 Student?
+  </h1>
+
+  <p
+    id="chooseTextNormalOrTrisomy"
+    className="cursor-default  text-[20px] font-normal mt-[10px] text-gray"
+  >
+    Choose the learning experience that works best for you
+  </p>
+</div>
                 <div className="chooseFlex flex flex-row gap-7.5 mt-10">
                     <div className="choosePartNormalOrTrisomy relative w-87.5 h-115 flex flex-col items-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-transform duration-1000 ease-in-out hover:-translate-y-0.75 hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]"
                         onClick={(e) => { const btn = e.currentTarget; btn.classList.add("clicked"); handleSubmit(); setTimeout(() => { navigate('/HomePage') }, 1000) }}
                     >
                         <img className="cursor-pointer w-[150px] h-[150px] mt-[50px] rounded-[20px] object-contain" src={myPic7}></img>
-                        <h2 id="choosePartTitleNormalOrTrisomy1" className="cursor-pointer font-['Geist',sans-serif] text-[25px] font-semibold text-[#202020] mt-[15px] whitespace-nowrap">Trisomy 21 Student</h2>
+                        <h2 id="choosePartTitleNormalOrTrisomy1" className="cursor-pointer text-[25px] font-semibold text-[#2e2c74] mt-[15px] whitespace-nowrap">Trisomy 21 Student</h2>
                         <p id="choosePartTextNormalOrTrisomy1" className="cursor-pointer text-[#202020] font-['Geist',sans-serif] text-[17px] font-normal w-[300px] mt-[10px] text-center">
                             I want larger text, simplified navigation, and extra learning support
                         </p>
-                        <a className="choosePartLinkNormalOrTrisomy cursor-pointer font-['Geist',sans-serif] text-[17px] font-medium mt-[50px] text-[#702DFF]">Select This</a>
+                        <a className="choosePartLinkNormalOrTrisomy cursor-pointer font-['Geist',sans-serif] text-[17px] font-medium mt-[50px] text-[#2e2c74]">Select This</a>
                     </div>
                     <div className="choosePartNormalOrTrisomy relative w-[350px] h-[460px] flex flex-col items-center rounded-[20px] border-[3px] border-[rgba(104,108,184,0.39)] bg-[rgba(167,170,233,0.39)] transition-[opacity,filter] duration-[3000ms] ease-in-out hover:-translate-y-[3px] hover:scale-105 hover:shadow-[0_12px_25px_rgba(0,0,0,0.3)]"
                         onClick={(e) => { const btn = e.currentTarget; btn.classList.add("clicked"); setTimeout(() => { navigate('/HomePage') }, 1000) }}>
 
                         <img className="cursor-pointer w-[150px] h-[150px] mt-[50px] rounded-[20px] object-contain" src={myPic4}></img>
-                        <h2 id="choosePartTitleNormalOrTrisomy2" className="cursor-pointer font-['Geist',sans-serif] text-[25px] font-semibold text-[#202020] mt-[15px] whitespace-nowrap">I am a Normal Student</h2>
+                        <h2 id="choosePartTitleNormalOrTrisomy2" className="cursor-pointer font-['Geist',sans-serif] text-[25px] font-semibold text-[#2e2c74] mt-[15px] whitespace-nowrap">I am a Normal Student</h2>
                         <p id="hoosePartTextNormalOrTrisomy2" className="cursor-pointer text-[#202020] font-['Geist',sans-serif] text-[17px] font-normal w-[300px] mt-[10px] text-center">I prefer the standard learning experience with regular content</p>
-                        <a className="choosePartLinkNormalOrTrisomy cursor-pointer font-['Geist',sans-serif] text-[17px] font-medium mt-[50px] text-[#702DFF]">Select This</a>
+                        <a className="choosePartLinkNormalOrTrisomy cursor-pointer font-['Geist',sans-serif] text-[17px] font-medium mt-[50px] text-[#2e2c74]">Select This</a>
                     </div>
                 </div>
 
-                <p className="cursor-default settingsChooseText font-['Geist',sans-serif] text-[20px] font-normal text-[#202020] mt-[60px]">You can always change this in your profile settings later</p>
-                <a id="skipNormalOrTrisomy" className="font-['Geist',sans-serif] text-[17px] font-medium h-[10px] mt-[30px] text-[#702DFF] relative top-[20px] cursor-pointer hover:text-[#702DFF]"
+                <p className="cursor-default settingsChooseText font-['Geist',sans-serif] text-[22px] font-normal text-[#2e2c74] mt-[60px]">You can always change this in your profile settings later</p>
+                <a id="skipNormalOrTrisomy" className="font-['Geist',sans-serif] text-[20px] font-medium h-[10px] mt-[30px] text-[#702DFF] relative top-[20px] cursor-pointer hover:text-[#702DFF]"
                     onClick={() => navigate('/HomePage')}>
                     skip for now
                 </a>

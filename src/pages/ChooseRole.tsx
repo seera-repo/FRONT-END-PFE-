@@ -6,7 +6,7 @@ const ChooseRole = () => {
     <div>
       <Header />
       <ChooseRoleMain />
-      <Footer />
+     
     </div>
   )
 }

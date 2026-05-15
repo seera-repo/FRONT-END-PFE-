@@ -6,7 +6,7 @@ const NormalOrTrisomyStudent = () => {
         <div>
             <Header />
             <NormalOrTrisomyMain />
-            <Footer />
+           
         </div>
     )
 }
