@@ -6,9 +6,11 @@ import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 import Course from './pages/Course';
 import CommunityBlog from './pages/ComunityBlog';
+import CommunityBlogTeacher from './pages/ComunityBlogTeacher';
 import ChooseComunity from './pages/ChooseCommunity';
 import ChooseRole from './pages/ChooseRole';
 import BrowseCourse from './pages/BrowseCourse';
+import BrowseCourseTeacher from './pages/BrowseCourseTeacher'
 import LessonPage from './pages/LessonPage';
 import Profile from './pages/Profile';
 import ProfileStudent from './pages/ProfileStudent';
@@ -50,6 +52,15 @@ function App() {
           element={<ProtectedRoute allowedRoles={["Teacher"]}>
             <AddCourse />
           </ProtectedRoute>} />
+           <Route path="/BrowseCourseTeacher"
+          element={<ProtectedRoute allowedRoles={[ "Teacher", "Admin"]}>
+            <BrowseCourseTeacher />
+          </ProtectedRoute>} /> 
+          <Route path="/CommunityBlogTeacher"
+          element={<ProtectedRoute allowedRoles={["Teacher", "Admin"]}>
+            <CommunityBlogTeacher />
+          </ProtectedRoute>} />
+
 
         <Route path="/profileTeacher"
           element={<ProtectedRoute allowedRoles={["Teacher"]}>

@@ -12,7 +12,7 @@ import { fetchProfileStudent } from '../api/user';
 import Footer from '../components/Footer';
 
 
-const BrowseCourse = () => {
+const BrowseCourseTeacher = () => {
 
   //get categories for filters
   const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
@@ -180,4 +180,4 @@ const BrowseCourse = () => {
   )
 }
 
-export default BrowseCourse
+export default BrowseCourseTeacher

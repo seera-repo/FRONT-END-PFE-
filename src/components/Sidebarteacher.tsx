@@ -23,7 +23,7 @@ const addIconSrc =
 const OVERVIEW_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: home, path: "/HomePageTeacher" },
   { label: "Add Course", icon: addIconSrc, path: "/AddCourse" },
-  { label: "Browse Courses", icon: folder, path: "/BrowseCourse" },
+  { label: "Browse Courses", icon: folder, path: "/BrowseCourseTeacher" },
 ];
 
 const COMMUNITY_ITEMS: NavItem[] = [
