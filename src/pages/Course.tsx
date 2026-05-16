@@ -1,6 +1,6 @@
 import Header from "../components/Header"
 import thumbnail from '../assets/images/thumbnail.png';
-import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send} from "lucide-react";
 import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState, type FormEvent, } from "react";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,6 +15,7 @@ import { enrole, removeEnrollment } from "../api/enrollment";
 import { removeSavedCourse, saveCourse } from "../api/savedCourses";
 import type { CourseComment } from "../types/types"
 import Footer from "../components/Footer";
+import star from '../assets/icons/star.svg';
 
 
 const Course = () => {
@@ -307,7 +308,7 @@ const Course = () => {
                 {/* Action Buttons */}
                 <div className="mt-8 flex flex-wrap gap-3">
                   <button
-                    className={`px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex justify-center items-center ${enrolled ? "bg-[#b6d6c1] text-black" : "bg-[#d2d4f5] text-[#2F35C2]"
+                    className={`px-4 py-3 active:opacity-80 text-[15px] font-bold rounded-2xl transition duration-200 ease-in-out cursor-pointer flex justify-center items-center ${enrolled ? "bg-[#702DFF]/20 text-black" : "bg-[#d2d4f5] text-[#2F35C2]"
                       }`}
                     disabled={enrollMutation.isPending || unenrollMutation.isPending}
                     onClick={() => enrolled ? unenrollMutation.mutate() : enrollMutation.mutate()}
@@ -368,7 +369,7 @@ const Course = () => {
                   {
                     <div>
                       <h2 className="flex items-center gap-2 text-xl font-bold text-[#19232a]">
-                        <Sparkles className="h-5 w-5 text-[#008cba]" />
+                        <img src={star} className="h-5 w-5 text-[#702DFF]" />
                         AI-Generated Quiz
                       </h2>
                       <p className="mt-1 text-sm text-[#59656e]">
@@ -451,7 +452,7 @@ const Course = () => {
                                   {percentage >= 50
                                     ? "🎉 Great job! You passed the quiz."
                                     : <>
-                                      📚 You should repeat the course.{" "}
+                                       You should repeat the course.{" "}
                                       <Link to={`/courses/${id}/lessons/${lessons[0].id}`} className="underline text-[#2F35C2] hover:opacity-80">
                                         Start from the beginning
                                       </Link>

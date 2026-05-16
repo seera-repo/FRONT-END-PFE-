@@ -83,7 +83,7 @@ const SidebarTeacher = () => {
   };
 
   return (
-    <div className="w-56 h-screen bg-[#A7AAE9]/30 p-4 flex flex-col shrink-0 rounded-3xl overflow-hidden">
+    <div className="w-56 h-screen bg-[#A7AAE9]/30 p-4 flex flex-col shrink-0 overflow-hidden rounded-r-3xl">
       {/* Logo */}
       <a href="/HomePageTeacher" className="flex items-center gap-2 mb-6 mt-1">
         <img src={logo} alt="Diversity" className="h-16 w-auto object-contain" />

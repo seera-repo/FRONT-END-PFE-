@@ -115,7 +115,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="w-56 h-screen bg-[#A7AAE9]/30 p-4 flex flex-col shrink-0 rounded-3xl overflow-hidden">
+    <div className="w-56 h-screen bg-[#A7AAE9]/30 p-4 flex flex-col shrink-0 rounded-r-3xl overflow-hidden">
 
       {/* Logo */}
       <a href="/HomePage" className="flex items-center px-1 mb-6 mt-1 gap-2">
