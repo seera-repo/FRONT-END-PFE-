@@ -24,6 +24,7 @@ import AdminDashBoard from './pages/page';
 import VerifyEmail from './pages/VerifyEmail';
 import TeacherProfile from './pages/Profileteacher';
 import EditCourse from './pages/EditCourse';
+import PublicTeacherProfile from './pages/PublicTeacherProfile';
 
 function App() {
   return (
@@ -120,7 +121,7 @@ function App() {
         <Route path="/AdminDashBoard" element={<ProtectedRoute allowedRoles={["Admin"]}>
           <Page />
         </ProtectedRoute>} />
-
+        <Route path="/teacher/:id" element={<PublicTeacherProfile />} />
 
         <Route path="/ProfileAdmin" element={<ProtectedRoute allowedRoles={["Admin"]}>
           <ProfileStudent />

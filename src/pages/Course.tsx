@@ -133,8 +133,8 @@ const Course = () => {
 
 
   useEffect(() => {
-  if (data?.courses?.likes !== undefined) setLikes(data.courses.likes);
-}, [data?.courses?.likes]);
+    if (data?.courses?.likes !== undefined) setLikes(data.courses.likes);
+  }, [data?.courses?.likes]);
 
   const likeMutation = useMutation({
     mutationFn: () => likeCourse(id!),
@@ -291,14 +291,15 @@ const Course = () => {
                 <h1 className="mt-4 text-balance text-3xl font-extrabold text-[#19232a] md:text-4xl">
                   {course.title}
                 </h1>
-
-                <p className="mt-2 text-base ">
+                <p className="mt-2 text-base">
                   By{" "}
-                  <span className="font-semibold text-[#2F35C2] cursor-pointer hover:text-[#2F35C2]/80 transition-colors">
+                  <Link
+                    to={`/teacher/${course.Teacher.id}`}
+                    className="font-semibold text-[#2F35C2] cursor-pointer hover:text-[#2F35C2]/80 transition-colors"
+                  >
                     {course.Teacher.User.name}
-                  </span>
+                  </Link>
                 </p>
-
                 <div className="mt-5 flex flex-wrap items-center gap-5 text-sm text-[#59656e]">
                   <span className="flex items-center gap-1.5">
                     <Users className="h-4 w-4" /> {enrollmentCount} students
