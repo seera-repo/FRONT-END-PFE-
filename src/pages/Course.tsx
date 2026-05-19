@@ -1,6 +1,6 @@
 import Header from "../components/Header"
 import thumbnail from '../assets/images/thumbnail.png';
-import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send} from "lucide-react";
+import { ArrowLeft, BookOpen, Heart, Play, Users, CheckCircle2, MessageSquare, Send } from "lucide-react";
 import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState, type FormEvent, } from "react";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ import { removeSavedCourse, saveCourse } from "../api/savedCourses";
 import type { CourseComment } from "../types/types"
 import Footer from "../components/Footer";
 import star from '../assets/icons/star.svg';
+import { likeCourse } from "../api/courses";
 
 
 const Course = () => {
@@ -26,6 +27,8 @@ const Course = () => {
   const [enrolled, setEnrolled] = useState(false);
   const [newComment, setNewComment] = useState("")
   const [Error, setError] = useState("");
+  const [likes, setLikes] = useState(0);
+  const [liked, setLiked] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>(
     {}
   )
@@ -128,6 +131,18 @@ const Course = () => {
     }
   });
 
+
+  useEffect(() => {
+  if (data?.courses?.likes !== undefined) setLikes(data.courses.likes);
+}, [data?.courses?.likes]);
+
+  const likeMutation = useMutation({
+    mutationFn: () => likeCourse(id!),
+    onSuccess: (data) => {
+      setLikes(data.likes);
+      setLiked(true);
+    }
+  });
   const commentMutation = useMutation({
     mutationFn: (comment: string) => addComment(id!, comment),
     onSuccess: (newCmnt) => {
@@ -262,10 +277,14 @@ const Course = () => {
                     {course.Categorie.name}
                   </div>
 
-                  <span className="flex items-center gap-1 text-sm font-semibold text-[#19232a]">
-                    <Heart className={`h-4 w-4 text-red-400 fill-current`} />
-                    {course.likes}
-                  </span>
+                  <button
+                    onClick={() => { if (!liked) likeMutation.mutate(); }}
+                    disabled={liked || likeMutation.isPending}
+                    className="flex items-center gap-1 text-sm font-semibold text-[#19232a] transition-transform active:scale-125 disabled:cursor-not-allowed"
+                  >
+                    <Heart className={`h-4 w-4 transition-colors ${liked ? "fill-red-500 text-red-500" : "text-red-400"}`} />
+                    {likes}
+                  </button>
 
                 </div>
 
@@ -452,7 +471,7 @@ const Course = () => {
                                   {percentage >= 50
                                     ? "🎉 Great job! You passed the quiz."
                                     : <>
-                                       You should repeat the course.{" "}
+                                      You should repeat the course.{" "}
                                       <Link to={`/courses/${id}/lessons/${lessons[0].id}`} className="underline text-[#2F35C2] hover:opacity-80">
                                         Start from the beginning
                                       </Link>

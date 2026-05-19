@@ -114,3 +114,11 @@ export async function createCourse(data: {
   if (!res.success) throw new Error("Failed to create course");
   return res;
 }
+
+export async function likeCourse(courseId: string) {
+  const res = await apiFetch<{ success: boolean; data: any }>(`api/courses/${courseId}/like`, {
+    method: "PATCH",
+  });
+  if (!res.success) throw new Error("Failed to like course");
+  return res.data; // ← this returns the course object
+}

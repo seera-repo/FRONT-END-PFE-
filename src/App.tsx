@@ -114,7 +114,17 @@ function App() {
           element={<ProtectedRoute allowedRoles={["Student", "Teacher", "Admin"]}>
             <CommunityBlog />
           </ProtectedRoute>} />
-        <Route path="/AdminDashBoard" element={<Page />} />
+
+
+
+        <Route path="/AdminDashBoard" element={<ProtectedRoute allowedRoles={["Admin"]}>
+          <Page />
+        </ProtectedRoute>} />
+
+
+        <Route path="/ProfileAdmin" element={<ProtectedRoute allowedRoles={["Admin"]}>
+          <ProfileStudent />
+        </ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

@@ -19,6 +19,7 @@ import {
 import { fetchCourses } from "../api/courses";
 import SidebarAdmin from "../components/Sidebar";
 import { getAllPosts } from "../api/admin";
+import React from "react";
 
 // ── helpers ───────────────────────────────────────────────────────
 function getInitials(name: string) {
@@ -116,10 +117,10 @@ export default function AdminDashboard() {
   });
   const { data: posts = [] } = useQuery({ queryKey: ["admin-posts"], queryFn: getAllPosts });
 
-const { mutate: removePost } = useMutation({
-  mutationFn: deletePostAdmin,
-  onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-posts"] }),
-});
+  const { mutate: removePost } = useMutation({
+    mutationFn: deletePostAdmin,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-posts"] }),
+  });
 
   const STATS = [
     { label: "Total Users", value: users.length, icon: Users, tab: "users" as Tab },
@@ -542,100 +543,127 @@ const { mutate: removePost } = useMutation({
           </div>
         )}
 
-        {posts.map(p => (
-          <>
-            <tr key={p.id} className="border-t border-[#f0f0f8] hover:bg-[#fafafe] transition-colors">
-              <td className="px-6 py-3">
-                <div>
-                  <p className="font-medium text-[#1a1a2e] truncate max-w-[200px]">{p.title}</p>
-                  <p className="text-xs text-gray-400 truncate max-w-[200px]">{p.content}</p>
-                </div>
-              </td>
-              <td className="px-6 py-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-[#A7AAE9]/30 flex items-center justify-center text-xs font-bold text-[#2e2c74]">
-                    {getInitials(p.User?.name ?? "?")}
-                  </div>
-                  <span className="text-gray-600">{p.User?.name ?? "—"}</span>
-                </div>
-              </td>
-              <td className="px-6 py-3">
-                <span className={`text-xs px-2 py-1 rounded-full font-semibold ${p.isSpecialized ? "bg-purple-50 text-purple-600" : "bg-blue-50 text-blue-600"
-                  }`}>
-                  {p.isSpecialized ? "Specialized" : "General"}
-                </span>
-              </td>
-              <td className="px-6 py-3 text-gray-500">
-                <span className="flex items-center gap-1">
-                  <Heart className="w-3 h-3" /> {p.likes}
-                </span>
-              </td>
-              <td className="px-6 py-3">
-                {/* Toggle comments */}
-                <button
-                  onClick={() => setExpandedPostId(expandedPostId === p.id ? null : p.id)}
-                  className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-semibold transition-colors ${expandedPostId === p.id
-                      ? "bg-[#2e2c74] text-white"
-                      : "bg-[#A7AAE9]/20 text-[#2e2c74] hover:bg-[#A7AAE9]/40"
-                    }`}
-                >
-                  <MessageSquare className="w-3 h-3" /> {p.commentsCount}
-                </button>
-              </td>
-              <td className="px-6 py-3 text-gray-400 text-xs">
-                {new Date(p.createdAt).toLocaleDateString()}
-              </td>
-              <td className="px-6 py-3">
-                <button
-                  onClick={() => { if (confirm(`Delete "${p.title}"?`)) removePost(p.id); }}
-                  className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </td>
-            </tr>
-
-            {/* Expanded comments row */}
-            {expandedPostId === p.id && (
-              <tr key={`comments-${p.id}`} className="bg-[#fafafe]">
-                <td colSpan={7} className="px-8 py-3">
-                  {expandedComments.length === 0 ? (
-                    <p className="text-xs text-gray-400 py-2">No comments yet.</p>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      {expandedComments.map(c => (
-                        <div key={c.id} className="flex items-center justify-between bg-white rounded-xl px-4 py-2.5 border border-[#e8e8f4]">
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-[#A7AAE9]/30 flex items-center justify-center text-[10px] font-bold text-[#2e2c74]">
-                              {getInitials(c.User?.name ?? "?")}
-                            </div>
-                            <div>
-                              <span className="text-xs font-semibold text-[#2e2c74] mr-2">{c.User?.name ?? "—"}</span>
-                              <span className="text-xs text-gray-600">{c.comment}</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="text-[10px] text-gray-300">
-                              {new Date(c.createdAt).toLocaleDateString()}
-                            </span>
-                            <button
-                              onClick={() => { if (confirm("Delete this comment?")) removeComment(c.id); }}
-                              className="p-1 rounded-lg hover:bg-red-50 text-red-400 transition-colors"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
+        {/* ── POSTS / COMMUNITY ── */}
+        {activeTab === "posts" && (
+          <div className="bg-white rounded-2xl shadow-sm border border-[#e8e8f4] overflow-hidden">
+            <div className="flex items-center gap-2 px-6 py-4 border-b border-[#f0f0f8]">
+              <MessageSquare className="w-4 h-4 text-[#2e2c74]" />
+              <h2 className="text-sm font-bold text-[#1a1a2e]">Community Posts ({posts.length})</h2>
+            </div>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-gray-400 bg-[#fafafa]">
+                  <th className="px-6 py-3 font-semibold">Post</th>
+                  <th className="px-6 py-3 font-semibold">Author</th>
+                  <th className="px-6 py-3 font-semibold">Type</th>
+                  <th className="px-6 py-3 font-semibold">Likes</th>
+                  <th className="px-6 py-3 font-semibold">Comments</th>
+                  <th className="px-6 py-3 font-semibold">Created</th>
+                  <th className="px-6 py-3 font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {posts.map(p => (
+                  <React.Fragment key={p.id}>
+                    <tr className="border-t border-[#f0f0f8] hover:bg-[#fafafe] transition-colors">
+                      <td className="px-6 py-3">
+                        <div>
+                          <p className="font-medium text-[#1a1a2e] truncate max-w-[200px]">{p.title}</p>
+                          <p className="text-xs text-gray-400 truncate max-w-[200px]">{p.content}</p>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </td>
-              </tr>
-            )}
-          </>
-        ))}
+                      </td>
+                      <td className="px-6 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-[#A7AAE9]/30 flex items-center justify-center text-xs font-bold text-[#2e2c74]">
+                            {getInitials(p.User?.name ?? "?")}
+                          </div>
+                          <span className="text-gray-600">{p.User?.name ?? "—"}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-3">
+                        <span className={`text-xs px-2 py-1 rounded-full font-semibold ${p.isSpecialized ? "bg-purple-50 text-purple-600" : "bg-blue-50 text-blue-600"
+                          }`}>
+                          {p.isSpecialized ? "Specialized" : "General"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3 text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <Heart className="w-3 h-3" /> {p.likes}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3">
+                        <button
+                          onClick={() => setExpandedPostId(expandedPostId === p.id ? null : p.id)}
+                          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-semibold transition-colors ${expandedPostId === p.id
+                            ? "bg-[#2e2c74] text-white"
+                            : "bg-[#A7AAE9]/20 text-[#2e2c74] hover:bg-[#A7AAE9]/40"
+                            }`}
+                        >
+                          <MessageSquare className="w-3 h-3" /> {p.commentsCount}
+                        </button>
+                      </td>
+                      <td className="px-6 py-3 text-gray-400 text-xs">
+                        {new Date(p.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-3">
+                        <button
+                          onClick={() => { if (confirm(`Delete "${p.title}"?`)) removePost(p.id); }}
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+
+                    {expandedPostId === p.id && (
+                      <tr className="bg-[#fafafe]">
+                        <td colSpan={7} className="px-8 py-3">
+                          {expandedComments.length === 0 ? (
+                            <p className="text-xs text-gray-400 py-2">No comments yet.</p>
+                          ) : (
+                            <div className="flex flex-col gap-2">
+                              {expandedComments.map(c => (
+                                <div key={c.id} className="flex items-center justify-between bg-white rounded-xl px-4 py-2.5 border border-[#e8e8f4]">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-[#A7AAE9]/30 flex items-center justify-center text-[10px] font-bold text-[#2e2c74]">
+                                      {getInitials(c.User?.name ?? "?")}
+                                    </div>
+                                    <div>
+                                      <span className="text-xs font-semibold text-[#2e2c74] mr-2">{c.User?.name ?? "—"}</span>
+                                      <span className="text-xs text-gray-600">{c.comment}</span>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-[10px] text-gray-300">
+                                      {new Date(c.createdAt).toLocaleDateString()}
+                                    </span>
+                                    <button
+                                      onClick={() => { if (confirm("Delete this comment?")) removeComment(c.id); }}
+                                      className="p-1 rounded-lg hover:bg-red-50 text-red-400 transition-colors"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
       </main>
     </div>
   );
 }
+
+//       </main >
+//     </div >
+//   );
+// }

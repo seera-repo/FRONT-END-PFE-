@@ -6,6 +6,7 @@ import { createLesson } from "../api/lessons";
 import { fetchCategories } from "../api/categories";
 import { useQuery } from '@tanstack/react-query';
 import type { Quize } from "../types/types";
+import { getMyTeacherProfile } from "../api/teacher";
 
 interface CourseAttributes {
   title: string;
@@ -155,42 +156,120 @@ const LessonCard = ({ lesson, index, total, onChangeText, onChangeFile, onDelete
 const ANSWER_LABELS = ["a", "b", "c", "d"] as const;
 const OPTION_KEYS = ["option_a", "option_b", "option_c", "option_d"] as const;
 
-const QuizPreview = ({ questions }: { questions: Quize[] }) => (
-  <div className="flex flex-col gap-4">
-    {questions.map((q, i) => (
-      <div key={q.id ?? i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <p className="text-sm font-semibold text-gray-800 mb-3">
-          {i + 1}. {q.question}
-        </p>
-        <div className="grid grid-cols-1 gap-2">
-          {OPTION_KEYS.map((key, oi) => {
-            const isCorrect = ANSWER_LABELS[oi] === q.correct_answer;
-            return (
-              <div key={key}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm transition-colors
-                  ${isCorrect
-                    ? "border-green-300 bg-green-50 text-green-700 font-semibold"
-                    : "border-gray-100 bg-[#f9f9fc] text-gray-600"
-                  }`}
-              >
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
-                  ${isCorrect ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"}`}>
-                  {ANSWER_LABELS[oi].toUpperCase()}
-                </span>
-                {q[key]}
-                {isCorrect && (
-                  <svg className="w-4 h-4 ml-auto text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
+const QuizPreview = ({ questions, courseId, onUpdate }: {
+  questions: Quize[],
+  courseId: string,
+  onUpdate: (updated: Quize) => void
+}) => {
+  const [editing, setEditing] = useState<string | null>(null);
+  const [draft, setDraft] = useState<Quize | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const startEdit = (q: Quize) => {
+    setEditing(q.id);
+    setDraft({ ...q });
+  };
+
+  const handleSave = async () => {
+    if (!draft) return;
+    setSaving(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:3000/api/quizes/${draft.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(draft),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+      onUpdate(draft);
+      setEditing(null);
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      {questions.map((q, i) => (
+        <div key={q.id ?? i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          {editing === q.id && draft ? (
+            // ── Edit mode ──
+            <div className="flex flex-col gap-3">
+              <textarea
+                className={inputCls + " resize-none font-semibold"}
+                rows={2}
+                value={draft.question}
+                onChange={e => setDraft({ ...draft, question: e.target.value })}
+              />
+              {OPTION_KEYS.map((key, oi) => (
+                <div key={key} className="flex items-center gap-2">
+                  <button
+                    onClick={() => setDraft({ ...draft, correct_answer: ANSWER_LABELS[oi] })}
+                    className={`w-6 h-6 rounded-full text-[10px] font-bold shrink-0 transition-colors
+                      ${draft.correct_answer === ANSWER_LABELS[oi]
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200 text-gray-500 hover:bg-purple-200"}`}
+                  >
+                    {ANSWER_LABELS[oi].toUpperCase()}
+                  </button>
+                  <input
+                    className={inputCls}
+                    value={draft[key] ?? ""}
+                    onChange={e => setDraft({ ...draft, [key]: e.target.value })}
+                  />
+                </div>
+              ))}
+              <p className="text-[10px] text-gray-400">Click a letter to set it as the correct answer</p>
+              <div className="flex gap-2 mt-1">
+                <button onClick={handleSave} disabled={saving}
+                  className="px-4 py-2 rounded-xl bg-[#2e2c74] text-white text-xs font-semibold hover:bg-purple-900 disabled:opacity-50 transition-colors">
+                  {saving ? "Saving..." : "Save"}
+                </button>
+                <button onClick={() => setEditing(null)}
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-500 hover:bg-gray-50 transition-colors">
+                  Cancel
+                </button>
               </div>
-            );
-          })}
+            </div>
+          ) : (
+            // ── View mode ──
+            <>
+              <div className="flex items-start justify-between mb-3 gap-2">
+                <p className="text-sm font-semibold text-gray-800">{i + 1}. {q.question}</p>
+                <button onClick={() => startEdit(q)}
+                  className="text-gray-400 hover:text-purple-600 transition-colors shrink-0 p-1">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                {OPTION_KEYS.map((key, oi) => {
+                  const isCorrect = ANSWER_LABELS[oi] === q.correct_answer;
+                  return (
+                    <div key={key}
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm
+                        ${isCorrect ? "border-green-300 bg-green-50 text-green-700 font-semibold" : "border-gray-100 bg-[#f9f9fc] text-gray-600"}`}>
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                        ${isCorrect ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"}`}>
+                        {ANSWER_LABELS[oi].toUpperCase()}
+                      </span>
+                      {q[key]}
+                      {isCorrect && <svg className="w-4 h-4 ml-auto text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
-      </div>
-    ))}
-  </div>
-);
+      ))}
+    </div>
+  );
+};
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 const AddCourse = () => {
@@ -259,6 +338,13 @@ const AddCourse = () => {
   const lessonIssues = lessons.filter(l => !l.title.trim() || !l.vedio_url).length;
 
   const selectedCategoryName = categories.find(c => c.id === course.categorie_id)?.name ?? "";
+
+  const { data: teacherProfile } = useQuery({
+    queryKey: ["teacherProfile"],
+    queryFn: getMyTeacherProfile,
+  });
+
+  const isPsychologist = teacherProfile?.isPsychologist ?? false;
 
   // ─── Generate / Regenerate quiz ───────────────────────────────────────────
   const handleGenerateQuiz = async (courseIdToUse: string) => {
@@ -417,20 +503,22 @@ const AddCourse = () => {
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <Label text="Specialized Course?" />
-                    <div onClick={() => updateCourse("isSpecialized", !course.isSpecialized)}
-                      className={`mt-1 flex items-center gap-3 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-150
+                  {isPsychologist && (
+                    <div>
+                      <Label text="Specialized Course?" />
+                      <div onClick={() => updateCourse("isSpecialized", !course.isSpecialized)}
+                        className={`mt-1 flex items-center gap-3 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-150
                         ${course.isSpecialized ? "border-purple-400 bg-purple-50" : "border-gray-200 bg-white hover:border-purple-200"}`}>
-                      <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${course.isSpecialized ? "bg-purple-600" : "bg-gray-200"}`}>
-                        <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${course.isSpecialized ? "translate-x-5" : "translate-x-0"}`} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-gray-700">Specialized</p>
-                        <p className="text-[10px] text-gray-400">For specific audience</p>
+                        <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${course.isSpecialized ? "bg-purple-600" : "bg-gray-200"}`}>
+                          <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${course.isSpecialized ? "translate-x-5" : "translate-x-0"}`} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-gray-700">Specialized</p>
+                          <p className="text-[10px] text-gray-400">For specific audience</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </SectionCard>
 
@@ -629,7 +717,11 @@ const AddCourse = () => {
                     <p className="text-xs text-gray-400 -mt-3">
                       Review the questions below. Not happy? Hit Regenerate for a fresh set.
                     </p>
-                    <QuizPreview questions={quizQuestions} />
+                    <QuizPreview
+                      questions={quizQuestions}
+                      courseId={publishedCourseId}
+                      onUpdate={(updated) => setQuizQuestions(prev => prev.map(q => q.id === updated.id ? updated : q))}
+                    />
                     <button
                       onClick={() => navigate("/HomePageTeacher")}
                       className="mt-2 w-full py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2"

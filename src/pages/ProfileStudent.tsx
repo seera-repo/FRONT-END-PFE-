@@ -42,7 +42,7 @@ if (isError) return <p>Something went wrong</p>
         <Header />
         <main className="flex-1 mt-20">
           <h1 className="text-[37px] pt-5 flex justify-center items-center font-semibold">
-            Student Profile
+             Profile
           </h1>
           <span className="text-[16px] pt-3 flex justify-center items-center text-gray-500">
             Tell us about yourself to personalize your learning
